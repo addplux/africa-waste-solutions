@@ -1,33 +1,49 @@
 # Africa Waste Solutions
 
-A modern waste management and tracking platform built with a hybrid **Go** (Backend) + **Python** (AI/Data) + **React** (Frontend) stack.
+A modern waste management and tracking platform built with **Go** (Backend) + **Python** (Flask Frontend & AI Service).
 
 ## Tech Stack
-- **Frontend**: React 18, Vite, Tailwind CSS (Green/Purple Theme), React Router, Formik.
-- **Backend**: Go (Golang) - *Pending Initialization*.
-- **AI/Data Service**: Python (Flask, ReportLab) - For Generating PDF Reports and Analytics.
+- **Frontend**: Python Flask with Jinja2 templates, Tailwind CSS (Navy Blue Theme), Chart.js
+- **Backend**: Go (Golang) REST API
+- **AI/Data Service**: Python Flask Microservice for PDF Reports and Analytics
 
 ## Project Structure
-- `/frontend`: React SPA (Single Page Application).
-- `/backend`: Go API Server (To be initialized).
-- `/ai-service`: Python Flask Microservice.
+- `/flask-frontend`: Flask web application with Jinja2 templates
+- `/backend`: Go API Server
+- `/ai-service`: Python Flask Microservice
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js & npm (Verified v20+)
 - Python 3.10+
-- Go 1.21+ (Please install if missing)
+- Go 1.21+
 
-### 1. Frontend Setup
+### 1. Frontend Setup (Flask)
 ```bash
-cd frontend
-npm install
-npm run dev
+cd flask-frontend
+pip install Flask requests python-dotenv
+python app.py
 ```
-Access the UI at `http://localhost:5173`.
+Access the UI at `http://localhost:5000`.
 
-### 2. AI Service Setup
+**Pages Available:**
+- Login: `/login`
+- Account Creation: `/account-creation`
+- Dashboard: `/dashboard`
+- Data Entry: `/data-entry`
+- Accounts: `/accounts`
+- Reports: `/reports`
+- KYC Verification: `/kyc`
+
+### 2. Backend Setup
+```bash
+cd backend
+go mod tidy
+go run main.go
+```
+API runs at `http://localhost:8080`.
+
+### 3. AI Service Setup
 ```bash
 cd ai-service
 python -m venv venv
@@ -36,18 +52,21 @@ python -m venv venv
 pip install -r requirements.txt
 python main.py
 ```
-Service runs at `http://localhost:5000`.
-
-### 3. Backend Setup
-*Creating the backend requires Go to be installed.*
-```bash
-cd backend
-go mod tidy
-go run main.go
-```
+Service runs at `http://localhost:5001`.
 
 ## Features
-- **Dashboard**: Overview of waste monitoring objectives.
-- **KYC Verification**: Identity verification with document upload and selfie capture.
-- **Data Entry**: Dynamic forms for tracking Package Supply vs Waste Returns.
-- **Reports**: Generate and export PDF summaries of waste impact.
+- **Dashboard**: Overview of waste monitoring with real-time statistics
+- **KYC Verification**: Identity verification with document upload and webcam selfie capture
+- **Data Entry**: Track waste collection by type (Plastic, Organic, Metal, Paper, Glass, E-Waste, Hazardous, Mixed)
+- **Accounts Management**: Manage consumer and business accounts with search and filters
+- **Reports & Analytics**: Interactive charts showing collection trends, waste distribution, and geographic analysis
+- **Navy Blue Design**: Modern, professional UI with Tailwind CSS
+
+## Architecture
+- **Frontend**: Flask serves Jinja2 templates with Tailwind CSS for styling
+- **Backend**: Go REST API handles business logic and database operations
+- **AI Service**: Python microservice for advanced analytics and PDF generation
+- **Integration**: Flask frontend proxies API calls to Go backend
+
+## Development
+The Flask frontend runs independently on port 5000 and communicates with the Go backend on port 8080 via REST API calls.

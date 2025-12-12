@@ -26,3 +26,8 @@ env/
 
 # Logs
 *.log
+
+# Old React frontends (removed)
+frontend/
+africa-waste-new/
+node_modules/
