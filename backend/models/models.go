@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 )
 
 type User struct {
@@ -30,18 +29,33 @@ type Account struct {
 }
 
 type Entry struct {
-	ID            uuid.UUID      `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	AccountID     uuid.UUID      `json:"account_id"`
-	EntryDate     time.Time      `json:"entry_date"`
-	ProductGroup  string         `json:"product_group"`  // beverages, food, etc.
-	ProductName   string         `json:"product_name"`   // Coca Cola, Meali Meal, etc.
-	PackageLevels datatypes.JSON `json:"package_levels"` // JSON: {"series0": 100, "level4": 50...}
-	WasteLevels   datatypes.JSON `json:"waste_levels"`   // JSON: {"series0": 0, "level4": 20...}
-	CreatedBy     uuid.UUID      `json:"created_by"`
-	CreatedAt     time.Time      `json:"created_at"`
+	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	TransactionType string    `json:"transaction_type"` // supply, transfer, return
+
+	// Transfer Details
+	SourceAccountID uuid.UUID  `json:"source_account_id"`
+	TargetAccountID *uuid.UUID `json:"target_account_id"` // Nullable (if just manufacturing stock)
+
+	// Authorization
+	PinVerified bool `json:"pin_verified"`
+
+	// Product Details
+	ProductGroup string `json:"product_group"` // Beverages, Cooking Oil, etc.
+	ProductName  string `json:"product_name"`  // Drip package water, Tablet Sugar, etc.
+
+	// Quantities (Bulk Keys)
+	Unit      int `json:"unit"`
+	Dozen     int `json:"dozen"`
+	HalfDozen int `json:"half_dozen"`
+	Case      int `json:"case"`
+	Series    int `json:"series"` // If relevant
+
+	EntryDate time.Time `json:"entry_date"`
+	CreatedBy uuid.UUID `json:"created_by"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Group struct {
-	ID   uint   `gorm:"primaryKey" json:"id"`
+	ID   uint   `json:"id"`
 	Name string `json:"name"`
 }

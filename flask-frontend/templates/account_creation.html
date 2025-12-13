@@ -179,28 +179,57 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Account Classification</h3>
                     <p class="text-gray-600 mb-6">Please select the category that best describes this account.</p>
 
-                    <input type="hidden" name="accountType" id="accountTypeInput" value="consumer">
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Consumer Option -->
-                        <div onclick="selectAccountType('consumer')" id="consumer-card"
-                            class="cursor-pointer p-8 rounded-xl border-2 border-blue-600 bg-blue-50 shadow-lg flex flex-col items-center justify-center gap-4 transition-all">
-                            <i class="fas fa-trash-alt text-5xl text-blue-600"></i>
-                            <span class="font-bold text-lg">Consumer</span>
-                            <p class="text-xs text-center text-gray-600 font-semibold mb-1">WASTE GENERATOR</p>
-                            <p class="text-sm text-center text-gray-500">Household, Company, or Institution that
-                                generates waste for return.</p>
-                        </div>
+                        <label class="account-type-card cursor-pointer group relative">
+                            <input type="radio" name="accountType" value="manufacturer" class="peer sr-only"
+                                onchange="toggleAccountFields(this.value)">
+                            <div
+                                class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:border-blue-300 transition-all text-center h-full flex flex-col items-center justify-center">
+                                <div
+                                    class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-blue-600">
+                                    <i class="fas fa-industry text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-gray-800 mb-1">Manufacturer</h3>
+                                <p class="text-xs text-gray-500">Produces goods</p>
+                            </div>
+                            <div class="absolute top-4 right-4 hidden peer-checked:block text-blue-600">
+                                <i class="fas fa-check-circle text-lg"></i>
+                            </div>
+                        </label>
 
-                        <!-- Business Option -->
-                        <div onclick="selectAccountType('business')" id="business-card"
-                            class="cursor-pointer p-8 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-md flex flex-col items-center justify-center gap-4 transition-all">
-                            <i class="fas fa-truck-loading text-5xl text-gray-400"></i>
-                            <span class="font-bold text-lg">Business</span>
-                            <p class="text-xs text-center text-gray-600 font-semibold mb-1">SUPPLIER</p>
-                            <p class="text-sm text-center text-gray-500">Manufacturer, Wholesaler, or Retailer supplying
-                                goods (Does not generate waste).</p>
-                        </div>
+                        <label class="account-type-card cursor-pointer group relative">
+                            <input type="radio" name="accountType" value="distributor" class="peer sr-only"
+                                onchange="toggleAccountFields(this.value)">
+                            <div
+                                class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-purple-600 peer-checked:bg-purple-50 hover:border-purple-300 transition-all text-center h-full flex flex-col items-center justify-center">
+                                <div
+                                    class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-purple-600">
+                                    <i class="fas fa-truck text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-gray-800 mb-1">Distributor</h3>
+                                <p class="text-xs text-gray-500">Rules Wholesale/Retail</p>
+                            </div>
+                            <div class="absolute top-4 right-4 hidden peer-checked:block text-purple-600">
+                                <i class="fas fa-check-circle text-lg"></i>
+                            </div>
+                        </label>
+
+                        <label class="account-type-card cursor-pointer group relative">
+                            <input type="radio" name="accountType" value="household" class="peer sr-only"
+                                onchange="toggleAccountFields(this.value)">
+                            <div
+                                class="p-4 rounded-xl border-2 border-gray-200 peer-checked:border-green-600 peer-checked:bg-green-50 hover:border-green-300 transition-all text-center h-full flex flex-col items-center justify-center">
+                                <div
+                                    class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-green-600">
+                                    <i class="fas fa-home text-xl"></i>
+                                </div>
+                                <h3 class="font-bold text-gray-800 mb-1">Household</h3>
+                                <p class="text-xs text-gray-500">Waste Generator</p>
+                            </div>
+                            <div class="absolute top-4 right-4 hidden peer-checked:block text-green-600">
+                                <i class="fas fa-check-circle text-lg"></i>
+                            </div>
+                        </label>
                     </div>
 
                     <!-- Company Type (Hidden by default, shown for Business) -->
@@ -387,30 +416,20 @@
         }
     }
 
-    function selectAccountType(type) {
-        document.getElementById('accountTypeInput').value = type;
-
-        const consumerCard = document.getElementById('consumer-card');
-        const businessCard = document.getElementById('business-card');
-
-        if (type === 'consumer') {
-            consumerCard.className = 'cursor-pointer p-8 rounded-xl border-2 border-blue-600 bg-blue-50 shadow-lg flex flex-col items-center justify-center gap-4 transition-all';
-            consumerCard.querySelector('i').className = 'fas fa-trash-alt text-5xl text-blue-600';
-            businessCard.className = 'cursor-pointer p-8 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-md flex flex-col items-center justify-center gap-4 transition-all';
-            businessCard.querySelector('i').className = 'fas fa-truck-loading text-5xl text-gray-400';
-
-            // Hide Company Type field for Consumer
-            document.getElementById('companyTypeField').classList.add('hidden');
+    function toggleAccountFields(type) {
+        const companyTypeSection = document.getElementById('companyTypeField'); // Changed from companyTypeSection to companyTypeField
+        if (type === 'manufacturer' || type === 'distributor') {
+            companyTypeSection.classList.remove('hidden');
         } else {
-            businessCard.className = 'cursor-pointer p-8 rounded-xl border-2 border-blue-600 bg-blue-50 shadow-lg flex flex-col items-center justify-center gap-4 transition-all';
-            businessCard.querySelector('i').className = 'fas fa-truck-loading text-5xl text-blue-600';
-            consumerCard.className = 'cursor-pointer p-8 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:shadow-md flex flex-col items-center justify-center gap-4 transition-all';
-            consumerCard.querySelector('i').className = 'fas fa-trash-alt text-5xl text-gray-400';
-
-            // Show Company Type field for Business
-            document.getElementById('companyTypeField').classList.remove('hidden');
+            companyTypeSection.classList.add('hidden');
         }
     }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        const selected = document.querySelector('input[name="accountType"]:checked');
+        if (selected) toggleAccountFields(selected.value);
+    });
 
     function previewIdImage(event) {
         const file = event.target.files[0];

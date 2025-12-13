@@ -147,41 +147,81 @@ def accounts():
 @login_required
 def data_entry():
     if request.method == 'POST':
-        # Extract basic info
+        tx_type = request.form.get('transaction_type')
+        
+        # Determine Source and Target based on transaction type
+        source_id = None
+        target_id = None
+
+        if tx_type == 'supply':
+            source_id = request.form.get('manufacturer_id')
+            target_id = None # Production adds to source stock
+        elif tx_type == 'transfer':
+            source_id = request.form.get('source_id')
+            target_id = request.form.get('target_id')
+        elif tx_type == 'return':
+            source_id = request.form.get('household_id')
+            target_id = request.form.get('return_target_id')
+
+        # Clean integer inputs
+        def get_int(key):
+            val = request.form.get(key)
+            return int(val) if val and val.strip() else 0
+
         data = {
-            'account_id': request.form.get('account_id'),
+            'transaction_type': tx_type,
+            'source_account_id': source_id,
+            'target_account_id': target_id,
+            'pin': request.form.get('pin'), # Send PIN for verification
             'product_group': request.form.get('product_group'),
             'product_name': request.form.get('product_name'),
-            'package_levels': {},
-            'waste_levels': {}
+            'unit': get_int('qty_unit'),
+            'dozen': get_int('qty_dozen'),
+            'half_dozen': get_int('qty_half_dozen'),
+            'case': get_int('qty_case'),
+            'series': get_int('qty_series')
         }
-
-        # Matrix keys
-        keys = ['series0', 'level4', 'level6', 'level10', 'level12', 'level16']
-
-        # Construct JSON for levels
-        for key in keys:
-            # Supply (Package Levels)
-            supply_val = request.form.get(f'supply_{key}')
-            if supply_val and supply_val.strip() != '':
-                data['package_levels'][key] = int(supply_val)
-            
-            # Waste (Disposal Levels)
-            waste_val = request.form.get(f'waste_{key}')
-            if waste_val and waste_val.strip() != '':
-                data['waste_levels'][key] = int(waste_val)
 
         # Send to Go Backend
         response = api_call('entries', method='POST', data=data)
         
         if response and response.status_code in [200, 201]:
-            flash('Data entry submitted successfully!', 'success')
+            flash(f'{tx_type.capitalize()} recorded successfully!', 'success')
         else:
-            flash('Failed to submit data. Please try again.', 'error')
+            error_msg = 'Failed to submit entry.'
+            if response:
+                try:
+                    error_msg = response.json().get('message', error_msg)
+                except:
+                    pass
+            flash(error_msg, 'error')
+            
             
         return redirect(url_for('data_entry'))
     
-    return render_template('data_entry.html', user=session.get('user'))
+    # GET Request: Fetch accounts for dropdowns
+    accounts_response = api_call('accounts', method='GET')
+    
+    manufacturers = []
+    distributors = []
+    households = []
+    
+    if accounts_response and accounts_response.status_code == 200:
+        all_accounts = accounts_response.json().get('data', [])
+        for acc in all_accounts:
+            a_type = acc.get('account_type', '').lower()
+            if a_type == 'manufacturer':
+                manufacturers.append(acc)
+            elif a_type == 'distributor':
+                distributors.append(acc)
+            elif a_type == 'household':
+                households.append(acc)
+    
+    return render_template('data_entry.html', 
+                           user=session.get('user'),
+                           manufacturers=manufacturers,
+                           distributors=distributors,
+                           households=households)
 
 @app.route('/reports')
 @login_required

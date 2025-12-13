@@ -9,24 +9,53 @@ import (
 )
 
 func CreateEntry(c *fiber.Ctx) error {
-	entry := new(models.Entry)
+	// Input struct including PIN
+	var input struct {
+		TransactionType string     `json:"transaction_type"`
+		SourceAccountID uuid.UUID  `json:"source_account_id"`
+		TargetAccountID *uuid.UUID `json:"target_account_id"`
+		Pin             string     `json:"pin"`
+		ProductGroup    string     `json:"product_group"`
+		ProductName     string     `json:"product_name"`
+		Unit            int        `json:"unit"`
+		Dozen           int        `json:"dozen"`
+		HalfDozen       int        `json:"half_dozen"`
+		Case            int        `json:"case"`
+		Series          int        `json:"series"`
+	}
 
-	if err := c.BodyParser(entry); err != nil {
+	if err := c.BodyParser(&input); err != nil {
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid input format"})
 	}
 
-	// Set default date if empty
-	if entry.EntryDate.IsZero() {
-		entry.EntryDate = time.Now()
+	// 1. PIN Verification (Mock for now, or check against '1234')
+	if input.Pin != "1234" {
+		return c.Status(401).JSON(fiber.Map{"status": "error", "message": "Invalid Authorization PIN"})
 	}
 
-	// Basic validation
-	if entry.ProductGroup == "" || entry.AccountID == uuid.Nil {
-		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Missing required fields (Account or Product Group)"})
+	// 2. Map to Entry Model
+	entry := models.Entry{
+		TransactionType: input.TransactionType,
+		SourceAccountID: input.SourceAccountID,
+		TargetAccountID: input.TargetAccountID,
+		PinVerified:     true,
+		ProductGroup:    input.ProductGroup,
+		ProductName:     input.ProductName,
+		Unit:            input.Unit,
+		Dozen:           input.Dozen,
+		HalfDozen:       input.HalfDozen,
+		Case:            input.Case,
+		Series:          input.Series,
+		EntryDate:       time.Now(),
+	}
+
+	// 3. Validation
+	if entry.SourceAccountID == uuid.Nil {
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Source Account is required"})
 	}
 
 	if result := models.DB.Create(&entry); result.Error != nil {
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create entry"})
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not record transaction"})
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "data": entry})

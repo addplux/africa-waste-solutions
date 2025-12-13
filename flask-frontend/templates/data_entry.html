@@ -1,395 +1,287 @@
 {% extends "base.html" %}
 
-{% block title %}Data Entry - Africa Waste Solutions{% endblock %}
+{% block title %}Supply Chain & Waste Tracking{% endblock %}
 
 {% block content %}
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-gray-50 font-sans">
     <!-- Sidebar -->
     {% include 'components/sidebar.html' %}
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
+    <div class="flex-1 overflow-auto flex flex-col">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Waste Data Monitoring</h1>
-                    <p class="text-gray-600 mt-1">Record Package Supply and Waste Disposal Levels</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-semibold">
-                        <i class="fas fa-calendar-alt mr-2"></i> {{ today_date if today_date else 'Dec 2024' }}
-                    </span>
-                </div>
+        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center z-10">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Supply Chain Operations</h1>
+                <p class="text-sm text-gray-500">Track Manufacturing, Distribution & Returns</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold border border-blue-100">
+                    {{ session.get('user', {}).get('name', 'Admin') }}
+                </span>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="p-8">
-            <div class="bg-white rounded-xl shadow-md p-8">
-                <!-- Step Indicator -->
-                <div class="flex items-center justify-between mb-8 border-b border-gray-200 pb-6">
-                    <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
-                            1</div>
-                        <span class="font-semibold text-gray-900">Select Account</span>
-                    </div>
-                    <div class="h-0.5 w-16 bg-gray-300"></div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold"
-                            id="step2-badge">2</div>
-                        <span class="font-semibold text-gray-500" id="step2-text">Capture Data</span>
-                    </div>
-                    <div class="h-0.5 w-16 bg-gray-300"></div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold"
-                            id="step3-badge">3</div>
-                        <span class="font-semibold text-gray-500" id="step3-text">Review & Save</span>
-                    </div>
+        <main class="p-6 flex-1">
+            <!-- TABS -->
+            <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden min-h-[600px] flex flex-col">
+                <div class="flex border-b border-gray-100">
+                    <button onclick="switchTab('supply')" id="tab-supply"
+                        class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all border-b-2 border-transparent">
+                        <i class="fas fa-boxes mr-2"></i>1. Supply (Manufacturer)
+                    </button>
+                    <button onclick="switchTab('transfer')" id="tab-transfer"
+                        class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-purple-600 hover:bg-purple-50 transition-all border-b-2 border-transparent">
+                        <i class="fas fa-truck-moving mr-2"></i>2. Transfer (Distributor)
+                    </button>
+                    <button onclick="switchTab('return')" id="tab-return"
+                        class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all border-b-2 border-transparent">
+                        <i class="fas fa-recycle mr-2"></i>3. Waste Return
+                    </button>
                 </div>
 
-                <form method="POST" action="{{ url_for('data_entry') }}" id="dataEntryForm">
+                <!-- FORM CONTAINER -->
+                <form method="POST" action="{{ url_for('data_entry') }}" id="entryForm"
+                    class="p-8 flex-1 flex flex-col">
+                    <input type="hidden" name="transaction_type" id="transaction_type" value="supply">
 
-                    <!-- SECTION 1: Account Selection -->
-                    <div id="section-account">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Account Name <span
-                                        class="text-red-500">*</span></label>
-                                <select id="accountSelect" name="account_id" onchange="updateFormMode()"
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 text-lg">
-                                    <option value="">-- Select Account --</option>
-                                    <optgroup label="Business Accounts (Suppliers)">
-                                        <option value="b1" data-type="business">Coca Cola Zambia Beverages</option>
-                                        <option value="b2" data-type="business">Shoprite Manda Hill</option>
-                                        <option value="b3" data-type="business">Amour General Dealers Wholesale</option>
-                                    </optgroup>
-                                    <optgroup label="Consumer Accounts (Waste Generators)">
-                                        <option value="c1" data-type="consumer">University Teaching Hospital (UTH)
-                                        </option>
-                                        <option value="c2" data-type="consumer">DMI University</option>
-                                        <option value="c3" data-type="consumer">Mr. Kombe Lwenje (Household)</option>
-                                        <option value="c4" data-type="consumer">Family Grocery Shop</option>
-                                    </optgroup>
-                                </select>
-                                <p class="text-sm text-gray-500 mt-2" id="account-hint">Select a Business to record
-                                    Supply, or a Consumer to record Disposal.</p>
+                    <!-- CONTENT AREA -->
+                    <div class="flex-1">
+
+                        <!-- TAB 1: SUPPLY (MANUFACTURER) -->
+                        <div id="content-supply" class="space-y-6 tab-content">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 text-sm mb-6">
+                                <i class="fas fa-info-circle mr-2"></i> Manufacturers enter new stock items
+                                (Unit/Case/Dozen) into the system.
                             </div>
 
-                            <div class="bg-blue-50 p-6 rounded-lg border border-blue-100 hidden" id="mode-display">
-                                <h3 class="text-lg font-bold text-blue-900 mb-2" id="mode-title">Select an Account</h3>
-                                <p class="text-blue-700" id="mode-desc">Please select an account to begin data capture.
-                                </p>
+                            <!-- Source: Manufacturer -->
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Manufacturer
+                                    Account</label>
+                                <select name="manufacturer_id"
+                                    class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                    <option value="">Select Manufacturer...</option>
+                                    {% for man in manufacturers %}
+                                    <option value="{{ man.id }}">{{ man.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: TRANSFER (DISTRIBUTOR) -->
+                        <div id="content-transfer" class="hidden space-y-6 tab-content">
+                            <div
+                                class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-purple-800 text-sm mb-6">
+                                <i class="fas fa-exchange-alt mr-2"></i> Move stock from Manufacturers to Distributors
+                                (Wholesale/Retail).
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">From
+                                        (Source)</label>
+                                    <select name="source_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Manufacturer...</option>
+                                        {% for man in manufacturers %}
+                                        <option value="{{ man.id }}">{{ man.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-center pt-6">
+                                    <i class="fas fa-arrow-right text-gray-300 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">To
+                                        (Distributor)</label>
+                                    <select name="target_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Distributor...</option>
+                                        {% for dist in distributors %}
+                                        <option value="{{ dist.id }}">{{ dist.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: RETURN (HOUSEHOLD) -->
+                        <div id="content-return" class="hidden space-y-6 tab-content">
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100 text-green-800 text-sm mb-6">
+                                <i class="fas fa-trash-restore mr-2"></i> Households return waste/empty packaging to
+                                Retailers.
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Household
+                                        (Returner)</label>
+                                    <select name="household_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
+                                        <option value="">Select Household...</option>
+                                        {% for hh in households %}
+                                        <option value="{{ hh.id }}">{{ hh.name }} ({{ hh.plot_number }})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-center pt-6">
+                                    <i class="fas fa-arrow-right text-gray-300 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Return
+                                        To (Retailer)</label>
+                                    <select name="return_target_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
+                                        <option value="">Select Retailer...</option>
+                                        {% for dist in distributors %}
+                                        <option value="{{ dist.id }}">{{ dist.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-8 border-gray-100">
+
+                        <!-- COMMON: PRODUCT DETAILS -->
+                        <div class="space-y-6 animate-fade-in-up">
+                            <h3 class="font-bold text-gray-800">Product Details</h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product
+                                        Category</label>
+                                    <select name="product_group"
+                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg">
+                                        <option value="Beverages">Beverages</option>
+                                        <option value="Water">Bottled/Drip Water</option>
+                                        <option value="Food">Cooking Oil / Meali Meal / Sugar</option>
+                                        <option value="Household">Cosmetics / Washing Gel</option>
+                                        <option value="Agri">Insecticides / CleanChem</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Specific
+                                        Item</label>
+                                    <input type="text" name="product_name" placeholder="e.g. Coca Cola 500ml"
+                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg">
+                                </div>
+                            </div>
+
+                            <!-- BULK QUANTITY KEYS -->
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">UNIT</label>
+                                    <input type="number" name="qty_unit" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">DOZEN
+                                        (12)</label>
+                                    <input type="number" name="qty_dozen" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">HALF
+                                        DOZEN (6)</label>
+                                    <input type="number" name="qty_half_dozen" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">CASE</label>
+                                    <input type="number" name="qty_case" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">SERIES</label>
+                                    <input type="number" name="qty_series" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- SECTION 2: Data Capture (Hidden until account selected) -->
-                    <div id="section-data" class="hidden animate-fade-in-up">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold text-gray-900">Package & Waste Level Matrix</h3>
-                            <div class="flex gap-2">
-                                <button type="button"
-                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-semibold text-sm">Transfer
-                                    Data</button>
-                                <button type="button"
-                                    class="px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-semibold text-sm">Add
-                                    Data</button>
+                    <!-- FOOTER & PIN -->
+                    <div
+                        class="mt-8 pt-6 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="w-full md:w-auto">
+                            <label
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Authorization
+                                PIN <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                <input type="password" name="pin" required maxlength="4" placeholder="****"
+                                    class="pl-10 pr-4 py-3 bg-gray-100 border-none rounded-xl w-32 text-center font-mono text-lg tracking-widest focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
 
-                        <!-- Product Group Selection -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Product Group</label>
-                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="beverages" checked
-                                        class="peer hidden" onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Beverages</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="food" class="peer hidden"
-                                        onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Food / Meali Meal</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="household" class="peer hidden"
-                                        onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Household/Cleaning</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="cosmetics" class="peer hidden"
-                                        onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Cosmetics</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="agri" class="peer hidden"
-                                        onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Agri/Fertilizer</div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="product_group" value="other" class="peer hidden"
-                                        onchange="updateProductList()">
-                                    <div
-                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
-                                        Other</div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Specific Product -->
-                        <div class="mb-8">
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Specific Product</label>
-                            <select id="productSelect" name="product_name"
-                                class="w-full md:w-1/2 px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
-                                <!-- Populated via JS -->
-                            </select>
-                        </div>
-
-                        <!-- Data Entry Matrix Table -->
-                        <div class="overflow-x-auto border rounded-xl shadow-sm mb-8">
-                            <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-white uppercase bg-slate-800">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-4 rounded-tl-xl">Metric Level</th>
-                                        <th scope="col" class="px-6 py-4 bg-blue-900 border-l border-blue-800">
-                                            <div class="flex flex-col">
-                                                <span class="text-[10px] opacity-75">BUSINESS (SUPPLY)</span>
-                                                <span class="text-lg">Package Level</span>
-                                            </div>
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-4 bg-green-900 border-l border-green-800 rounded-tr-xl">
-                                            <div class="flex flex-col">
-                                                <span class="text-[10px] opacity-75">CONSUMER (DISPOSAL)</span>
-                                                <span class="text-lg">Waste Disposal Level</span>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Series 0</th>
-                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
-                                            <input type="number" name="supply_series0"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
-                                            <input type="number" name="waste_series0"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 4</th>
-                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
-                                            <input type="number" name="supply_level4"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
-                                            <input type="number" name="waste_level4"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 6</th>
-                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
-                                            <input type="number" name="supply_level6"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
-                                            <input type="number" name="waste_level6"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 10</th>
-                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
-                                            <input type="number" name="supply_level10"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
-                                            <input type="number" name="waste_level10"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 12</th>
-                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
-                                            <input type="number" name="supply_level12"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
-                                            <input type="number" name="waste_level12"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 16</th>
-                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
-                                            <input type="number" name="supply_level16"
-                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                                                placeholder="0">
-                                        </td>
-                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
-                                            <input type="number" name="waste_level16"
-                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
-                                                placeholder="0">
-                                        </td>
-                                    </tr>
-                                    <!-- Add Level Row -->
-                                    <tr class="bg-gray-100 font-bold border-t-2 border-gray-300">
-                                        <th scope="row" class="px-6 py-4 text-gray-800">Add Level (Total)</th>
-                                        <td class="px-6 py-4 text-blue-700 text-lg" id="total-supply">0</td>
-                                        <td class="px-6 py-4 text-green-700 text-lg" id="total-waste">0</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="flex justify-end gap-4 mt-8">
-                            <button type="button" onclick="location.reload()"
-                                class="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                class="px-8 py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800 shadow-lg transition-colors">
-                                Save Data Entry
-                            </button>
-                        </div>
+                        <button type="submit" id="submitBtn"
+                            class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-0.5">
+                            <i class="fas fa-save mr-2"></i> Save Entry
+                        </button>
                     </div>
                 </form>
-            </div>
-
-            <!-- Context Help / Guide -->
-            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
-                <h4 class="font-bold text-blue-900 mb-2"><i class="fas fa-info-circle mr-2"></i>Data Capture Guide</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                    <div>
-                        <h5 class="font-semibold text-blue-800 mb-1">Business Account (Supply)</h5>
-                        <p class="text-blue-700">Enter data in the <span class="font-bold">Package Level</span> column.
-                            This represents items supplied to the market (e.g. 1000 cases of Coca Cola).</p>
-                    </div>
-                    <div>
-                        <h5 class="font-semibold text-blue-800 mb-1">Consumer Account (Disposal)</h5>
-                        <p class="text-blue-700">Enter data in the <span class="font-bold">Waste Disposal Level</span>
-                            column. This represents empty packaging or waste generated (e.g. 300 empty bottles).</p>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
 </div>
 
 <script>
-    const products = {
-        'beverages': ['Bottled Water', 'Sachets Water', 'Coca Cola', 'Minute Maid', 'Molt Drink', 'Liquor'],
-        'food': ['Meali Meal', 'Cooking Oil', 'Flour', 'Sugar', 'Animal Feed', 'Farm Seeds'],
-        'household': ['Cleaning Agents', 'Detergents', 'Bleach'],
-        'cosmetics': ['Cosmetics', 'Body Deodorant', 'Lotions'],
-        'agri': ['Fertilizer', 'Insecticides'],
-        'other': ['Pharmaceuticals', 'Other']
-    };
+    function switchTab(mode) {
+        // Update hidden input
+        document.getElementById('transaction_type').value = mode;
 
-    function updateFormMode() {
-        const select = document.getElementById('accountSelect');
-        const selectedOption = select.options[select.selectedIndex];
-        const type = selectedOption.getAttribute('data-type');
+        // Hide all contents
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`content-${mode}`).classList.remove('hidden');
 
-        const modeDisplay = document.getElementById('mode-display');
-        const sectionData = document.getElementById('section-data');
-        const modeTitle = document.getElementById('mode-title');
-        const modeDesc = document.getElementById('mode-desc');
-        const step2Badge = document.getElementById('step2-badge');
-        const step2Text = document.getElementById('step2-text');
-
-        if (!type) {
-            modeDisplay.classList.add('hidden');
-            sectionData.classList.add('hidden');
-            return;
-        }
-
-        modeDisplay.classList.remove('hidden');
-        sectionData.classList.remove('hidden');
-
-        // Update Step 2 Badge
-        step2Badge.classList.replace('bg-gray-200', 'bg-blue-600');
-        step2Badge.classList.replace('text-gray-600', 'text-white');
-        step2Text.classList.replace('text-gray-500', 'text-blue-900');
-
-        // Disable unnecessary inputs based on type
-        const supplyInputs = document.querySelectorAll('.package-input');
-        const wasteInputs = document.querySelectorAll('.waste-input');
-
-        if (type === 'business') {
-            modeTitle.innerText = "Active Mode: Business Supply";
-            modeDesc.innerHTML = 'You are recording <strong>Package Level (Supply)</strong> data. Waste Disposal inputs are disabled.';
-            modeDisplay.className = "bg-blue-50 p-6 rounded-lg border border-blue-200 mb-8";
-
-            supplyInputs.forEach(i => { i.disabled = false; i.classList.remove('bg-gray-100'); });
-            wasteInputs.forEach(i => { i.disabled = true; i.classList.add('bg-gray-100', 'cursor-not-allowed'); i.value = ''; });
-        } else {
-            modeTitle.innerText = "Active Mode: Waste Disposal";
-            modeDesc.innerHTML = 'You are recording <strong>Waste Disposal Level</strong> data. Supply inputs are disabled.';
-            modeDisplay.className = "bg-green-50 p-6 rounded-lg border border-green-200 mb-8";
-
-            wasteInputs.forEach(i => { i.disabled = false; i.classList.remove('bg-gray-100'); });
-            supplyInputs.forEach(i => { i.disabled = true; i.classList.add('bg-gray-100', 'cursor-not-allowed'); i.value = ''; });
-        }
-    }
-
-    function updateProductList() {
-        const group = document.querySelector('input[name="product_group"]:checked').value;
-        const select = document.getElementById('productSelect');
-        select.innerHTML = '';
-
-        products[group].forEach(prod => {
-            const option = document.createElement('option');
-            option.value = prod;
-            option.text = prod;
-            select.appendChild(option);
+        // Reset Tab Styles
+        document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
+            btn.className = "flex-1 py-5 text-center font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all border-b-2 border-transparent";
         });
+
+        // Set Active Tab Style
+        const activeBtn = document.getElementById(`tab-${mode}`);
+        const colors = {
+            'supply': 'border-blue-500 text-blue-600 bg-blue-50',
+            'transfer': 'border-purple-500 text-purple-600 bg-purple-50',
+            'return': 'border-green-500 text-green-600 bg-green-50'
+        };
+        const btnColors = {
+            'supply': 'bg-blue-600 hover:bg-blue-700',
+            'transfer': 'bg-purple-600 hover:bg-purple-700',
+            'return': 'bg-green-600 hover:bg-green-700'
+        };
+
+        activeBtn.className = `flex-1 py-5 text-center font-bold transition-all border-b-2 ${colors[mode]}`;
+
+        // Update Submit Button Color
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.className = `w-full md:w-auto px-10 py-4 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 ${btnColors[mode]}`;
+        submitBtn.innerHTML = mode === 'supply' ? '<i class="fas fa-save mr-2"></i> Record Supply' :
+            mode === 'transfer' ? '<i class="fas fa-exchange-alt mr-2"></i> Transfer Stock' :
+                '<i class="fas fa-trash-restore mr-2"></i> Record Return';
     }
 
-    // Auto-calculate totals
-    document.addEventListener('input', function (e) {
-        if (e.target.classList.contains('package-input') || e.target.classList.contains('waste-input')) {
-            calculateTotals();
-        }
-    });
-
-    function calculateTotals() {
-        let supplyTotal = 0;
-        let wasteTotal = 0;
-
-        document.querySelectorAll('.package-input').forEach(i => supplyTotal += Number(i.value || 0));
-        document.querySelectorAll('.waste-input').forEach(i => wasteTotal += Number(i.value || 0));
-
-        document.getElementById('total-supply').innerText = supplyTotal;
-        document.getElementById('total-waste').innerText = wasteTotal;
-    }
-
-    // Initialize
-    updateProductList();
+    // Init
+    switchTab('supply');
 </script>
 {% endblock %}
