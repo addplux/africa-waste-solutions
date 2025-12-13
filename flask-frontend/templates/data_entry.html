@@ -13,298 +13,287 @@
         <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Waste Data Entry</h1>
-                    <p class="text-gray-600 mt-1">Record waste collection and disposal data</p>
+                    <h1 class="text-3xl font-bold text-gray-900">Waste Data Monitoring</h1>
+                    <p class="text-gray-600 mt-1">Record Package Supply and Waste Disposal Levels</p>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button onclick="showBulkEntry()"
-                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold">
-                        <i class="fas fa-list mr-2"></i>
-                        Bulk Entry
-                    </button>
-                    <button onclick="showHistory()"
-                        class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors font-semibold">
-                        <i class="fas fa-history mr-2"></i>
-                        Entry History
-                    </button>
+                    <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-semibold">
+                        <i class="fas fa-calendar-alt mr-2"></i> {{ today_date if today_date else 'Dec 2024' }}
+                    </span>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="p-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Data Entry Form -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-md p-8">
-                        <h2 class="text-xl font-bold text-gray-900 mb-6">New Waste Entry</h2>
-
-                        <form method="POST" action="{{ url_for('data_entry') }}" enctype="multipart/form-data"
-                            id="wasteEntryForm">
-                            <!-- Account Selection -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Account / Customer <span class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <select name="account_id" required
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900 appearance-none">
-                                        <option value="">Select an account...</option>
-                                        <option value="1">John Doe - Plot 123, Kabulonga (Consumer)</option>
-                                        <option value="2">ABC Manufacturing Ltd - Plot 456, Industrial Area (Business)
-                                        </option>
-                                        <option value="3">Jane Smith - Plot 789, Roma (Consumer)</option>
-                                        <option value="4">Green Grocers - Plot 321, Woodlands (Business)</option>
-                                    </select>
-                                    <i
-                                        class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
-                                </div>
-                            </div>
-
-                            <!-- Collection Date & Time -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Collection Date <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" name="collection_date" required
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Collection Time <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="time" name="collection_time" required
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
-                                </div>
-                            </div>
-
-                            <!-- Waste Type -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Waste Type <span class="text-red-500">*</span>
-                                </label>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="plastic" required
-                                            class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:border-blue-300 transition-all">
-                                            <i class="fas fa-bottle-water text-2xl text-blue-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Plastic</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="organic" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-green-600 peer-checked:bg-green-50 hover:border-green-300 transition-all">
-                                            <i class="fas fa-leaf text-2xl text-green-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Organic</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="metal" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-gray-600 peer-checked:bg-gray-50 hover:border-gray-300 transition-all">
-                                            <i class="fas fa-recycle text-2xl text-gray-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Metal</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="paper" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-yellow-600 peer-checked:bg-yellow-50 hover:border-yellow-300 transition-all">
-                                            <i class="fas fa-newspaper text-2xl text-yellow-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Paper</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="glass" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-teal-600 peer-checked:bg-teal-50 hover:border-teal-300 transition-all">
-                                            <i class="fas fa-wine-bottle text-2xl text-teal-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Glass</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="electronic" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-purple-600 peer-checked:bg-purple-50 hover:border-purple-300 transition-all">
-                                            <i class="fas fa-laptop text-2xl text-purple-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">E-Waste</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="hazardous" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-red-600 peer-checked:bg-red-50 hover:border-red-300 transition-all">
-                                            <i class="fas fa-radiation text-2xl text-red-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Hazardous</p>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="waste_type" value="mixed" class="peer hidden">
-                                        <div
-                                            class="p-4 border-2 border-gray-200 rounded-lg text-center peer-checked:border-orange-600 peer-checked:bg-orange-50 hover:border-orange-300 transition-all">
-                                            <i class="fas fa-trash text-2xl text-orange-600 mb-2"></i>
-                                            <p class="font-semibold text-sm">Mixed</p>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Weight/Volume -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Weight (kg) <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="number" name="weight" step="0.01" min="0" required
-                                        placeholder="e.g. 25.5"
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        Volume (m³) <span class="text-gray-400">(Optional)</span>
-                                    </label>
-                                    <input type="number" name="volume" step="0.01" min="0" placeholder="e.g. 1.5"
-                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
-                                </div>
-                            </div>
-
-                            <!-- Location -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Collection Location
-                                </label>
-                                <input type="text" name="location" placeholder="e.g. Plot 123, Kabulonga, Lusaka"
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
-                            </div>
-
-                            <!-- Photo Upload -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Photo Evidence <span class="text-gray-400">(Optional)</span>
-                                </label>
-                                <div
-                                    class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
-                                    <i class="fas fa-camera text-gray-400 text-4xl mb-3"></i>
-                                    <p class="text-sm text-gray-600 mb-3">Upload photo of waste collection</p>
-                                    <input type="file" name="photo" accept="image/*"
-                                        class="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer file:transition-colors">
-                                </div>
-                            </div>
-
-                            <!-- Notes -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Additional Notes
-                                </label>
-                                <textarea name="notes" rows="3"
-                                    placeholder="Any additional information about this collection..."
-                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900 resize-none"></textarea>
-                            </div>
-
-                            <!-- Submit Buttons -->
-                            <div class="flex gap-4">
-                                <button type="submit"
-                                    class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                    <i class="fas fa-save mr-2"></i>
-                                    Save Entry
-                                </button>
-                                <button type="button" onclick="resetForm()"
-                                    class="px-8 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-4 rounded-lg transition-all">
-                                    <i class="fas fa-redo mr-2"></i>
-                                    Reset
-                                </button>
-                            </div>
-                        </form>
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <!-- Step Indicator -->
+                <div class="flex items-center justify-between mb-8 border-b border-gray-200 pb-6">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">
+                            1</div>
+                        <span class="font-semibold text-gray-900">Select Account</span>
+                    </div>
+                    <div class="h-0.5 w-16 bg-gray-300"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold"
+                            id="step2-badge">2</div>
+                        <span class="font-semibold text-gray-500" id="step2-text">Capture Data</span>
+                    </div>
+                    <div class="h-0.5 w-16 bg-gray-300"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold"
+                            id="step3-badge">3</div>
+                        <span class="font-semibold text-gray-500" id="step3-text">Review & Save</span>
                     </div>
                 </div>
 
-                <!-- Quick Stats & Recent Entries -->
-                <div class="space-y-6">
-                    <!-- Today's Stats -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">Today's Summary</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                                <div class="flex items-center gap-3">
-                                    <div class="bg-blue-600 rounded-full p-2">
-                                        <i class="fas fa-clipboard-list text-white"></i>
-                                    </div>
-                                    <span class="font-semibold text-gray-700">Total Entries</span>
-                                </div>
-                                <span class="text-2xl font-bold text-blue-600">12</span>
+                <form method="POST" action="{{ url_for('data_entry') }}" id="dataEntryForm">
+
+                    <!-- SECTION 1: Account Selection -->
+                    <div id="section-account">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Account Name <span
+                                        class="text-red-500">*</span></label>
+                                <select id="accountSelect" name="account_id" onchange="updateFormMode()"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 text-lg">
+                                    <option value="">-- Select Account --</option>
+                                    <optgroup label="Business Accounts (Suppliers)">
+                                        <option value="b1" data-type="business">Coca Cola Zambia Beverages</option>
+                                        <option value="b2" data-type="business">Shoprite Manda Hill</option>
+                                        <option value="b3" data-type="business">Amour General Dealers Wholesale</option>
+                                    </optgroup>
+                                    <optgroup label="Consumer Accounts (Waste Generators)">
+                                        <option value="c1" data-type="consumer">University Teaching Hospital (UTH)
+                                        </option>
+                                        <option value="c2" data-type="consumer">DMI University</option>
+                                        <option value="c3" data-type="consumer">Mr. Kombe Lwenje (Household)</option>
+                                        <option value="c4" data-type="consumer">Family Grocery Shop</option>
+                                    </optgroup>
+                                </select>
+                                <p class="text-sm text-gray-500 mt-2" id="account-hint">Select a Business to record
+                                    Supply, or a Consumer to record Disposal.</p>
                             </div>
-                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                                <div class="flex items-center gap-3">
-                                    <div class="bg-green-600 rounded-full p-2">
-                                        <i class="fas fa-weight text-white"></i>
-                                    </div>
-                                    <span class="font-semibold text-gray-700">Total Weight</span>
-                                </div>
-                                <span class="text-2xl font-bold text-green-600">342 kg</span>
-                            </div>
-                            <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                                <div class="flex items-center gap-3">
-                                    <div class="bg-purple-600 rounded-full p-2">
-                                        <i class="fas fa-users text-white"></i>
-                                    </div>
-                                    <span class="font-semibold text-gray-700">Accounts Served</span>
-                                </div>
-                                <span class="text-2xl font-bold text-purple-600">8</span>
+
+                            <div class="bg-blue-50 p-6 rounded-lg border border-blue-100 hidden" id="mode-display">
+                                <h3 class="text-lg font-bold text-blue-900 mb-2" id="mode-title">Select an Account</h3>
+                                <p class="text-blue-700" id="mode-desc">Please select an account to begin data capture.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Recent Entries -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Entries</h3>
-                        <div class="space-y-3">
-                            <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-blue-600">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="font-semibold text-sm text-gray-900">John Doe</span>
-                                    <span class="text-xs text-gray-500">10:30 AM</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Plastic - 15.5 kg</p>
-                            </div>
-                            <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-green-600">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="font-semibold text-sm text-gray-900">ABC Manufacturing</span>
-                                    <span class="text-xs text-gray-500">9:45 AM</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Organic - 45.0 kg</p>
-                            </div>
-                            <div class="p-3 bg-gray-50 rounded-lg border-l-4 border-yellow-600">
-                                <div class="flex justify-between items-start mb-1">
-                                    <span class="font-semibold text-sm text-gray-900">Jane Smith</span>
-                                    <span class="text-xs text-gray-500">9:15 AM</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Paper - 8.2 kg</p>
+                    <!-- SECTION 2: Data Capture (Hidden until account selected) -->
+                    <div id="section-data" class="hidden animate-fade-in-up">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-900">Package & Waste Level Matrix</h3>
+                            <div class="flex gap-2">
+                                <button type="button"
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 font-semibold text-sm">Transfer
+                                    Data</button>
+                                <button type="button"
+                                    class="px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 font-semibold text-sm">Add
+                                    Data</button>
                             </div>
                         </div>
-                        <button onclick="showHistory()"
-                            class="w-full mt-4 text-blue-700 hover:text-blue-800 font-semibold text-sm transition-colors">
-                            View All Entries →
-                        </button>
-                    </div>
 
-                    <!-- Quick Actions -->
-                    <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-md p-6 text-white">
-                        <h3 class="text-lg font-bold mb-3">Quick Actions</h3>
-                        <div class="space-y-2">
-                            <button onclick="scanBarcode()"
-                                class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm py-3 rounded-lg font-semibold transition-all">
-                                <i class="fas fa-qrcode mr-2"></i>
-                                Scan QR/Barcode
+                        <!-- Product Group Selection -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Product Group</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="beverages" checked
+                                        class="peer hidden" onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Beverages</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="food" class="peer hidden"
+                                        onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Food / Meali Meal</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="household" class="peer hidden"
+                                        onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Household/Cleaning</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="cosmetics" class="peer hidden"
+                                        onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Cosmetics</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="agri" class="peer hidden"
+                                        onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Agri/Fertilizer</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="product_group" value="other" class="peer hidden"
+                                        onchange="updateProductList()">
+                                    <div
+                                        class="px-3 py-2 border rounded-lg text-center peer-checked:bg-blue-600 peer-checked:text-white hover:bg-gray-50 text-sm font-medium transition-colors">
+                                        Other</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Specific Product -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Specific Product</label>
+                            <select id="productSelect" name="product_name"
+                                class="w-full md:w-1/2 px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Data Entry Matrix Table -->
+                        <div class="overflow-x-auto border rounded-xl shadow-sm mb-8">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-white uppercase bg-slate-800">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 rounded-tl-xl">Metric Level</th>
+                                        <th scope="col" class="px-6 py-4 bg-blue-900 border-l border-blue-800">
+                                            <div class="flex flex-col">
+                                                <span class="text-[10px] opacity-75">BUSINESS (SUPPLY)</span>
+                                                <span class="text-lg">Package Level</span>
+                                            </div>
+                                        </th>
+                                        <th scope="col"
+                                            class="px-6 py-4 bg-green-900 border-l border-green-800 rounded-tr-xl">
+                                            <div class="flex flex-col">
+                                                <span class="text-[10px] opacity-75">CONSUMER (DISPOSAL)</span>
+                                                <span class="text-lg">Waste Disposal Level</span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Series 0</th>
+                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
+                                            <input type="number" name="supply_series0"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
+                                            <input type="number" name="waste_series0"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 4</th>
+                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
+                                            <input type="number" name="supply_level4"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
+                                            <input type="number" name="waste_level4"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 6</th>
+                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
+                                            <input type="number" name="supply_level6"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
+                                            <input type="number" name="waste_level6"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 10</th>
+                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
+                                            <input type="number" name="supply_level10"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
+                                            <input type="number" name="waste_level10"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 12</th>
+                                        <td class="px-6 py-2 bg-blue-50 border-l border-gray-200">
+                                            <input type="number" name="supply_level12"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50 border-l border-gray-200">
+                                            <input type="number" name="waste_level12"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <th scope="row" class="px-6 py-4 font-bold text-gray-900">Level 16</th>
+                                        <td class="px-6 py-2 bg-blue-50/50 border-l border-gray-200">
+                                            <input type="number" name="supply_level16"
+                                                class="package-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                                placeholder="0">
+                                        </td>
+                                        <td class="px-6 py-2 bg-green-50/50 border-l border-gray-200">
+                                            <input type="number" name="waste_level16"
+                                                class="waste-input w-full px-3 py-2 border border-gray-300 rounded focus:ring-green-500 focus:border-green-500"
+                                                placeholder="0">
+                                        </td>
+                                    </tr>
+                                    <!-- Add Level Row -->
+                                    <tr class="bg-gray-100 font-bold border-t-2 border-gray-300">
+                                        <th scope="row" class="px-6 py-4 text-gray-800">Add Level (Total)</th>
+                                        <td class="px-6 py-4 text-blue-700 text-lg" id="total-supply">0</td>
+                                        <td class="px-6 py-4 text-green-700 text-lg" id="total-waste">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-8">
+                            <button type="button" onclick="location.reload()"
+                                class="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-colors">
+                                Cancel
                             </button>
-                            <button onclick="showBulkEntry()"
-                                class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm py-3 rounded-lg font-semibold transition-all">
-                                <i class="fas fa-list mr-2"></i>
-                                Bulk Entry
+                            <button type="submit"
+                                class="px-8 py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800 shadow-lg transition-colors">
+                                Save Data Entry
                             </button>
                         </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Context Help / Guide -->
+            <div class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <h4 class="font-bold text-blue-900 mb-2"><i class="fas fa-info-circle mr-2"></i>Data Capture Guide</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div>
+                        <h5 class="font-semibold text-blue-800 mb-1">Business Account (Supply)</h5>
+                        <p class="text-blue-700">Enter data in the <span class="font-bold">Package Level</span> column.
+                            This represents items supplied to the market (e.g. 1000 cases of Coca Cola).</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-blue-800 mb-1">Consumer Account (Disposal)</h5>
+                        <p class="text-blue-700">Enter data in the <span class="font-bold">Waste Disposal Level</span>
+                            column. This represents empty packaging or waste generated (e.g. 300 empty bottles).</p>
                     </div>
                 </div>
             </div>
@@ -313,38 +302,94 @@
 </div>
 
 <script>
-    function resetForm() {
-        document.getElementById('wasteEntryForm').reset();
-    }
+    const products = {
+        'beverages': ['Bottled Water', 'Sachets Water', 'Coca Cola', 'Minute Maid', 'Molt Drink', 'Liquor'],
+        'food': ['Meali Meal', 'Cooking Oil', 'Flour', 'Sugar', 'Animal Feed', 'Farm Seeds'],
+        'household': ['Cleaning Agents', 'Detergents', 'Bleach'],
+        'cosmetics': ['Cosmetics', 'Body Deodorant', 'Lotions'],
+        'agri': ['Fertilizer', 'Insecticides'],
+        'other': ['Pharmaceuticals', 'Other']
+    };
 
-    function showHistory() {
-        alert('Entry History feature coming soon!');
-    }
+    function updateFormMode() {
+        const select = document.getElementById('accountSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const type = selectedOption.getAttribute('data-type');
 
-    function showBulkEntry() {
-        alert('Bulk Entry feature coming soon!');
-    }
+        const modeDisplay = document.getElementById('mode-display');
+        const sectionData = document.getElementById('section-data');
+        const modeTitle = document.getElementById('mode-title');
+        const modeDesc = document.getElementById('mode-desc');
+        const step2Badge = document.getElementById('step2-badge');
+        const step2Text = document.getElementById('step2-text');
 
-    function scanBarcode() {
-        alert('QR/Barcode Scanner feature coming soon!');
-    }
-
-    // Auto-set today's date
-    document.addEventListener('DOMContentLoaded', function () {
-        const dateInput = document.querySelector('input[name="collection_date"]');
-        const timeInput = document.querySelector('input[name="collection_time"]');
-
-        if (dateInput && !dateInput.value) {
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
+        if (!type) {
+            modeDisplay.classList.add('hidden');
+            sectionData.classList.add('hidden');
+            return;
         }
 
-        if (timeInput && !timeInput.value) {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            timeInput.value = `${hours}:${minutes}`;
+        modeDisplay.classList.remove('hidden');
+        sectionData.classList.remove('hidden');
+
+        // Update Step 2 Badge
+        step2Badge.classList.replace('bg-gray-200', 'bg-blue-600');
+        step2Badge.classList.replace('text-gray-600', 'text-white');
+        step2Text.classList.replace('text-gray-500', 'text-blue-900');
+
+        // Disable unnecessary inputs based on type
+        const supplyInputs = document.querySelectorAll('.package-input');
+        const wasteInputs = document.querySelectorAll('.waste-input');
+
+        if (type === 'business') {
+            modeTitle.innerText = "Active Mode: Business Supply";
+            modeDesc.innerHTML = 'You are recording <strong>Package Level (Supply)</strong> data. Waste Disposal inputs are disabled.';
+            modeDisplay.className = "bg-blue-50 p-6 rounded-lg border border-blue-200 mb-8";
+
+            supplyInputs.forEach(i => { i.disabled = false; i.classList.remove('bg-gray-100'); });
+            wasteInputs.forEach(i => { i.disabled = true; i.classList.add('bg-gray-100', 'cursor-not-allowed'); i.value = ''; });
+        } else {
+            modeTitle.innerText = "Active Mode: Waste Disposal";
+            modeDesc.innerHTML = 'You are recording <strong>Waste Disposal Level</strong> data. Supply inputs are disabled.';
+            modeDisplay.className = "bg-green-50 p-6 rounded-lg border border-green-200 mb-8";
+
+            wasteInputs.forEach(i => { i.disabled = false; i.classList.remove('bg-gray-100'); });
+            supplyInputs.forEach(i => { i.disabled = true; i.classList.add('bg-gray-100', 'cursor-not-allowed'); i.value = ''; });
+        }
+    }
+
+    function updateProductList() {
+        const group = document.querySelector('input[name="product_group"]:checked').value;
+        const select = document.getElementById('productSelect');
+        select.innerHTML = '';
+
+        products[group].forEach(prod => {
+            const option = document.createElement('option');
+            option.value = prod;
+            option.text = prod;
+            select.appendChild(option);
+        });
+    }
+
+    // Auto-calculate totals
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('package-input') || e.target.classList.contains('waste-input')) {
+            calculateTotals();
         }
     });
+
+    function calculateTotals() {
+        let supplyTotal = 0;
+        let wasteTotal = 0;
+
+        document.querySelectorAll('.package-input').forEach(i => supplyTotal += Number(i.value || 0));
+        document.querySelectorAll('.waste-input').forEach(i => wasteTotal += Number(i.value || 0));
+
+        document.getElementById('total-supply').innerText = supplyTotal;
+        document.getElementById('total-waste').innerText = wasteTotal;
+    }
+
+    // Initialize
+    updateProductList();
 </script>
 {% endblock %}
