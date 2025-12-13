@@ -159,19 +159,50 @@
                                         class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product
                                         Category</label>
                                     <select name="product_group"
-                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg">
-                                        <option value="Beverages">Beverages</option>
-                                        <option value="Water">Bottled/Drip Water</option>
-                                        <option value="Food">Cooking Oil / Meali Meal / Sugar</option>
-                                        <option value="Household">Cosmetics / Washing Gel</option>
-                                        <option value="Agri">Insecticides / CleanChem</option>
+                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                        <optgroup label="Food & Beverages">
+                                            <option value="Beverages">Disposable Beverage Packages</option>
+                                            <option value="Bottled Water">Disposable Bottled Water</option>
+                                            <option value="Sachets Water">Disposable Sachets Water</option>
+                                            <option value="Liquor">Disposable Liquor Packages</option>
+                                            <option value="Peanut Butter">Disposable Peanut Butter</option>
+                                            <option value="Blue Band">Disposable Blue Band Butter</option>
+                                            <option value="Tomato Sauce">Disposable Tomato Sauce</option>
+                                            <option value="Mayonnaise">Disposable Mayonnaise</option>
+                                            <option value="Vinegar">Disposable Vinegar</option>
+                                            <option value="Canned Food">Disposable Canned Food</option>
+                                            <option value="Food Spices">Disposable Food Spices</option>
+                                        </optgroup>
+                                        <optgroup label="Staples & Cooking">
+                                            <option value="Mealie Meal">Disposable Mealie Meal Packages</option>
+                                            <option value="Cooking Oil">Disposable Cooking Oil Packages</option>
+                                            <option value="Flour">Disposable Flour Packages</option>
+                                            <option value="Sugar">Disposable Sugar Packages</option>
+                                        </optgroup>
+                                        <optgroup label="Household & Hygiene">
+                                            <option value="Shoe Polish">Disposable Shoe Polish</option>
+                                            <option value="Floor Polish">Disposable Floor Polish</option>
+                                            <option value="Cleaning Agents">Disposable Cleaning Agents</option>
+                                            <option value="Tooth Brushes">Disposable Tooth Brushes</option>
+                                            <option value="Cosmetics">Disposable Cosmetics/Deodorant</option>
+                                        </optgroup>
+                                        <optgroup label="Agriculture & Industrial">
+                                            <option value="Pharmaceutical">Disposable Pharmaceutical Packages</option>
+                                            <option value="Animal Feed">Disposable Animal Feed Packages</option>
+                                            <option value="Fertilizer">Disposable Fertilizer Packages</option>
+                                            <option value="Insecticides">Disposable Insecticides Packages</option>
+                                            <option value="Farm Seeds">Disposable Farm Seeds Packages</option>
+                                            <option value="Vehicle Tyres">Disposable Vehicle Tyres</option>
+                                            <option value="Bicycle Tyres">Disposable Bicycle Tyres</option>
+                                            <option value="Motorbike Tyres">Disposable Motorbike Tyres</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div>
                                     <label
                                         class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Specific
-                                        Item</label>
-                                    <input type="text" name="product_name" placeholder="e.g. Coca Cola 500ml"
+                                        Item Name</label>
+                                    <input type="text" name="product_name" placeholder="e.g. 500ml Bottle, 2kg Packet"
                                         class="w-full p-3 bg-white border border-gray-200 rounded-lg">
                                 </div>
                             </div>
@@ -239,6 +270,75 @@
                         </button>
                     </div>
                 </form>
+            </div>
+
+            <!-- RECENT TRANSACTIONS BOARD (COMMAND KEYS) -->
+            <div class="max-w-5xl mx-auto mt-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg">Recent Supply Chain Activity</h3>
+                        <p class="text-sm text-gray-500">Command Center for Corrections</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50 text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="px-8 py-4 font-semibold">Date</th>
+                                <th class="px-8 py-4 font-semibold">Type</th>
+                                <th class="px-8 py-4 font-semibold">Transfer Flow</th>
+                                <th class="px-8 py-4 font-semibold">Product</th>
+                                <th class="px-8 py-4 font-semibold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            {% for entry in recent_entries %}
+                            <tr class="hover:bg-gray-50 transition-colors group">
+                                <td class="px-8 py-4 text-gray-600 whitespace-nowrap">{{ entry.entry_date[:10] }}</td>
+                                <td class="px-8 py-4">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                        {% if entry.transaction_type == 'supply' %}bg-blue-100 text-blue-800
+                                        {% elif entry.transaction_type == 'transfer' %}bg-purple-100 text-purple-800
+                                        {% else %}bg-green-100 text-green-800{% endif %}">
+                                        {{ entry.transaction_type|capitalize }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-4">
+                                    <div class="flex items-center gap-2 text-gray-900 font-medium">
+                                        <span class="truncate max-w-[100px]">{{ account_map.get(entry.source_account_id,
+                                            'Source') }}</span>
+                                        <i class="fas fa-arrow-right text-gray-300 text-xs"></i>
+                                        {% if entry.target_account_id %}
+                                        <span class="truncate max-w-[100px]">{{ account_map.get(entry.target_account_id,
+                                            'Target') }}</span>
+                                        {% else %}
+                                        <span class="text-gray-400 italic">Inventory</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-8 py-4 text-gray-600">
+                                    {{ entry.product_name }} <span class="text-gray-400 text-xs">({{ entry.product_group
+                                        }})</span>
+                                </td>
+                                <td class="px-8 py-4 text-right">
+                                    <form action="{{ url_for('reverse_entry', entry_id=entry.id) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to REVERSE this transaction? This cannot be undone.');">
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 hover:bg-red-50 px-3 py-1 rounded-lg transition-all text-xs font-bold border border-transparent hover:border-red-100">
+                                            <i class="fas fa-undo-alt mr-1"></i> REVERSE
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="px-8 py-8 text-center text-gray-500 italic">No recent
+                                    transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>

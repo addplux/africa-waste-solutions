@@ -25,6 +25,7 @@ func Setup(app *fiber.App) {
 	entries.Use(middleware.Protected())
 	entries.Post("/", controllers.CreateEntry)
 	entries.Get("/", controllers.GetEntries)
+	entries.Delete("/:id", controllers.DeleteEntry)
 
 	// Reports
 	api.Get("/reports/generate", controllers.GenerateReport)

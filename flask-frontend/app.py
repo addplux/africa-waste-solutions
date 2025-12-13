@@ -165,8 +165,13 @@ def data_entry():
 
         # Clean integer inputs
         def get_int(key):
-            val = request.form.get(key)
-            return int(val) if val and val.strip() else 0
+            try:
+                val = request.form.get(key)
+                if val and val.strip():
+                    return int(val)
+            except ValueError:
+                pass
+            return 0
 
         data = {
             'transaction_type': tx_type,
@@ -199,16 +204,20 @@ def data_entry():
             
         return redirect(url_for('data_entry'))
     
-    # GET Request: Fetch accounts for dropdowns
+    # GET Request: Fetch accounts AND recent entries
     accounts_response = api_call('accounts', method='GET')
+    entries_response = api_call('entries', method='GET')
     
     manufacturers = []
     distributors = []
     households = []
+    recent_entries = []
+    account_map = {}
     
     if accounts_response and accounts_response.status_code == 200:
         all_accounts = accounts_response.json().get('data', [])
         for acc in all_accounts:
+            account_map[acc['id']] = acc['name']
             a_type = acc.get('account_type', '').lower()
             if a_type == 'manufacturer':
                 manufacturers.append(acc)
@@ -216,12 +225,30 @@ def data_entry():
                 distributors.append(acc)
             elif a_type == 'household':
                 households.append(acc)
+
+    if entries_response and entries_response.status_code == 200:
+        recent_entries = entries_response.json().get('data', [])
+        # Sort by date desc (simple python sort if backend doesn't sort)
+        recent_entries.sort(key=lambda x: x.get('entry_date', ''), reverse=True)
+        recent_entries = recent_entries[:10] # Top 10
     
     return render_template('data_entry.html', 
                            user=session.get('user'),
                            manufacturers=manufacturers,
                            distributors=distributors,
-                           households=households)
+                           households=households,
+                           recent_entries=recent_entries,
+                           account_map=account_map)
+
+@app.route('/entry/reverse/<string:entry_id>', methods=['POST'])
+@login_required
+def reverse_entry(entry_id):
+    response = api_call(f'entries/{entry_id}', method='DELETE')
+    if response and response.status_code == 200:
+        flash('Transaction reversed successfully.', 'success')
+    else:
+        flash('Failed to reverse transaction.', 'error')
+    return redirect(url_for('data_entry'))
 
 @app.route('/reports')
 @login_required

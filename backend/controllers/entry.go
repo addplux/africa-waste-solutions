@@ -61,6 +61,14 @@ func CreateEntry(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "data": entry})
 }
 
+func DeleteEntry(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if result := models.DB.Delete(&models.Entry{}, "id = ?", id); result.Error != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not delete entry"})
+	}
+	return c.JSON(fiber.Map{"status": "success", "message": "Entry reversed"})
+}
+
 func GetEntries(c *fiber.Ctx) error {
 	var entries []models.Entry
 	models.DB.Find(&entries)
