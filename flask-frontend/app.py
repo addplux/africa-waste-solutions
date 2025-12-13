@@ -226,8 +226,21 @@ def data_entry():
 @app.route('/reports')
 @login_required
 def reports():
-    # TODO: Fetch reports data from Go backend
-    return render_template('reports.html', user=session.get('user'))
+    # Fetch stats from Go Backend
+    stats = {
+        'manufactured': 0,
+        'distributed': 0,
+        'returned': 0
+    }
+    
+    response = api_call('reports/stats', method='GET')
+    if response and response.status_code == 200:
+        data = response.json().get('data', {})
+        stats['manufactured'] = data.get('manufactured', 0)
+        stats['distributed'] = data.get('distributed', 0)
+        stats['returned'] = data.get('returned', 0)
+
+    return render_template('reports.html', user=session.get('user'), stats=stats)
 
 @app.route('/kyc')
 @login_required

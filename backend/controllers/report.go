@@ -40,7 +40,38 @@ func GenerateReport(c *fiber.Ctx) error {
 	// 3. Stream PDF back to client
 	c.Set("Content-Type", "application/pdf")
 	c.Set("Content-Disposition", "attachment; filename=waste_report.pdf")
-	
+
 	body, _ := io.ReadAll(resp.Body)
 	return c.Send(body)
+}
+
+func GetDashboardStats(c *fiber.Ctx) error {
+	var entries []models.Entry
+	models.DB.Find(&entries)
+
+	var manufactured, distributed, returned int64
+
+	for _, e := range entries {
+		// Calculate total units (Simple Sum for MVP)
+		// Only counting 'Case' magnitude for big numbers, or strict sum?
+		// Let's sum Case + Unit for a "Total Items" proxy.
+		total := int64(e.Unit) + int64(e.Case)*24 + int64(e.Dozen)*12 + int64(e.Series)
+
+		if e.TransactionType == "supply" {
+			manufactured += total
+		} else if e.TransactionType == "transfer" {
+			distributed += total
+		} else if e.TransactionType == "return" {
+			returned += total
+		}
+	}
+
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"data": fiber.Map{
+			"manufactured": manufactured,
+			"distributed":  distributed,
+			"returned":     returned,
+		},
+	})
 }

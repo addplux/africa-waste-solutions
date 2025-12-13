@@ -1,336 +1,164 @@
 {% extends "base.html" %}
 
-{% block title %}Reports - Africa Waste Solutions{% endblock %}
-
-{% block extra_head %}
-<!-- Chart.js for data visualization -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-{% endblock %}
+{% block title %}Supply Chain Analytics{% endblock %}
 
 {% block content %}
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-gray-50 font-sans">
     <!-- Sidebar -->
     {% include 'components/sidebar.html' %}
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-auto">
+    <div class="flex-1 overflow-auto flex flex-col">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-                    <p class="text-gray-600 mt-1">Waste collection insights and trends</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <select
-                        class="px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-                        <option>Last 7 Days</option>
-                        <option>Last 30 Days</option>
-                        <option>Last 3 Months</option>
-                        <option>Last Year</option>
-                        <option>Custom Range</option>
-                    </select>
-                    <button
-                        class="px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
-                        <i class="fas fa-download mr-2"></i>
-                        Export PDF
-                    </button>
-                </div>
+        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center z-10">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Supply Chain Analytics</h1>
+                <p class="text-sm text-gray-500">Real-time tracking of Production, Distribution & Returns</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold border border-blue-100">
+                    {{ session.get('user', {}).get('name', 'Admin') }}
+                </span>
             </div>
         </header>
 
-        <!-- Main Content -->
-        <main class="p-8">
-            <!-- Key Metrics -->
+        <main class="p-8 flex-1">
+            <!-- KPIS -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-weight text-3xl opacity-80"></i>
-                        <span class="text-xs bg-white/20 px-2 py-1 rounded">+12%</span>
+                <!-- Manufactured -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-blue-50 rounded-xl text-blue-600">
+                            <i class="fas fa-industry text-xl"></i>
+                        </div>
                     </div>
-                    <p class="text-sm opacity-90">Total Waste Collected</p>
-                    <p class="text-4xl font-bold mt-2">2,456 kg</p>
-                    <p class="text-xs opacity-75 mt-2">This month</p>
+                    <h3 class="text-gray-500 text-sm font-medium">Total Manufactured</h3>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ stats.manufactured }}</p>
+                    <p class="text-xs text-gray-400 mt-2">Units in stock</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-600 to-green-800 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-recycle text-3xl opacity-80"></i>
-                        <span class="text-xs bg-white/20 px-2 py-1 rounded">+8%</span>
+                <!-- In Transit/Distributed -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-purple-50 rounded-xl text-purple-600">
+                            <i class="fas fa-truck text-xl"></i>
+                        </div>
                     </div>
-                    <p class="text-sm opacity-90">Recycled</p>
-                    <p class="text-4xl font-bold mt-2">1,834 kg</p>
-                    <p class="text-xs opacity-75 mt-2">74.7% recycling rate</p>
+                    <h3 class="text-gray-500 text-sm font-medium">Distributed Stock</h3>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ stats.distributed }}</p>
+                    <p class="text-xs text-gray-400 mt-2">Cases moved</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-truck text-3xl opacity-80"></i>
-                        <span class="text-xs bg-white/20 px-2 py-1 rounded">+15%</span>
+                <!-- Returned Waste -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-green-50 rounded-xl text-green-600">
+                            <i class="fas fa-recycle text-xl"></i>
+                        </div>
                     </div>
-                    <p class="text-sm opacity-90">Collections</p>
-                    <p class="text-4xl font-bold mt-2">342</p>
-                    <p class="text-xs opacity-75 mt-2">This month</p>
+                    <h3 class="text-gray-500 text-sm font-medium">Returned Waste</h3>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">{{ stats.returned }}</p>
+                    <p class="text-xs text-gray-400 mt-2">Items recovered</p>
                 </div>
 
-                <div class="bg-gradient-to-br from-orange-600 to-orange-800 rounded-xl shadow-lg p-6 text-white">
-                    <div class="flex items-center justify-between mb-4">
-                        <i class="fas fa-dollar-sign text-3xl opacity-80"></i>
-                        <span class="text-xs bg-white/20 px-2 py-1 rounded">+5%</span>
+                <!-- Efficiency Rate -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600">
+                            <i class="fas fa-chart-line text-xl"></i>
+                        </div>
                     </div>
-                    <p class="text-sm opacity-90">Revenue</p>
-                    <p class="text-4xl font-bold mt-2">K45,230</p>
-                    <p class="text-xs opacity-75 mt-2">This month</p>
+                    <h3 class="text-gray-500 text-sm font-medium">Recovery Rate</h3>
+                    <p class="text-3xl font-bold text-gray-800 mt-1">N/A</p>
                 </div>
             </div>
 
-            <!-- Charts Row 1 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- Waste Collection Trend -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-gray-900">Waste Collection Trend</h3>
-                        <select class="px-3 py-1 bg-gray-50 border border-gray-300 rounded-lg text-sm">
-                            <option>Daily</option>
-                            <option>Weekly</option>
-                            <option>Monthly</option>
-                        </select>
-                    </div>
-                    <canvas id="collectionTrendChart" height="250"></canvas>
+            <!-- CHARTS ROW 1 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Flow Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">Supply Chain Flow</h3>
+                    <canvas id="flowChart" height="250"></canvas>
                 </div>
 
-                <!-- Waste Type Distribution -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">Waste Type Distribution</h3>
-                    <canvas id="wasteTypeChart" height="250"></canvas>
+                <!-- Category Breakdown -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">Production by Category</h3>
+                    <canvas id="categoryChart" height="250"></canvas>
                 </div>
             </div>
 
-            <!-- Charts Row 2 -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <!-- Top Collectors -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Top Collectors</h3>
-                    <div class="space-y-4">
-                        <div
-                            class="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-transparent rounded-lg border-l-4 border-blue-600">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                                    1</div>
-                                <div>
-                                    <p class="font-semibold text-gray-900">ABC Manufacturing</p>
-                                    <p class="text-xs text-gray-500">Business</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-blue-600">456 kg</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-transparent rounded-lg border-l-4 border-green-600">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-sm">
-                                    2</div>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Green Grocers</p>
-                                    <p class="text-xs text-gray-500">Business</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-green-600">342 kg</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-transparent rounded-lg border-l-4 border-yellow-600">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-yellow-600 text-white flex items-center justify-center font-bold text-sm">
-                                    3</div>
-                                <div>
-                                    <p class="font-semibold text-gray-900">John Doe</p>
-                                    <p class="text-xs text-gray-500">Consumer</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-yellow-600">234 kg</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-sm">
-                                    4</div>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Jane Smith</p>
-                                    <p class="text-xs text-gray-500">Consumer</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-gray-600">189 kg</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-sm">
-                                    5</div>
-                                <div>
-                                    <p class="font-semibold text-gray-900">Tech Solutions Ltd</p>
-                                    <p class="text-xs text-gray-500">Business</p>
-                                </div>
-                            </div>
-                            <span class="font-bold text-gray-600">156 kg</span>
-                        </div>
-                    </div>
+            <!-- TOP MOVERS TABLE -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="px-8 py-5 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800">Top Distributors (Volume)</h3>
+                    <button class="text-sm text-blue-600 font-medium hover:underline">View Full Report</button>
                 </div>
-
-                <!-- Monthly Comparison -->
-                <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-6">Monthly Comparison</h3>
-                    <canvas id="monthlyComparisonChart" height="200"></canvas>
-                </div>
-            </div>
-
-            <!-- Geographic Distribution -->
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">Collection by Area</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-600">
-                        <p class="text-sm text-gray-600 mb-1">Kabulonga</p>
-                        <p class="text-2xl font-bold text-blue-600">456 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">23 collections</p>
-                    </div>
-                    <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-600">
-                        <p class="text-sm text-gray-600 mb-1">Industrial Area</p>
-                        <p class="text-2xl font-bold text-green-600">892 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">15 collections</p>
-                    </div>
-                    <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-600">
-                        <p class="text-sm text-gray-600 mb-1">Roma</p>
-                        <p class="text-2xl font-bold text-purple-600">234 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">18 collections</p>
-                    </div>
-                    <div class="p-4 bg-orange-50 rounded-lg border-l-4 border-orange-600">
-                        <p class="text-sm text-gray-600 mb-1">Woodlands</p>
-                        <p class="text-2xl font-bold text-orange-600">567 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">21 collections</p>
-                    </div>
-                    <div class="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-600">
-                        <p class="text-sm text-gray-600 mb-1">Olympia</p>
-                        <p class="text-2xl font-bold text-yellow-600">189 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">12 collections</p>
-                    </div>
-                    <div class="p-4 bg-red-50 rounded-lg border-l-4 border-red-600">
-                        <p class="text-sm text-gray-600 mb-1">Chelston</p>
-                        <p class="text-2xl font-bold text-red-600">345 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">16 collections</p>
-                    </div>
-                    <div class="p-4 bg-teal-50 rounded-lg border-l-4 border-teal-600">
-                        <p class="text-sm text-gray-600 mb-1">Meanwood</p>
-                        <p class="text-2xl font-bold text-teal-600">278 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">14 collections</p>
-                    </div>
-                    <div class="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
-                        <p class="text-sm text-gray-600 mb-1">Others</p>
-                        <p class="text-2xl font-bold text-indigo-600">495 kg</p>
-                        <p class="text-xs text-gray-500 mt-1">25 collections</p>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="px-8 py-4 font-semibold">Distributor Name</th>
+                                <th class="px-8 py-4 font-semibold text-right">Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-8 py-4 font-medium text-gray-900">Calculated in detailed report</td>
+                                <td class="px-8 py-4 text-right font-bold text-blue-600">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Collection Trend Chart
-    const trendCtx = document.getElementById('collectionTrendChart').getContext('2d');
-    new Chart(trendCtx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Weight (kg)',
-                data: [320, 450, 380, 520, 410, 290, 350],
-                borderColor: 'rgb(29, 78, 216)',
-                backgroundColor: 'rgba(29, 78, 216, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    // Waste Type Distribution Chart
-    const typeCtx = document.getElementById('wasteTypeChart').getContext('2d');
-    new Chart(typeCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Plastic', 'Organic', 'Metal', 'Paper', 'Glass', 'E-Waste', 'Other'],
-            datasets: [{
-                data: [35, 25, 15, 12, 8, 3, 2],
-                backgroundColor: [
-                    'rgb(59, 130, 246)',
-                    'rgb(34, 197, 94)',
-                    'rgb(107, 114, 128)',
-                    'rgb(234, 179, 8)',
-                    'rgb(20, 184, 166)',
-                    'rgb(168, 85, 247)',
-                    'rgb(249, 115, 22)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-
-    // Monthly Comparison Chart
-    const comparisonCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
-    new Chart(comparisonCtx, {
+    // FLOW CHART (Sankey-like Logic)
+    const flowCtx = document.getElementById('flowChart').getContext('2d');
+    new Chart(flowCtx, {
         type: 'bar',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            labels: ['Manufactured', 'Transferred (Dist)', 'Returned (Waste)'],
             datasets: [{
-                label: 'This Year',
-                data: [1200, 1450, 1680, 1890, 2100, 2456],
-                backgroundColor: 'rgb(29, 78, 216)'
-            }, {
-                label: 'Last Year',
-                data: [1100, 1250, 1420, 1650, 1850, 2200],
-                backgroundColor: 'rgb(156, 163, 175)'
+                label: 'Volume (Units)',
+                data: [{{ stats.manufactured }}, {{ stats.distributed }}, {{ stats.returned }}],
+        backgroundColor: ['#2563EB', '#9333EA', '#16A34A'],
+        borderRadius: 8
+            }]
+        },
+        options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { beginAtZero: true, grid: { display: false } },
+            x: { grid: { display: false } }
+        }
+    }
+    });
+
+    // CATEGORY CHART
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(catCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Beverages', 'Water', 'Food', 'Household', 'Inductrial'],
+            datasets: [{
+                data: [45, 25, 15, 10, 5],
+                backgroundColor: ['#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#EFF6FF'],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            cutout: '70%',
             plugins: {
-                legend: {
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+                legend: { position: 'right' }
             }
         }
     });

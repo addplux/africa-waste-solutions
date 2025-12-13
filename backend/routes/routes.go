@@ -25,7 +25,8 @@ func Setup(app *fiber.App) {
 	entries.Use(middleware.Protected())
 	entries.Post("/", controllers.CreateEntry)
 	entries.Get("/", controllers.GetEntries)
-	
+
 	// Reports
 	api.Get("/reports/generate", controllers.GenerateReport)
+	api.Get("/reports/stats", controllers.GetDashboardStats)
 }
