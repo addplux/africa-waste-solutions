@@ -87,6 +87,23 @@ def account_creation():
             id_file = request.files.get('id_document')
             selfie_file = request.files.get('selfie')
             
+            # Map form data to backend JSON structure
+            is_international = (request.form.get('companyType') == 'international')
+            
+            data = {
+                'name': request.form.get('fullName'),
+                'email': request.form.get('email'),
+                'password': request.form.get('password'),
+                'contact': request.form.get('contact'),
+                'plot_number': request.form.get('plotNumber'),
+                'area': request.form.get('area'),
+                'account_type': request.form.get('accountType'),
+                'is_international': is_international,
+                'kyc_status': 'pending'
+            }
+
+            # Upload files if present
+            # Note: For now we just save locally. In production, we'd send these to backend or S3
             if id_file and allowed_file(id_file.filename):
                 id_filename = secure_filename(id_file.filename)
                 id_file.save(os.path.join(app.config['UPLOAD_FOLDER'], id_filename))
@@ -95,9 +112,22 @@ def account_creation():
                 selfie_filename = secure_filename(selfie_file.filename)
                 selfie_file.save(os.path.join(app.config['UPLOAD_FOLDER'], selfie_filename))
             
-            # TODO: Send data to Go backend
-            flash('Account application submitted for verification!', 'success')
-            return redirect(url_for('login'))
+            # Send to Go Backend Auth Register Endpoint
+            # This creates both User and Account
+            response = api_call('auth/register', method='POST', data=data)
+            
+            if response and response.status_code in [200, 201]:
+                flash('Account created successfully! Please login.', 'success')
+                return redirect(url_for('login'))
+            else:
+                error_msg = 'Failed to create account.'
+                if response:
+                    try:
+                        error_msg = response.json().get('message', error_msg)
+                    except:
+                        pass
+                flash(error_msg, 'error')
+                return redirect(url_for('account_creation'))
     
     return render_template('account_creation.html')
 
@@ -117,8 +147,38 @@ def accounts():
 @login_required
 def data_entry():
     if request.method == 'POST':
-        # TODO: Send data to Go backend
-        flash('Data entry submitted successfully!', 'success')
+        # Extract basic info
+        data = {
+            'account_id': request.form.get('account_id'),
+            'product_group': request.form.get('product_group'),
+            'product_name': request.form.get('product_name'),
+            'package_levels': {},
+            'waste_levels': {}
+        }
+
+        # Matrix keys
+        keys = ['series0', 'level4', 'level6', 'level10', 'level12', 'level16']
+
+        # Construct JSON for levels
+        for key in keys:
+            # Supply (Package Levels)
+            supply_val = request.form.get(f'supply_{key}')
+            if supply_val and supply_val.strip() != '':
+                data['package_levels'][key] = int(supply_val)
+            
+            # Waste (Disposal Levels)
+            waste_val = request.form.get(f'waste_{key}')
+            if waste_val and waste_val.strip() != '':
+                data['waste_levels'][key] = int(waste_val)
+
+        # Send to Go Backend
+        response = api_call('entries', method='POST', data=data)
+        
+        if response and response.status_code in [200, 201]:
+            flash('Data entry submitted successfully!', 'success')
+        else:
+            flash('Failed to submit data. Please try again.', 'error')
+            
         return redirect(url_for('data_entry'))
     
     return render_template('data_entry.html', user=session.get('user'))

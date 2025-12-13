@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"time"
 	"os"
+	"time"
 
 	"github.com/addplux/africa-waste-solutions/models"
 	"github.com/gofiber/fiber/v2"
@@ -12,10 +12,16 @@ import (
 )
 
 func Register(c *fiber.Ctx) error {
+	// composite input struct
 	var input struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Name            string `json:"name"`
+		Email           string `json:"email"`
+		Password        string `json:"password"`
+		Contact         string `json:"contact"`
+		PlotNumber      string `json:"plot_number"`
+		Area            string `json:"area"`
+		AccountType     string `json:"account_type"`
+		IsInternational bool   `json:"is_international"`
 	}
 
 	if err := c.BodyParser(&input); err != nil {
@@ -24,18 +30,42 @@ func Register(c *fiber.Ctx) error {
 
 	hash, _ := bcrypt.GenerateFromPassword([]byte(input.Password), 14)
 
+	// Start Transaction
+	tx := models.DB.Begin()
+
+	// 1. Create User
 	user := models.User{
 		Name:         input.Name,
 		Email:        input.Email,
 		PasswordHash: string(hash),
-		Role:         "user", // Default
+		Role:         "user",
 	}
 
-	if result := models.DB.Create(&user); result.Error != nil {
+	if result := tx.Create(&user); result.Error != nil {
+		tx.Rollback()
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user"})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "user": user})
+	// 2. Create Account
+	account := models.Account{
+		Name:            input.Name, // Account name = User name for now
+		Contact:         input.Contact,
+		PlotNumber:      input.PlotNumber,
+		Area:            input.Area,
+		AccountType:     input.AccountType,
+		IsInternational: input.IsInternational,
+		KYCStatus:       "pending",
+		CreatedBy:       user.ID, // Linked to the new user
+	}
+
+	if result := tx.Create(&account); result.Error != nil {
+		tx.Rollback()
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create account"})
+	}
+
+	tx.Commit()
+
+	return c.JSON(fiber.Map{"status": "success", "user": user, "account": account})
 }
 
 func Login(c *fiber.Ctx) error {

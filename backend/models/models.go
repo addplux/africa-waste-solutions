@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -34,8 +33,10 @@ type Entry struct {
 	ID            uuid.UUID      `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	AccountID     uuid.UUID      `json:"account_id"`
 	EntryDate     time.Time      `json:"entry_date"`
-	PackageLevels datatypes.JSON `json:"package_levels"` // JSON: {"12": 1000, "16": 500}
-	WasteLevels   datatypes.JSON `json:"waste_levels"`   // JSON: {"12": 200}
+	ProductGroup  string         `json:"product_group"`  // beverages, food, etc.
+	ProductName   string         `json:"product_name"`   // Coca Cola, Meali Meal, etc.
+	PackageLevels datatypes.JSON `json:"package_levels"` // JSON: {"series0": 100, "level4": 50...}
+	WasteLevels   datatypes.JSON `json:"waste_levels"`   // JSON: {"series0": 0, "level4": 20...}
 	CreatedBy     uuid.UUID      `json:"created_by"`
 	CreatedAt     time.Time      `json:"created_at"`
 }
