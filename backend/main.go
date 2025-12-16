@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
-	
+	"os"
+	"strings"
+
 	"github.com/addplux/africa-waste-solutions/models"
 	"github.com/addplux/africa-waste-solutions/routes"
 	"github.com/gofiber/fiber/v2"
@@ -19,12 +21,30 @@ func main() {
 
 	app := fiber.New()
 
+	// Get CORS origins from environment variable or use default
+	corsOrigins := os.Getenv("CORS_ORIGINS")
+	if corsOrigins == "" {
+		corsOrigins = "http://localhost:5173,http://localhost:5000"
+	}
+
+	// Support multiple origins
+	allowedOrigins := strings.Split(corsOrigins, ",")
+	log.Printf("CORS enabled for origins: %v", allowedOrigins)
+
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173", // Frontend URL
-		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowOrigins:     strings.Join(allowedOrigins, ","),
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowCredentials: true,
 	}))
 
 	routes.Setup(app)
 
-	log.Fatal(app.Listen(":8080")) // Listen on port 8080
+	// Get port from environment or use default
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Starting server on port %s", port)
+	log.Fatal(app.Listen(":" + port))
 }

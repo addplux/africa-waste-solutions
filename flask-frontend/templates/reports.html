@@ -16,6 +16,10 @@
                 <p class="text-sm text-gray-500">Real-time tracking of Production, Distribution & Returns</p>
             </div>
             <div class="flex items-center gap-3">
+                <a href="{{ url_for('download_report') }}" target="_blank"
+                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-semibold text-sm">
+                    <i class="fas fa-file-download"></i> Export PDF
+                </a>
                 <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold border border-blue-100">
                     {{ session.get('user', {}).get('name', 'Admin') }}
                 </span>
@@ -23,6 +27,31 @@
         </header>
 
         <main class="p-8 flex-1">
+            <!-- AI INSIGHTS CARD -->
+            <div
+                class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-lg mb-8 text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10">
+                    <i class="fas fa-robot text-9xl"></i>
+                </div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                            <i class="fas fa-sparkles text-yellow-300"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">AI Supply Chain Insights</h3>
+                    </div>
+                    <div id="ai-loading" class="animate-pulse flex space-x-4">
+                        <div class="flex-1 space-y-2 py-1">
+                            <div class="h-2 bg-white/30 rounded w-3/4"></div>
+                            <div class="h-2 bg-white/30 rounded w-1/2"></div>
+                        </div>
+                    </div>
+                    <p id="ai-content" class="text-white/90 text-sm leading-relaxed hidden whitespace-pre-line">
+                        Analyzing your data...
+                    </p>
+                </div>
+            </div>
+
             <!-- KPIS -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <!-- Manufactured -->
@@ -161,6 +190,32 @@
                 legend: { position: 'right' }
             }
         }
+    });
+    });
+
+    // FETCH AI INSIGHTS
+    document.addEventListener('DOMContentLoaded', function () {
+        const aiContent = document.getElementById('ai-content');
+        const aiLoading = document.getElementById('ai-loading');
+
+        fetch('/reports/insights')
+            .then(response => response.json())
+            .then(data => {
+                aiLoading.classList.add('hidden');
+                aiContent.classList.remove('hidden');
+
+                if (data.status === 'success' && data.data && data.data.insight) {
+                    aiContent.innerText = data.data.insight;
+                } else {
+                    aiContent.innerText = "Could not generate insights at this time as the service is offline.";
+                }
+            })
+            .catch(err => {
+                console.error("AI Error:", err);
+                aiLoading.classList.add('hidden');
+                aiContent.classList.remove('hidden');
+                aiContent.innerText = "AI Service unavailable.";
+            });
     });
 </script>
 {% endblock %}

@@ -151,60 +151,24 @@
 
                         <!-- COMMON: PRODUCT DETAILS -->
                         <div class="space-y-6 animate-fade-in-up">
-                            <h3 class="font-bold text-gray-800">Product Details</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-gray-800">Product Details</h3>
+                                <span class="text-xs text-gray-400">Waste Control List (Batch 1)</span>
+                            </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Product
-                                        Category</label>
-                                    <select name="product_group"
-                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                        <optgroup label="Food & Beverages">
-                                            <option value="Beverages">Disposable Beverage Packages</option>
-                                            <option value="Bottled Water">Disposable Bottled Water</option>
-                                            <option value="Sachets Water">Disposable Sachets Water</option>
-                                            <option value="Liquor">Disposable Liquor Packages</option>
-                                            <option value="Peanut Butter">Disposable Peanut Butter</option>
-                                            <option value="Blue Band">Disposable Blue Band Butter</option>
-                                            <option value="Tomato Sauce">Disposable Tomato Sauce</option>
-                                            <option value="Mayonnaise">Disposable Mayonnaise</option>
-                                            <option value="Vinegar">Disposable Vinegar</option>
-                                            <option value="Canned Food">Disposable Canned Food</option>
-                                            <option value="Food Spices">Disposable Food Spices</option>
-                                        </optgroup>
-                                        <optgroup label="Staples & Cooking">
-                                            <option value="Mealie Meal">Disposable Mealie Meal Packages</option>
-                                            <option value="Cooking Oil">Disposable Cooking Oil Packages</option>
-                                            <option value="Flour">Disposable Flour Packages</option>
-                                            <option value="Sugar">Disposable Sugar Packages</option>
-                                        </optgroup>
-                                        <optgroup label="Household & Hygiene">
-                                            <option value="Shoe Polish">Disposable Shoe Polish</option>
-                                            <option value="Floor Polish">Disposable Floor Polish</option>
-                                            <option value="Cleaning Agents">Disposable Cleaning Agents</option>
-                                            <option value="Tooth Brushes">Disposable Tooth Brushes</option>
-                                            <option value="Cosmetics">Disposable Cosmetics/Deodorant</option>
-                                        </optgroup>
-                                        <optgroup label="Agriculture & Industrial">
-                                            <option value="Pharmaceutical">Disposable Pharmaceutical Packages</option>
-                                            <option value="Animal Feed">Disposable Animal Feed Packages</option>
-                                            <option value="Fertilizer">Disposable Fertilizer Packages</option>
-                                            <option value="Insecticides">Disposable Insecticides Packages</option>
-                                            <option value="Farm Seeds">Disposable Farm Seeds Packages</option>
-                                            <option value="Vehicle Tyres">Disposable Vehicle Tyres</option>
-                                            <option value="Bicycle Tyres">Disposable Bicycle Tyres</option>
-                                            <option value="Motorbike Tyres">Disposable Motorbike Tyres</option>
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Specific
-                                        Item Name</label>
-                                    <input type="text" name="product_name" placeholder="e.g. 500ml Bottle, 2kg Packet"
-                                        class="w-full p-3 bg-white border border-gray-200 rounded-lg">
-                                </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                    Product / Package Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="product_name" list="product_list" required autocomplete="off"
+                                    placeholder="Start typing to select from items list..."
+                                    class="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm text-lg text-gray-800 placeholder-gray-400">
+                                <datalist id="product_list">
+                                    {% for p in products %}
+                                    <option value="{{ p }}">
+                                        {% endfor %}
+                                </datalist>
+                                <input type="hidden" name="product_group" value="Waste Control">
                             </div>
 
                             <!-- BULK QUANTITY KEYS -->
@@ -277,11 +241,14 @@
                 <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-gray-800 text-lg">Recent Supply Chain Activity</h3>
-                        <p class="text-sm text-gray-500">Command Center for Corrections</p>
+                        <p class="text-sm text-gray-500">Command Center for Corrections (Ctrl+Shift+Z to Reverse Last)
+                        </p>
                     </div>
                 </div>
+                <!-- ... Table same as before, skipping for brevity in replacement chunk ... -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
+                        <!-- headers same -->
                         <thead>
                             <tr class="bg-gray-50/50 text-xs text-gray-500 uppercase tracking-wider">
                                 <th class="px-8 py-4 font-semibold">Date</th>
@@ -317,8 +284,7 @@
                                     </div>
                                 </td>
                                 <td class="px-8 py-4 text-gray-600">
-                                    {{ entry.product_name }} <span class="text-gray-400 text-xs">({{ entry.product_group
-                                        }})</span>
+                                    {{ entry.product_name }}
                                 </td>
                                 <td class="px-8 py-4 text-right">
                                     <form action="{{ url_for('reverse_entry', entry_id=entry.id) }}" method="POST"
@@ -383,5 +349,22 @@
 
     // Init
     switchTab('supply');
+
+    // Command Keys (Keyboard Shortcuts)
+    document.addEventListener('keydown', (e) => {
+        // Alt+S = Supply, Alt+T = Transfer, Alt+R = Return
+        if (e.altKey) {
+            if (e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                switchTab('supply');
+            } else if (e.key.toLowerCase() === 't') {
+                e.preventDefault();
+                switchTab('transfer');
+            } else if (e.key.toLowerCase() === 'r') {
+                e.preventDefault();
+                switchTab('return');
+            }
+        }
+    });
 </script>
 {% endblock %}

@@ -17,13 +17,14 @@ type User struct {
 
 type Account struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	AccountType     string    `json:"account_type"` // business, consumer
+	AccountType     string    `json:"account_type"` // manufacturer, distributor, institution, household
 	Name            string    `json:"name"`
 	PlotNumber      string    `json:"plot_number"`
 	Area            string    `json:"area"`
 	Contact         string    `json:"contact"`
 	IsInternational bool      `json:"is_international"`
 	KYCStatus       string    `json:"kyc_status"` // pending, approved, rejected
+	Status          string    `json:"status"`     // active, blocked
 	CreatedBy       uuid.UUID `json:"created_by"`
 	CreatedAt       time.Time `json:"created_at"`
 }

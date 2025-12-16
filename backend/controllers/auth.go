@@ -34,11 +34,16 @@ func Register(c *fiber.Ctx) error {
 	tx := models.DB.Begin()
 
 	// 1. Create User
+	role := "user"
+	if input.Email == "admin@aws.com" {
+		role = "admin"
+	}
+
 	user := models.User{
 		Name:         input.Name,
 		Email:        input.Email,
 		PasswordHash: string(hash),
-		Role:         "user",
+		Role:         role,
 	}
 
 	if result := tx.Create(&user); result.Error != nil {
@@ -65,7 +70,29 @@ func Register(c *fiber.Ctx) error {
 
 	tx.Commit()
 
-	return c.JSON(fiber.Map{"status": "success", "user": user, "account": account})
+	// Generate JWT for Auto-Login
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["user_id"] = user.ID
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		// Even if token fails, user is created, so just return success but no token (client will have to login manually)
+		return c.JSON(fiber.Map{"status": "success", "user": user, "account": account})
+	}
+
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"token":  t,
+		"user": fiber.Map{
+			"id":    user.ID,
+			"name":  user.Name,
+			"email": user.Email,
+			"role":  user.Role,
+		},
+		"account": account,
+	})
 }
 
 func Login(c *fiber.Ctx) error {
@@ -100,5 +127,14 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not login"})
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "token": t})
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"token":  t,
+		"user": fiber.Map{
+			"id":    user.ID,
+			"name":  user.Name,
+			"email": user.Email,
+			"role":  user.Role,
+		},
+	})
 }

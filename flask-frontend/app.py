@@ -17,6 +17,16 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+# Helper function to check if user is admin
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session or session['user'].get('role') != 'admin':
+            flash('Access denied. Admin privileges required.', 'error')
+            return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Helper function to make API calls to Go backend
 def api_call(endpoint, method='GET', data=None, files=None):
     url = f"{app.config['BACKEND_API_URL']}/{endpoint}"
@@ -60,13 +70,17 @@ def login():
         password = request.form.get('password')
         remember = request.form.get('remember')
         
-        # TODO: Call Go backend authentication API
-        # For now, simulate login
-        session['user'] = {'name': 'Admin', 'email': email}
-        session['token'] = 'dummy-token'  # Replace with actual token from backend
+        # Call Go backend authentication API
+        response = api_call('auth/login', method='POST', data={'email': email, 'password': password})
         
-        flash('Login successful!', 'success')
-        return redirect(url_for('dashboard'))
+        if response and response.status_code == 200:
+            data = response.json()
+            session['user'] = data['user']
+            session['token'] = data['token']
+            flash(f"Welcome back, {session['user']['name']}!", 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid email or password', 'error')
     
     return render_template('login.html')
 
@@ -117,8 +131,16 @@ def account_creation():
             response = api_call('auth/register', method='POST', data=data)
             
             if response and response.status_code in [200, 201]:
-                flash('Account created successfully! Please login.', 'success')
-                return redirect(url_for('login'))
+                resp_data = response.json()
+                # Check for token and auto-login
+                if 'token' in resp_data:
+                    session['user'] = resp_data['user']
+                    session['token'] = resp_data['token']
+                    flash(f"Account created! Welcome, {session['user']['name']}.", 'success')
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash('Account created successfully! Please login.', 'success')
+                    return redirect(url_for('login'))
             else:
                 error_msg = 'Failed to create account.'
                 if response:
@@ -139,12 +161,18 @@ def dashboard():
 
 @app.route('/accounts')
 @login_required
+@admin_required
 def accounts():
-    # TODO: Fetch accounts data from Go backend
-    return render_template('accounts.html', user=session.get('user'))
+    accounts_list = []
+    response = api_call('accounts', method='GET')
+    if response and response.status_code == 200:
+        accounts_list = response.json().get('data', [])
+    
+    return render_template('accounts.html', user=session.get('user'), accounts=accounts_list)
 
 @app.route('/data-entry', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def data_entry():
     if request.method == 'POST':
         tx_type = request.form.get('transaction_type')
@@ -232,13 +260,54 @@ def data_entry():
         recent_entries.sort(key=lambda x: x.get('entry_date', ''), reverse=True)
         recent_entries = recent_entries[:10] # Top 10
     
+    # Fetch Products
+    products = []
+    products_response = api_call('products', method='GET')
+    if products_response and products_response.status_code == 200:
+        products = products_response.json().get('data', [])
+
     return render_template('data_entry.html', 
                            user=session.get('user'),
                            manufacturers=manufacturers,
                            distributors=distributors,
                            households=households,
                            recent_entries=recent_entries,
-                           account_map=account_map)
+                           account_map=account_map,
+                           products=products)
+
+@app.route('/account/block/<string:account_id>', methods=['POST'])
+@login_required
+@admin_required
+def block_account(account_id):
+    response = api_call(f'accounts/{account_id}/block', method='POST')
+    if response and response.status_code == 200:
+        flash('Account blocked successfully.', 'success')
+    else:
+        error_msg = 'Failed to block account.'
+        if response:
+            try:
+                error_msg = response.json().get('message', error_msg)
+            except:
+                pass
+        flash(error_msg, 'error')
+    return redirect(url_for('accounts'))
+
+@app.route('/account/delete/<string:account_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_account(account_id):
+    response = api_call(f'accounts/{account_id}', method='DELETE')
+    if response and response.status_code == 200:
+        flash('Account deleted successfully.', 'success')
+    else:
+        error_msg = 'Failed to delete account.'
+        if response:
+            try:
+                error_msg = response.json().get('message', error_msg)
+            except:
+                pass
+        flash(error_msg, 'error')
+    return redirect(url_for('accounts'))
 
 @app.route('/entry/reverse/<string:entry_id>', methods=['POST'])
 @login_required
@@ -268,6 +337,33 @@ def reports():
         stats['returned'] = data.get('returned', 0)
 
     return render_template('reports.html', user=session.get('user'), stats=stats)
+
+@app.route('/reports/download')
+@login_required
+def download_report():
+    # Call Backend to generate PDF
+    response = api_call('reports/export', method='GET')
+    
+    if response and response.status_code == 200:
+        # Stream the PDF back to the user
+        return response.content, 200, {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': 'attachment; filename=waste_report.pdf'
+        }
+    else:
+        flash('Failed to generate report.', 'error')
+        return redirect(url_for('reports'))
+
+@app.route('/reports/insights')
+@login_required
+def get_insights():
+    # Call Backend to get AI analysis
+    response = api_call('reports/insights', method='GET')
+    
+    if response and response.status_code == 200:
+        return jsonify(response.json())
+    
+    return jsonify({"status": "error", "message": "Could not fetch insights"}), 500
 
 @app.route('/kyc')
 @login_required
