@@ -3,11 +3,20 @@ package routes
 import (
 	"github.com/addplux/africa-waste-solutions/controllers"
 	"github.com/addplux/africa-waste-solutions/middleware"
+	"github.com/addplux/africa-waste-solutions/models"
 	"github.com/gofiber/fiber/v2"
 )
 
 func Setup(app *fiber.App) {
 	api := app.Group("/api")
+
+	// Health check endpoint - no database required
+	api.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"status":  "ok",
+			"message": "Backend is running",
+		})
+	})
 
 	// Auth
 	auth := api.Group("/auth")
@@ -19,6 +28,8 @@ func Setup(app *fiber.App) {
 	accounts.Use(middleware.Protected())
 	accounts.Post("/", controllers.CreateAccount)
 	accounts.Get("/", controllers.GetAccounts)
+	accounts.Post("/:id/block", controllers.BlockAccount)
+	accounts.Delete("/:id", controllers.DeleteAccount)
 
 	// Entries
 	entries := api.Group("/entries")
@@ -28,6 +39,16 @@ func Setup(app *fiber.App) {
 	entries.Delete("/:id", controllers.DeleteEntry)
 
 	// Reports
-	api.Get("/reports/generate", controllers.GenerateReport)
 	api.Get("/reports/stats", controllers.GetDashboardStats)
+	api.Get("/reports/export", controllers.GenerateReport)
+	api.Get("/reports/insights", controllers.GetInsights)
+
+	// Products
+	api.Get("/debug/users", func(c *fiber.Ctx) error {
+		var count int64
+		models.DB.Model(&models.User{}).Count(&count)
+		return c.JSON(fiber.Map{"count": count})
+	})
+
+	api.Get("/products", controllers.GetProducts)
 }
