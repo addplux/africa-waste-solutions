@@ -3,7 +3,7 @@ FROM golang:1.21-alpine AS builder
 WORKDIR /app
 
 COPY go.mod ./
-COPY go.sum ./
+# COPY go.sum ./
 
 RUN go mod download || echo "Skipping download, manual vendor needed if no net"
 
