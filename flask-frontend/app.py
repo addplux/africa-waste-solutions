@@ -61,7 +61,7 @@ def allowed_file(filename):
 def index():
     if 'user' in session:
         return redirect(url_for('dashboard'))
-    return redirect(url_for('login'))
+    return render_template('landing.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -112,23 +112,24 @@ def account_creation():
                 'plot_number': request.form.get('plotNumber'),
                 'area': request.form.get('area'),
                 'account_type': request.form.get('accountType'),
+                'company_name': request.form.get('companyName'),
+                'date_of_birth': request.form.get('dateOfBirth'),
+                'selfie': request.form.get('selfie'), # Base64 string from canvas
                 'is_international': is_international,
                 'kyc_status': 'pending'
             }
 
-            # Upload files if present
-            # Note: For now we just save locally. In production, we'd send these to backend or S3
-            if id_file and allowed_file(id_file.filename):
-                id_filename = secure_filename(id_file.filename)
-                id_file.save(os.path.join(app.config['UPLOAD_FOLDER'], id_filename))
-            
-            if selfie_file and allowed_file(selfie_file.filename):
-                selfie_filename = secure_filename(selfie_file.filename)
-                selfie_file.save(os.path.join(app.config['UPLOAD_FOLDER'], selfie_filename))
-            
+            # Prepare files for upload
+            files = {}
+            if id_file:
+                # We need to send the file object, but requests.post expects (filename, file_handle, content_type)
+                # or just the file handle.
+                # Since we are forwarding, we can pass the stream.
+                files['id_document'] = (id_file.filename, id_file.stream, id_file.mimetype)
+
             # Send to Go Backend Auth Register Endpoint
             # This creates both User and Account
-            response = api_call('auth/register', method='POST', data=data)
+            response = api_call('auth/register', method='POST', data=data, files=files)
             
             if response and response.status_code in [200, 201]:
                 resp_data = response.json()

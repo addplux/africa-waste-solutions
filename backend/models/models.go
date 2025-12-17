@@ -12,21 +12,29 @@ type User struct {
 	Email        string    `gorm:"uniqueIndex" json:"email"`
 	PasswordHash string    `json:"-"`
 	Role         string    `json:"role"` // admin, field_officer
+	DateOfBirth  time.Time `json:"date_of_birth"`
+	Contact      string    `json:"contact"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
 type Account struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	AccountType     string    `json:"account_type"` // manufacturer, distributor, institution, household
-	Name            string    `json:"name"`
+	CompanyName     string    `json:"company_name"` // For business accounts
+	Name            string    `json:"name"`         // Primary contact name or household head
 	PlotNumber      string    `json:"plot_number"`
 	Area            string    `json:"area"`
 	Contact         string    `json:"contact"`
 	IsInternational bool      `json:"is_international"`
-	KYCStatus       string    `json:"kyc_status"` // pending, approved, rejected
-	Status          string    `json:"status"`     // active, blocked
-	CreatedBy       uuid.UUID `json:"created_by"`
-	CreatedAt       time.Time `json:"created_at"`
+
+	// KYC Documents
+	IDDocumentURL string `json:"id_document_url"`
+	SelfieURL     string `json:"selfie_url"`
+	KYCStatus     string `json:"kyc_status"` // pending, approved, rejected
+
+	Status    string    `json:"status"` // active, blocked
+	CreatedBy uuid.UUID `json:"created_by"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Entry struct {
