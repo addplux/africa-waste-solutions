@@ -227,6 +227,7 @@
                     </div>
 
                     <!-- System Pulse -->
+                    {% if user and user.get('role') == 'admin' %}
                     <div class="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
                         <h4 class="font-bold text-gray-900 mb-6">System Health</h4>
                         <div class="space-y-4">
@@ -255,6 +256,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </main>
