@@ -89,28 +89,66 @@ func GetDashboardStats(c *fiber.Ctx) error {
 	models.DB.Find(&entries)
 
 	var manufactured, distributed, returned int64
+	distributorVolumes := make(map[string]int64)
+	categoryVolumes := make(map[string]int64)
+
+	// Fetch accounts to map names
+	var accounts []models.Account
+	models.DB.Find(&accounts)
+	accountMap := make(map[string]string)
+	for _, a := range accounts {
+		name := a.CompanyName
+		if name == "" {
+			name = a.Name
+		}
+		accountMap[a.ID.String()] = name
+	}
 
 	for _, e := range entries {
-		// Calculate total units (Simple Sum for MVP)
-		// Only counting 'Case' magnitude for big numbers, or strict sum?
-		// Let's sum Case + Unit for a "Total Items" proxy.
-		total := int64(e.Unit) + int64(e.Case)*24 + int64(e.Dozen)*12 + int64(e.Series)
+		total := int64(e.Unit) + int64(e.Case)*24 + int64(e.Dozen)*12 + int64(e.Series) + int64(e.HalfDozen)*6
 
 		if e.TransactionType == "supply" {
 			manufactured += total
 		} else if e.TransactionType == "transfer" {
 			distributed += total
+			if e.TargetAccountID != nil {
+				distributorVolumes[e.TargetAccountID.String()] += total
+			}
 		} else if e.TransactionType == "return" {
 			returned += total
 		}
+
+		if e.ProductGroup != "" {
+			categoryVolumes[e.ProductGroup] += total
+		}
+	}
+
+	// Prepare Top Distributors
+	var topDistributors []map[string]interface{}
+	for id, vol := range distributorVolumes {
+		topDistributors = append(topDistributors, map[string]interface{}{
+			"name":   accountMap[id],
+			"volume": vol,
+		})
+	}
+
+	// Prepare Categories
+	var categories []map[string]interface{}
+	for cat, vol := range categoryVolumes {
+		categories = append(categories, map[string]interface{}{
+			"name":   cat,
+			"volume": vol,
+		})
 	}
 
 	return c.JSON(fiber.Map{
 		"status": "success",
 		"data": fiber.Map{
-			"manufactured": manufactured,
-			"distributed":  distributed,
-			"returned":     returned,
+			"manufactured":     manufactured,
+			"distributed":      distributed,
+			"returned":         returned,
+			"top_distributors": topDistributors,
+			"categories":       categories,
 		},
 	})
 }

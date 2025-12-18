@@ -27,160 +27,233 @@
 
         <!-- Dashboard Content -->
         <main class="p-8">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Welcome Section -->
+            <div class="mb-10 animate-fade-in-up">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold mb-4 border border-blue-100 uppercase tracking-wider">
+                    <i class="fas fa-sparkles"></i> System Analysis Active
+                </div>
+                <h2 class="text-4xl font-extrabold text-gray-900 tracking-tight">Environmental Performance Overview</h2>
+                <p class="text-gray-500 mt-2 text-lg">Real-time monitoring of your waste management ecosystem in Zambia.
+                </p>
+            </div>
+
+            <!-- Enhanced KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <!-- Total Accounts -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold">Total Accounts</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">1,234</p>
-                            <p class="text-blue-600 text-sm mt-1">
-                                <i class="fas fa-arrow-up"></i> 12% from last month
-                            </p>
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-blue-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                            <span
+                                class="text-green-600 text-sm font-bold bg-green-50 px-3 py-1 rounded-full">+12%</span>
                         </div>
-                        <div class="bg-blue-100 rounded-full p-4">
-                            <i class="fas fa-users text-blue-600 text-2xl"></i>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Total Accounts</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">1,234</p>
+                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full w-[85%] bg-blue-600 rounded-full"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Waste Collected -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold">Waste Collected</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">45.2 T</p>
-                            <p class="text-blue-600 text-sm mt-1">
-                                <i class="fas fa-arrow-up"></i> 8% from last month
-                            </p>
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-green-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-green-600 to-teal-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/30">
+                                <i class="fas fa-trash-alt text-2xl"></i>
+                            </div>
+                            <span class="text-green-600 text-sm font-bold bg-green-50 px-3 py-1 rounded-full">+8%</span>
                         </div>
-                        <div class="bg-blue-100 rounded-full p-4">
-                            <i class="fas fa-trash-alt text-blue-600 text-2xl"></i>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Waste Collected</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">45.2 <span
+                                class="text-xl font-bold text-gray-400">T</span></p>
+                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full w-[70%] bg-green-600 rounded-full"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Pending KYC -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-600">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-semibold">Pending KYC</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">23</p>
-                            <p class="text-yellow-600 text-sm mt-1">
-                                <i class="fas fa-clock"></i> Awaiting review
-                            </p>
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
+                                <i class="fas fa-id-card text-2xl"></i>
+                            </div>
+                            <span class="text-yellow-600 text-sm font-bold bg-yellow-50 px-3 py-1 rounded-full">Action
+                                Req.</span>
                         </div>
-                        <div class="bg-yellow-100 rounded-full p-4">
-                            <i class="fas fa-id-card text-yellow-600 text-2xl"></i>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Pending KYC</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">23</p>
+                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full w-[40%] bg-yellow-500 rounded-full"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Active Routes -->
-                <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-600">
-                    <div class="flex items-center justify-between">
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-purple-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+                                <i class="fas fa-route text-2xl"></i>
+                            </div>
+                            <span
+                                class="text-purple-600 text-sm font-bold bg-purple-50 px-3 py-1 rounded-full">Active</span>
+                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Operational Routes</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">18</p>
+                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full w-[100%] bg-purple-600 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Recent Activity (Spans 2 columns) -->
+                <div
+                    class="lg:col-span-2 bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden animate-fade-in-up animate-delay-400">
+                    <div class="px-8 py-6 border-b border-gray-50 flex justify-between items-center">
                         <div>
-                            <p class="text-gray-600 text-sm font-semibold">Active Routes</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">18</p>
-                            <p class="text-purple-600 text-sm mt-1">
-                                <i class="fas fa-check"></i> All operational
-                            </p>
+                            <h3 class="text-xl font-bold text-gray-900">Recent Stream</h3>
+                            <p class="text-sm text-gray-500">Live logistics and registration updates</p>
                         </div>
-                        <div class="bg-purple-100 rounded-full p-4">
-                            <i class="fas fa-route text-purple-600 text-2xl"></i>
+                        <button class="text-blue-600 font-bold text-sm hover:underline flex items-center gap-1">
+                            View All <i class="fas fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-2">
+                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
+                                <div
+                                    class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900">New Account Created</p>
+                                    <p class="text-sm text-gray-500">John Doe • Lusaka Region • Consumer</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-bold text-gray-400">2 MINUTES AGO</span>
+                                </div>
+                            </div>
+
+                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
+                                <div
+                                    class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                                    <i class="fas fa-truck-loading"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900">Waste Collection Logged</p>
+                                    <p class="text-sm text-gray-500">Plot 123, Kabulonga • 250kg Recovered</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-bold text-gray-400">15 MINUTES AGO</span>
+                                </div>
+                            </div>
+
+                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
+                                <div
+                                    class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
+                                    <i class="fas fa-verified"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-900">KYC Verification Completed</p>
+                                    <p class="text-sm text-gray-500">Greenway Logistics • Manufacturer Account</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-bold text-gray-400">1 HOUR AGO</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Recent Activity -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Activity</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                            <div class="bg-green-100 rounded-full p-3">
-                                <i class="fas fa-user-plus text-green-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-900">New Account Created</p>
-                                <p class="text-sm text-gray-600">John Doe - Consumer Account</p>
-                            </div>
-                            <span class="text-xs text-gray-500">2 min ago</span>
+                <!-- Premium Action Sidebar -->
+                <div class="space-y-8 animate-fade-in-up animate-delay-500">
+                    <div
+                        class="bg-gradient-to-br from-indigo-700 to-blue-900 rounded-3xl p-8 text-white shadow-2xl shadow-blue-500/20 relative overflow-hidden">
+                        <div
+                            class="absolute -bottom-12 -right-12 w-48 h-48 bg-white/10 rounded-full border border-white/20">
                         </div>
-
-                        <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                            <div class="bg-blue-100 rounded-full p-3">
-                                <i class="fas fa-trash text-blue-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-900">Waste Collection Completed</p>
-                                <p class="text-sm text-gray-600">Plot 123, Kabulonga - 250 kg</p>
-                            </div>
-                            <span class="text-xs text-gray-500">15 min ago</span>
-                        </div>
-
-                        <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                            <div class="bg-yellow-100 rounded-full p-3">
-                                <i class="fas fa-check-circle text-yellow-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-900">KYC Verified</p>
-                                <p class="text-sm text-gray-600">Jane Smith - Business Account</p>
-                            </div>
-                            <span class="text-xs text-gray-500">1 hour ago</span>
+                        <h4 class="text-2xl font-bold mb-4">Quick Actions</h4>
+                        <div class="grid grid-cols-1 gap-4 relative z-10">
+                            <a href="{{ url_for('data_entry') }}"
+                                class="flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/10 transition-all transform hover:-translate-x-2">
+                                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <span class="font-bold">New Data Entry</span>
+                            </a>
+                            <a href="{{ url_for('reports') }}"
+                                class="flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/10 transition-all transform hover:-translate-x-2">
+                                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <span class="font-bold">Generate Reports</span>
+                            </a>
+                            <a href="{{ url_for('accounts') }}"
+                                class="flex items-center gap-4 p-4 bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/10 transition-all transform hover:-translate-x-2">
+                                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <span class="font-bold">KYC Portal</span>
+                            </a>
                         </div>
                     </div>
-                </div>
 
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <a href="{{ url_for('account_creation') }}"
-                            class="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200 hover:border-blue-400 hover:shadow-md transition-all">
-                            <i class="fas fa-user-plus text-blue-600 text-3xl mb-2"></i>
-                            <span class="font-semibold text-gray-900">New Account</span>
-                        </a>
-
-                        <a href="{{ url_for('data_entry') }}"
-                            class="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200 hover:border-blue-400 hover:shadow-md transition-all">
-                            <i class="fas fa-edit text-blue-600 text-3xl mb-2"></i>
-                            <span class="font-semibold text-gray-900">Data Entry</span>
-                        </a>
-
-                        <a href="{{ url_for('reports') }}"
-                            class="flex flex-col items-center justify-center p-6 bg-purple-50 rounded-lg border-2 border-purple-200 hover:border-purple-400 hover:shadow-md transition-all">
-                            <i class="fas fa-chart-bar text-purple-600 text-3xl mb-2"></i>
-                            <span class="font-semibold text-gray-900">View Reports</span>
-                        </a>
-
-                        <a href="{{ url_for('kyc') }}"
-                            class="flex flex-col items-center justify-center p-6 bg-yellow-50 rounded-lg border-2 border-yellow-200 hover:border-yellow-400 hover:shadow-md transition-all">
-                            <i class="fas fa-id-card text-yellow-600 text-3xl mb-2"></i>
-                            <span class="font-semibold text-gray-900">KYC Review</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- System Status -->
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4">System Status</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                        <span class="text-gray-700">Backend API: <span
-                                class="font-semibold text-blue-600">Online</span></span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                        <span class="text-gray-700">Database: <span <div class="flex items-center gap-3">
-                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span class="text-gray-700">AI Service: <span
-                                        class="font-semibold text-green-600">Running</span></span>
+                    <!-- System Pulse -->
+                    <div class="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100">
+                        <h4 class="font-bold text-gray-900 mb-6">System Health</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                                    <span class="text-sm font-semibold text-gray-600">Core Network</span>
+                                </div>
+                                <span
+                                    class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">STABLE</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                                    <span class="text-sm font-semibold text-gray-600">AI Engine</span>
+                                </div>
+                                <span
+                                    class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">HEALTHY</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                                    <span class="text-sm font-semibold text-gray-600">Global Sync</span>
+                                </div>
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">SYNCED</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

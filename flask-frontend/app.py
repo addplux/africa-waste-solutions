@@ -327,7 +327,9 @@ def reports():
     stats = {
         'manufactured': 0,
         'distributed': 0,
-        'returned': 0
+        'returned': 0,
+        'top_distributors': [],
+        'categories': []
     }
     
     response = api_call('reports/stats', method='GET')
@@ -336,6 +338,8 @@ def reports():
         stats['manufactured'] = data.get('manufactured', 0)
         stats['distributed'] = data.get('distributed', 0)
         stats['returned'] = data.get('returned', 0)
+        stats['top_distributors'] = data.get('top_distributors', [])
+        stats['categories'] = data.get('categories', [])
 
     return render_template('reports.html', user=session.get('user'), stats=stats)
 
