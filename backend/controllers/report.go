@@ -124,7 +124,7 @@ func GetDashboardStats(c *fiber.Ctx) error {
 	}
 
 	// Prepare Top Distributors
-	var topDistributors []map[string]interface{}
+	topDistributors := []map[string]interface{}{}
 	for id, vol := range distributorVolumes {
 		topDistributors = append(topDistributors, map[string]interface{}{
 			"name":   accountMap[id],
@@ -133,7 +133,7 @@ func GetDashboardStats(c *fiber.Ctx) error {
 	}
 
 	// Prepare Categories
-	var categories []map[string]interface{}
+	categories := []map[string]interface{}{}
 	for cat, vol := range categoryVolumes {
 		categories = append(categories, map[string]interface{}{
 			"name":   cat,

@@ -297,8 +297,8 @@
 
     // CATEGORY CHART
     const catCtx = document.getElementById('categoryChart').getContext('2d');
-    const catLabels = statsData.categories.map(c => c.name);
-    const catValues = statsData.categories.map(c => c.volume);
+    const catLabels = (statsData.categories || []).map(c => c.name);
+    const catValues = (statsData.categories || []).map(c => c.volume);
 
     new Chart(catCtx, {
         type: 'doughnut',
