@@ -157,8 +157,21 @@ def account_creation():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # TODO: Fetch dashboard data from Go backend
-    return render_template('dashboard.html', user=session.get('user'))
+    # Fetch personalized stats from Go Backend
+    user_stats = {
+        'supply_received': 0,
+        'distributed': 0,
+        'returned': 0,
+        'kyc_status': 'unknown',
+        'account_type': 'consumer',
+        'balance': 0
+    }
+    
+    response = api_call('auth/stats', method='GET')
+    if response and response.status_code == 200:
+        user_stats = response.json().get('data', user_stats)
+
+    return render_template('dashboard.html', user=session.get('user'), stats=user_stats)
 
 @app.route('/accounts')
 @login_required

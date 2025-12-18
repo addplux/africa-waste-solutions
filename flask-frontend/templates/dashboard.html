@@ -40,7 +40,8 @@
 
             <!-- Enhanced KPI Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                <!-- Total Accounts -->
+                {% if user.role == 'admin' %}
+                <!-- ADMIN VIEW: Total Accounts -->
                 <div
                     class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
                     <div
@@ -52,18 +53,15 @@
                                 class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
                                 <i class="fas fa-users text-2xl"></i>
                             </div>
-                            <span
-                                class="text-green-600 text-sm font-bold bg-green-50 px-3 py-1 rounded-full">+12%</span>
                         </div>
-                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Total Accounts</p>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Total Ecosystem Nodes
+                        </p>
                         <p class="text-4xl font-black text-gray-950 mt-1">1,234</p>
-                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full w-[85%] bg-blue-600 rounded-full"></div>
-                        </div>
+                        <p class="text-xs font-bold text-blue-600 mt-2">Active Participants</p>
                     </div>
                 </div>
 
-                <!-- Waste Collected -->
+                <!-- ADMIN VIEW: Global Waste -->
                 <div
                     class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
                     <div
@@ -73,20 +71,17 @@
                         <div class="flex items-center justify-between mb-6">
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-green-600 to-teal-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/30">
-                                <i class="fas fa-trash-alt text-2xl"></i>
+                                <i class="fas fa-globe-africa text-2xl"></i>
                             </div>
-                            <span class="text-green-600 text-sm font-bold bg-green-50 px-3 py-1 rounded-full">+8%</span>
                         </div>
-                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Waste Collected</p>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Global Recovery</p>
                         <p class="text-4xl font-black text-gray-950 mt-1">45.2 <span
                                 class="text-xl font-bold text-gray-400">T</span></p>
-                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full w-[70%] bg-green-600 rounded-full"></div>
-                        </div>
+                        <p class="text-xs font-bold text-green-600 mt-2">Total System Output</p>
                     </div>
                 </div>
 
-                <!-- Pending KYC -->
+                <!-- ADMIN VIEW: Pending KYC -->
                 <div
                     class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
                     <div
@@ -98,18 +93,14 @@
                                 class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
                                 <i class="fas fa-id-card text-2xl"></i>
                             </div>
-                            <span class="text-yellow-600 text-sm font-bold bg-yellow-50 px-3 py-1 rounded-full">Action
-                                Req.</span>
                         </div>
-                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Pending KYC</p>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">KYC Queue</p>
                         <p class="text-4xl font-black text-gray-950 mt-1">23</p>
-                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full w-[40%] bg-yellow-500 rounded-full"></div>
-                        </div>
+                        <p class="text-xs font-bold text-yellow-600 mt-2">Awaiting Verification</p>
                     </div>
                 </div>
 
-                <!-- Active Routes -->
+                <!-- ADMIN VIEW: Status -->
                 <div
                     class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
                     <div
@@ -119,18 +110,93 @@
                         <div class="flex items-center justify-between mb-6">
                             <div
                                 class="w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
-                                <i class="fas fa-route text-2xl"></i>
+                                <i class="fas fa-server text-2xl"></i>
                             </div>
-                            <span
-                                class="text-purple-600 text-sm font-bold bg-purple-50 px-3 py-1 rounded-full">Active</span>
                         </div>
-                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Operational Routes</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">18</p>
-                        <div class="mt-4 h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full w-[100%] bg-purple-600 rounded-full"></div>
-                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Node Status</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">100%</p>
+                        <p class="text-xs font-bold text-purple-600 mt-2">Network Uptime</p>
                     </div>
                 </div>
+
+                {% else %}
+                <!-- CLIENT VIEW: My Recycling -->
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-green-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-green-600 to-teal-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/30">
+                                <i class="fas fa-recycle text-2xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">My Total Recovery</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.returned) }} <span
+                                class="text-xl font-bold text-gray-400">U</span></p>
+                        <p class="text-xs font-bold text-green-600 mt-2">Lifetime Impact</p>
+                    </div>
+                </div>
+
+                <!-- CLIENT VIEW: Inventory Balance -->
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-blue-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                                <i class="fas fa-boxes text-2xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Current Stock</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.balance) }}</p>
+                        <p class="text-xs font-bold text-blue-600 mt-2">Units in Node</p>
+                    </div>
+                </div>
+
+                <!-- CLIENT VIEW: Distributed -->
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-purple-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-purple-500/30">
+                                <i class="fas fa-shipping-fast text-2xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Outbound Stream</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.distributed) }}</p>
+                        <p class="text-xs font-bold text-purple-600 mt-2">Total Transferred</p>
+                    </div>
+                </div>
+
+                <!-- CLIENT VIEW: Account KYC -->
+                <div
+                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
+                    <div
+                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div
+                                class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
+                                <i class="fas fa-check-double text-2xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Compliance Status</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1 uppercase">{{ stats.kyc_status }}</p>
+                        <p class="text-xs font-bold text-yellow-600 mt-2">ZEMA Verification</p>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
