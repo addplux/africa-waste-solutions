@@ -292,6 +292,7 @@ def data_entry():
         return redirect(url_for('data_entry'))
     
     # GET Request: Fetch accounts AND recent entries
+    all_accounts = [] # Initialize all_accounts to prevent undefined error
     accounts_response = api_call('accounts', method='GET')
     entries_response = api_call('entries', method='GET')
     
@@ -328,10 +329,21 @@ def data_entry():
     # Identify current user's account if they are not admin
     current_account = None
     if session.get('user', {}).get('role') != 'admin':
-        # Try to match user email or name with accounts
+        user_id = session.get('user', {}).get('id')
+        user_name = session.get('user', {}).get('name')
         user_email = session.get('user', {}).get('email')
+        
         for acc in all_accounts:
-            if acc.get('email') == user_email or acc.get('name') == session.get('user', {}).get('name'):
+            # 1. Primary check: Was this account created by this user?
+            if acc.get('created_by') == user_id:
+                current_account = acc
+                break
+            # 2. Secondary check: Does the name match exactly?
+            if user_name and acc.get('name') == user_name:
+                current_account = acc
+                break
+            # 3. Tertiary check: Does the company name match user name?
+            if user_name and acc.get('company_name') == user_name:
                 current_account = acc
                 break
 
