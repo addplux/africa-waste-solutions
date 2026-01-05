@@ -77,8 +77,13 @@ def login():
             data = response.json()
             session['user'] = data['user']
             session['token'] = data['token']
+            session['details_confirmed'] = False # Reset confirmation on login
             flash(f"Welcome back, {session['user']['name']}!", 'success')
-            return redirect(url_for('dashboard'))
+            
+            # If user is admin, skip confirmation or go to dashboard
+            if session['user'].get('role') == 'admin':
+                return redirect(url_for('dashboard'))
+            return redirect(url_for('confirm_details'))
         else:
             flash('Invalid email or password', 'error')
     
@@ -89,6 +94,42 @@ def logout():
     session.clear()
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
+
+@app.route('/confirm-details', methods=['GET', 'POST'])
+@login_required
+def confirm_details():
+    if request.method == 'POST':
+        session['details_confirmed'] = True
+        return redirect(url_for('dashboard'))
+    
+    # In a real app we might fetch the latest account details here
+    # For now we'll use session data or mock it if needed
+    user = session.get('user', {})
+    
+    # We need account details specifically for households
+    # The 'user' object might not have everything, let's try to get account stats or similar
+    account_details = {
+        'name': user.get('name'),
+        'area': user.get('area', 'Unknown Location'),
+        'plot_number': user.get('plot_number', 'N/A'),
+        'contact': user.get('contact', 'N/A')
+    }
+
+    # If backend has an endpoint for account details, we should use it
+    # Looking at the codebase, stats/profile might have it
+    response = api_call('auth/stats', method='GET')
+    if response and response.status_code == 200:
+        data = response.json().get('data', {})
+        # Assuming the backend returns account info in the stats data
+        # Let's enrich what we have
+        account_details.update({
+            'area': data.get('area', account_details['area']),
+            'plot_number': data.get('plot_number', account_details['plot_number']),
+            'contact': data.get('contact', account_details['contact']),
+            'name': data.get('name', account_details['name'])
+        })
+
+    return render_template('confirm_details.html', user=user, details=account_details)
 
 @app.route('/account-creation', methods=['GET', 'POST'])
 def account_creation():
@@ -157,6 +198,9 @@ def account_creation():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    if session.get('user', {}).get('role') != 'admin' and not session.get('details_confirmed'):
+        return redirect(url_for('confirm_details'))
+
     # Fetch personalized stats from Go Backend
     user_stats = {
         'supply_received': 0,
@@ -186,7 +230,6 @@ def accounts():
 
 @app.route('/data-entry', methods=['GET', 'POST'])
 @login_required
-@admin_required
 def data_entry():
     if request.method == 'POST':
         tx_type = request.form.get('transaction_type')
@@ -199,8 +242,10 @@ def data_entry():
             source_id = request.form.get('manufacturer_id')
             target_id = None # Production adds to source stock
         elif tx_type == 'transfer':
-            source_id = request.form.get('source_id')
-            target_id = request.form.get('target_id')
+            # Check for multiple possible source fields based on tab
+            source_id = request.form.get('manufacturer_id') or request.form.get('household_id') or request.form.get('source_id')
+            # Check for multiple possible target fields based on tab
+            target_id = request.form.get('target_id_supply') or request.form.get('return_target_id') or request.form.get('target_id')
         elif tx_type == 'return':
             source_id = request.form.get('household_id')
             target_id = request.form.get('return_target_id')
@@ -280,8 +325,19 @@ def data_entry():
     if products_response and products_response.status_code == 200:
         products = products_response.json().get('data', [])
 
+    # Identify current user's account if they are not admin
+    current_account = None
+    if session.get('user', {}).get('role') != 'admin':
+        # Try to match user email or name with accounts
+        user_email = session.get('user', {}).get('email')
+        for acc in all_accounts:
+            if acc.get('email') == user_email or acc.get('name') == session.get('user', {}).get('name'):
+                current_account = acc
+                break
+
     return render_template('data_entry.html', 
                            user=session.get('user'),
+                           current_account=current_account,
                            manufacturers=manufacturers,
                            distributors=distributors,
                            households=households,
