@@ -58,3 +58,35 @@ function validateForm(formId) {
 // Export functions for global use
 window.apiCall = apiCall;
 window.validateForm = validateForm;
+
+// Mobile Sidebar Toggle Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const closeBtn = document.getElementById('mobile-menu-close');
+
+    if (sidebar && toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('flex', 'w-full'); // Fill screen on mobile
+        });
+    }
+
+    if (sidebar && closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.add('hidden');
+            sidebar.classList.remove('flex', 'w-full');
+        });
+    }
+
+    // Close sidebar when clicking on a link (for mobile)
+    const sidebarLinks = sidebar ? sidebar.querySelectorAll('nav a') : [];
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth < 1024) { // lg breakpoint
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex', 'w-full');
+            }
+        });
+    });
+});
