@@ -1,6 +1,7 @@
 FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
+# Cache bust: 2026-01-06
 
 # Copy backend go.mod from the backend directory
 COPY backend/go.mod ./
