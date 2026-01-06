@@ -1,7 +1,8 @@
 FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
-# Cache bust: 2026-01-06
+# Cache bust: 2026-01-06-Try2
+RUN echo "Force rebuild 2026-01-06-Try2"
 
 # Copy backend go.mod from the backend directory
 COPY backend/go.mod ./
