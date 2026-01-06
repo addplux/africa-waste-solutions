@@ -25,21 +25,21 @@ func GetUserStats(c *fiber.Ctx) error {
 
 	// Fetch entries for this account
 	var entries []models.Entry
-	models.DB.Where("account_id = ? OR target_account_id = ?", account.ID, account.ID).Find(&entries)
+	models.DB.Where("source_account_id = ? OR target_account_id = ?", account.ID, account.ID).Find(&entries)
 
 	var supply, distributed, returned int64
 	for _, e := range entries {
 		total := int64(e.Unit) + int64(e.Case)*24 + int64(e.Dozen)*12 + int64(e.Series) + int64(e.HalfDozen)*6
 
-		if e.TransactionType == "supply" && e.AccountID == account.ID {
+		if e.TransactionType == "supply" && e.SourceAccountID == account.ID {
 			supply += total
 		} else if e.TransactionType == "transfer" {
-			if e.AccountID == account.ID {
+			if e.SourceAccountID == account.ID {
 				distributed += total
 			} else if e.TargetAccountID != nil && *e.TargetAccountID == account.ID {
 				supply += total // Received stock
 			}
-		} else if e.TransactionType == "return" && e.AccountID == account.ID {
+		} else if e.TransactionType == "return" && e.SourceAccountID == account.ID {
 			returned += total
 		}
 	}
