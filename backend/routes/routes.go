@@ -30,6 +30,7 @@ func Setup(app *fiber.App) {
 	accounts.Post("/", controllers.CreateAccount)
 	accounts.Get("/", controllers.GetAccounts)
 	accounts.Post("/:id/block", controllers.BlockAccount)
+	accounts.Put("/:id/kyc", controllers.UpdateKYCStatus)
 	accounts.Delete("/:id", controllers.DeleteAccount)
 
 	// Entries

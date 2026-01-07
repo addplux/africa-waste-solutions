@@ -305,6 +305,50 @@
         rejectionDiv.classList.toggle('hidden');
     }
 
+    async function updateStatus(status, reason = "") {
+        if (!currentAppId) return;
+
+        try {
+            const response = await fetch(`/kyc/update/${currentAppId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status, reason: reason })
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                alert(`Application ${status} successfully!`);
+                window.location.reload(); // Refresh to update lists
+            } else {
+                alert('Error updating status: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while communicating with the server.');
+        }
+    }
+
+    function approveKYC() {
+        if (confirm("Are you sure you want to APPROVE this application?")) {
+            updateStatus('approved');
+        }
+    }
+
+    function rejectKYC() {
+        const reason = document.querySelector('#rejectionReason textarea').value;
+        if (!reason.trim()) {
+            alert("Please provide a rejection reason.");
+            return;
+        }
+
+        if (confirm("Are you sure you want to REJECT this application?")) {
+            updateStatus('rejected', reason);
+        }
+    }
+
     // Initialize with first item if exists
     if (applications.length > 0) {
         loadApplication(0);

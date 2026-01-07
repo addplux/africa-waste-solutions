@@ -48,3 +48,29 @@ func DeleteAccount(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"status": "success", "message": "Account deleted successfully"})
 }
+
+type KYCUpdateInput struct {
+	Status string `json:"status"`
+	Reason string `json:"reason,omitempty"`
+}
+
+func UpdateKYCStatus(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var input KYCUpdateInput
+
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid input"})
+	}
+
+	var account models.Account
+	if result := models.DB.First(&account, "id = ?", id); result.Error != nil {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Account not found"})
+	}
+
+	account.KYCStatus = input.Status
+	// If you had a RejectionReason field in model, you'd save input.Reason too
+
+	models.DB.Save(&account)
+
+	return c.JSON(fiber.Map{"status": "success", "message": "KYC status updated", "data": account})
+}
