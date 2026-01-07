@@ -473,8 +473,37 @@ def get_insights():
 @app.route('/kyc')
 @login_required
 def kyc():
-    # TODO: Fetch KYC data from Go backend
-    return render_template('kyc.html', user=session.get('user'))
+    # Fetch all accounts from backend
+    all_accounts = []
+    response = api_call('accounts', method='GET')
+    if response and response.status_code == 200:
+        all_accounts = response.json().get('data', [])
+
+    # Filter and Stats
+    pending_apps = []
+    
+    stats = {
+        'pending': 0,
+        'approved_today': 0, # Since we don't have kyc_date, this might just be 0 for now or total approved
+        'rejected_today': 0,
+        'total_verified': 0
+    }
+
+    for acc in all_accounts:
+        k_status = acc.get('kyc_status', 'pending').lower()
+        
+        if k_status == 'pending':
+            stats['pending'] += 1
+            pending_apps.append(acc)
+        elif k_status == 'approved':
+            stats['total_verified'] += 1
+        elif k_status == 'rejected':
+            stats['rejected_today'] += 1 # Treating as total rejected for now as we lack timestamp for kyc action
+
+    # Sort pending apps by creation date (newest first)
+    pending_apps.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+
+    return render_template('kyc.html', user=session.get('user'), stats=stats, pending_apps=pending_apps)
 
 if __name__ == '__main__':
     # Ensure upload folder exists

@@ -19,7 +19,7 @@
                 <div class="flex items-center gap-3">
                     <div class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold">
                         <i class="fas fa-clock mr-2"></i>
-                        23 Pending Reviews
+                        <p class="font-bold">{{ stats.pending }} Pending Reviews</p>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-600 text-sm font-semibold">Pending</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">23</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.pending }}</p>
                         </div>
                         <div class="bg-yellow-100 rounded-full p-4">
                             <i class="fas fa-clock text-yellow-600 text-2xl"></i>
@@ -45,7 +45,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-600 text-sm font-semibold">Approved Today</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">8</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.approved_today }}</p>
                         </div>
                         <div class="bg-green-100 rounded-full p-4">
                             <i class="fas fa-check-circle text-green-600 text-2xl"></i>
@@ -57,7 +57,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-600 text-sm font-semibold">Rejected Today</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">2</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.rejected_today }}</p>
                         </div>
                         <div class="bg-red-100 rounded-full p-4">
                             <i class="fas fa-times-circle text-red-600 text-2xl"></i>
@@ -69,7 +69,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-600 text-sm font-semibold">Total Verified</p>
-                            <p class="text-3xl font-bold text-gray-900 mt-2">1,089</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2">{{ stats.total_verified }}</p>
                         </div>
                         <div class="bg-blue-100 rounded-full p-4">
                             <i class="fas fa-id-card text-blue-600 text-2xl"></i>
@@ -84,257 +84,220 @@
                 <div class="lg:col-span-1">
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4">Pending Applications</h3>
-                        <div class="space-y-3 max-h-[600px] overflow-y-auto">
-                            <!-- Application 1 - Active -->
-                            <div class="p-4 bg-blue-50 border-2 border-blue-600 rounded-lg cursor-pointer"
-                                onclick="loadApplication(1)">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                                            JS
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Jane Smith</p>
-                                            <p class="text-xs text-gray-500">Consumer</p>
-                                        </div>
+                        {% for app in pending_apps %}
+                        <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors application-item"
+                            id="app-item-{{ loop.index0 }}" onclick="loadApplication({{ loop.index0 }})">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold uppercase">
+                                        {{ app.name[:2] }}
                                     </div>
-                                    <span class="text-xs text-gray-500">2h ago</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Plot 789, Roma</p>
-                            </div>
-
-                            <!-- Application 2 -->
-                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onclick="loadApplication(2)">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
-                                            TL
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Tech Ltd</p>
-                                            <p class="text-xs text-gray-500">Business</p>
-                                        </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 truncate max-w-[120px]">{{ app.name }}
+                                        </p>
+                                        <p class="text-xs text-gray-500 capitalize">{{ app.account_type }}</p>
                                     </div>
-                                    <span class="text-xs text-gray-500">5h ago</span>
                                 </div>
-                                <p class="text-xs text-gray-600">Plot 234, Industrial</p>
+                                <span class="text-xs text-gray-500">{{ app.created_at[:10] }}</span>
                             </div>
-
-                            <!-- Application 3 -->
-                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onclick="loadApplication(3)">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                                            MB
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Michael Brown</p>
-                                            <p class="text-xs text-gray-500">Consumer</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-gray-500">1d ago</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Plot 555, Olympia</p>
-                            </div>
-
-                            <!-- Application 4 -->
-                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onclick="loadApplication(4)">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold">
-                                            GG
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Green Grocers</p>
-                                            <p class="text-xs text-gray-500">Business</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-gray-500">2d ago</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Plot 321, Woodlands</p>
-                            </div>
-
-                            <!-- Application 5 -->
-                            <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                onclick="loadApplication(5)">
-                                <div class="flex items-start justify-between mb-2">
-                                    <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                                            SA
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Sarah Anderson</p>
-                                            <p class="text-xs text-gray-500">Consumer</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-gray-500">3d ago</span>
-                                </div>
-                                <p class="text-xs text-gray-600">Plot 678, Chelston</p>
-                            </div>
+                            <p class="text-xs text-gray-600 truncate">Plot {{ app.plot_number }}, {{ app.area }}</p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Document Review Panel -->
-                <div class="lg:col-span-2">
-                    <div class="bg-white rounded-xl shadow-md p-8">
-                        <div class="mb-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">Jane Smith</h2>
-                                    <p class="text-gray-600">Consumer Account - Plot 789, Roma</p>
-                                </div>
-                                <span class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold text-sm">
-                                    <i class="fas fa-clock mr-2"></i>
-                                    Pending Review
-                                </span>
-                            </div>
+                        {% else %}
+                        <div class="p-8 text-center text-gray-500">
+                            <i class="fas fa-check-circle text-4xl text-green-200 mb-3"></i>
+                            <p>All caught up! No pending reviews.</p>
                         </div>
-
-                        <!-- Application Details -->
-                        <div class="grid grid-cols-2 gap-6 mb-8 p-6 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Full Name</p>
-                                <p class="font-semibold text-gray-900">Jane Smith</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Contact Number</p>
-                                <p class="font-semibold text-gray-900">+260 977 123 456</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Plot Number</p>
-                                <p class="font-semibold text-gray-900">789</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Area</p>
-                                <p class="font-semibold text-gray-900">Roma, Lusaka</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Account Type</p>
-                                <p class="font-semibold text-gray-900">Consumer</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-600 mb-1">Submitted</p>
-                                <p class="font-semibold text-gray-900">2 hours ago</p>
-                            </div>
-                        </div>
-
-                        <!-- Documents -->
-                        <div class="mb-8">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Identity Documents</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- ID Document -->
-                                <div class="border-2 border-gray-200 rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h4 class="font-semibold text-gray-900">ID Document</h4>
-                                        <button onclick="viewFullscreen('id')"
-                                            class="text-blue-600 hover:text-blue-700 text-sm">
-                                            <i class="fas fa-expand mr-1"></i>
-                                            Expand
-                                        </button>
-                                    </div>
-                                    <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-                                        <div class="text-center">
-                                            <i class="fas fa-id-card text-gray-400 text-6xl mb-3"></i>
-                                            <p class="text-sm text-gray-600">National Registration Card</p>
-                                            <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Selfie -->
-                                <div class="border-2 border-gray-200 rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h4 class="font-semibold text-gray-900">Liveness Check (Selfie)</h4>
-                                        <button onclick="viewFullscreen('selfie')"
-                                            class="text-blue-600 hover:text-blue-700 text-sm">
-                                            <i class="fas fa-expand mr-1"></i>
-                                            Expand
-                                        </button>
-                                    </div>
-                                    <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-                                        <div class="text-center">
-                                            <i class="fas fa-user-circle text-gray-400 text-6xl mb-3"></i>
-                                            <p class="text-sm text-gray-600">Selfie Photo</p>
-                                            <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Verification Checklist -->
-                        <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                            <h3 class="text-lg font-bold text-gray-900 mb-4">Verification Checklist</h3>
-                            <div class="space-y-3">
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                                    <span class="text-gray-700">ID document is clear and readable</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                                    <span class="text-gray-700">ID document appears authentic (no signs of
-                                        tampering)</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                                    <span class="text-gray-700">Selfie matches ID photo</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                                    <span class="text-gray-700">Personal details match application</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
-                                    <span class="text-gray-700">ID document is not expired</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Rejection Reason (Hidden by default) -->
-                        <div id="rejectionReason" class="mb-8 hidden">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Rejection Reason <span class="text-red-500">*</span>
-                            </label>
-                            <textarea rows="4" placeholder="Please provide a detailed reason for rejection..."
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-all text-gray-900 resize-none"></textarea>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex gap-4">
-                            <button onclick="approveKYC()"
-                                class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                <i class="fas fa-check-circle mr-2"></i>
-                                Approve Application
-                            </button>
-                            <button onclick="toggleRejection()"
-                                class="flex-1 bg-red-700 hover:bg-red-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
-                                <i class="fas fa-times-circle mr-2"></i>
-                                Reject Application
-                            </button>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </main>
+
+            <!-- Document Review Panel -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-md p-8 relative">
+                    <!-- EMPTY STATE OVERLAY -->
+                    <div id="empty-state"
+                        class="absolute inset-0 bg-white z-10 flex flex-col items-center justify-center rounded-xl {% if pending_apps %}hidden{% endif %}">
+                        <i class="fas fa-clipboard-check text-gray-300 text-6xl mb-4"></i>
+                        <p class="text-gray-500 font-bold">Select an application to review details</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900" id="detail-name">...</h2>
+                                <p class="text-gray-600" id="detail-sub">...</p>
+                            </div>
+                            <span class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-semibold text-sm">
+                                <i class="fas fa-clock mr-2"></i>
+                                Pending Review
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Application Details -->
+                    <div class="grid grid-cols-2 gap-6 mb-8 p-6 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Full Name</p>
+                            <p class="font-semibold text-gray-900" id="field-name">...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Contact Number</p>
+                            <p class="font-semibold text-gray-900" id="field-contact">...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Plot Number</p>
+                            <p class="font-semibold text-gray-900" id="field-plot">...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Area</p>
+                            <p class="font-semibold text-gray-900" id="field-area">...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Account Type</p>
+                            <p class="font-semibold text-gray-900 capitalize" id="field-type">...</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 mb-1">Submitted</p>
+                            <p class="font-semibold text-gray-900" id="field-date">...</p>
+                        </div>
+                    </div>
+
+                    <!-- Documents -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Identity Documents</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- ID Document -->
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">ID Document</h4>
+                                    <button onclick="viewFullscreen('id')"
+                                        class="text-blue-600 hover:text-blue-700 text-sm">
+                                        <i class="fas fa-expand mr-1"></i>
+                                        Expand
+                                    </button>
+                                </div>
+                                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-id-card text-gray-400 text-6xl mb-3"></i>
+                                        <p class="text-sm text-gray-600">National Registration Card</p>
+                                        <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selfie -->
+                            <div class="border-2 border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h4 class="font-semibold text-gray-900">Liveness Check (Selfie)</h4>
+                                    <button onclick="viewFullscreen('selfie')"
+                                        class="text-blue-600 hover:text-blue-700 text-sm">
+                                        <i class="fas fa-expand mr-1"></i>
+                                        Expand
+                                    </button>
+                                </div>
+                                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <i class="fas fa-user-circle text-gray-400 text-6xl mb-3"></i>
+                                        <p class="text-sm text-gray-600">Selfie Photo</p>
+                                        <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verification Checklist -->
+                    <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">Verification Checklist</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-700">ID document is clear and readable</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-700">ID document appears authentic (no signs of
+                                    tampering)</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-700">Selfie matches ID photo</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-700">Personal details match application</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500">
+                                <span class="text-gray-700">ID document is not expired</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Rejection Reason (Hidden by default) -->
+                    <div id="rejectionReason" class="mb-8 hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Rejection Reason <span class="text-red-500">*</span>
+                        </label>
+                        <textarea rows="4" placeholder="Please provide a detailed reason for rejection..."
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition-all text-gray-900 resize-none"></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button onclick="approveKYC()"
+                            class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Approve Application
+                        </button>
+                        <button onclick="toggleRejection()"
+                            class="flex-1 bg-red-700 hover:bg-red-800 text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            Reject Application
+                        </button>
+                    </div>
+                </div>
+            </div>
     </div>
+    </main>
+</div>
 </div>
 
 <script>
-    function loadApplication(id) {
-        alert('Loading application #' + id);
-    }
+    // DYNAMIC DATA FROM BACKEND
+    const applications = {{ pending_apps | tojson }};
+    let currentAppId = null;
 
-    function viewFullscreen(type) {
-        alert('Viewing ' + type + ' in fullscreen');
+    function loadApplication(index) {
+        const app = applications[index];
+        if (!app) return;
+
+        currentAppId = app.id;
+
+        // Update UI Fields
+        document.getElementById('detail-name').innerText = app.name;
+        document.getElementById('detail-sub').innerText = `${app.account_type.toUpperCase()} - Plot ${app.plot_number}, ${app.area}`;
+
+        document.getElementById('field-name').innerText = app.name;
+        document.getElementById('field-contact').innerText = app.contact;
+        document.getElementById('field-plot').innerText = app.plot_number;
+        document.getElementById('field-area').innerText = app.area;
+        document.getElementById('field-type').innerText = app.account_type;
+        document.getElementById('field-date').innerText = app.created_at.substring(0, 10);
+
+        // Hide Empty State
+        document.getElementById('empty-state').classList.add('hidden');
+
+        // Update Active Selection Style
+        document.querySelectorAll('.application-item').forEach(el => {
+            el.className = "p-4 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors application-item";
+        });
+        const activeItem = document.getElementById(`app-item-${index}`);
+        if (activeItem) {
+            activeItem.className = "p-4 bg-blue-50 border-2 border-blue-600 rounded-lg cursor-pointer application-item";
+        }
     }
 
     function toggleRejection() {
@@ -342,11 +305,9 @@
         rejectionDiv.classList.toggle('hidden');
     }
 
-    function approveKYC() {
-        if (confirm('Are you sure you want to approve this KYC application?')) {
-            alert('KYC Application Approved! ✓');
-            // TODO: Send approval to backend
-        }
+    // Initialize with first item if exists
+    if (applications.length > 0) {
+        loadApplication(0);
     }
 </script>
 {% endblock %}
