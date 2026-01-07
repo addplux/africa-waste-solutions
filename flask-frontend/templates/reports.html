@@ -30,7 +30,8 @@
                     <div class="text-right">
                         <p class="text-xs font-bold text-gray-950 leading-none">{{ session.get('user', {}).get('name',
                             'Admin') }}</p>
-                        <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">System Admin</p>
+                        <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-tighter">{{ session.get('user',
+                            {}).get('role', 'User')|title }}</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
@@ -303,9 +304,9 @@
     new Chart(catCtx, {
         type: 'doughnut',
         data: {
-            labels: catLabels.length ? catLabels : ['Awaiting Data'],
+            labels: catLabels,
             datasets: [{
-                data: catValues.length ? catValues : [1],
+                data: catValues,
                 backgroundColor: [
                     '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD',
                     '#BFDBFE', '#DBEAFE', '#EFF6FF'
