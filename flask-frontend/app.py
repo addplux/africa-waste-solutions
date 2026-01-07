@@ -226,7 +226,26 @@ def accounts():
     if response and response.status_code == 200:
         accounts_list = response.json().get('data', [])
     
-    return render_template('accounts.html', user=session.get('user'), accounts=accounts_list)
+    # Calculate Real-time Stats
+    stats = {
+        'total': len(accounts_list),
+        'active': 0,
+        'pending_kyc': 0,
+        'suspended': 0
+    }
+    
+    for acc in accounts_list:
+        status = acc.get('status', 'active').lower()
+        kyc = acc.get('kyc_status', 'approved').lower()
+        
+        if status == 'blocked':
+            stats['suspended'] += 1
+        elif kyc == 'pending':
+            stats['pending_kyc'] += 1
+        else:
+            stats['active'] += 1
+
+    return render_template('accounts.html', user=session.get('user'), accounts=accounts_list, stats=stats)
 
 @app.route('/data-entry', methods=['GET', 'POST'])
 @login_required
