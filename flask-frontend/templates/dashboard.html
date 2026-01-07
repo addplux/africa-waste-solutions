@@ -19,7 +19,7 @@
                 <div class="flex items-center gap-4">
                     <div class="text-right">
                         <p class="text-sm text-gray-600">Last Login</p>
-                        <p class="font-semibold text-gray-900">Today, 9:30 AM</p>
+                        <p class="font-semibold text-gray-900">{{ session.get('login_time', 'Just now') }}</p>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Total Ecosystem Nodes
                         </p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">1,234</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ admin_stats.total_accounts }}</p>
                         <p class="text-xs font-bold text-blue-600 mt-2">Active Participants</p>
                     </div>
                 </div>
@@ -75,8 +75,8 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Global Recovery</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">45.2 <span
-                                class="text-xl font-bold text-gray-400">T</span></p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(admin_stats.global_recovery)
+                            }} <span class="text-xl font-bold text-gray-400">T</span></p>
                         <p class="text-xs font-bold text-green-600 mt-2">Total System Output</p>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">KYC Queue</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">23</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ admin_stats.pending_kyc }}</p>
                         <p class="text-xs font-bold text-yellow-600 mt-2">Awaiting Verification</p>
                     </div>
                 </div>
@@ -213,49 +213,26 @@
                         </button>
                     </div>
                     <div class="p-4">
-                        <div class="space-y-2">
-                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
-                                <div
-                                    class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-bold text-gray-900">New Account Created</p>
-                                    <p class="text-sm text-gray-500">John Doe • Lusaka Region • Consumer</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-gray-400">2 MINUTES AGO</span>
-                                </div>
+                        {% for activity in recent_activity %}
+                        <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
+                            <div
+                                class="w-12 h-12 bg-{{ activity.color or 'blue' }}-100 rounded-full flex items-center justify-center text-{{ activity.color or 'blue' }}-600 group-hover:scale-110 transition-transform">
+                                <i class="fas {{ activity.icon }}"></i>
                             </div>
-
-                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
-                                <div
-                                    class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                                    <i class="fas fa-truck-loading"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-bold text-gray-900">Waste Collection Logged</p>
-                                    <p class="text-sm text-gray-500">Plot 123, Kabulonga • 250kg Recovered</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-gray-400">15 MINUTES AGO</span>
-                                </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-gray-900">{{ activity.title }}</p>
+                                <p class="text-sm text-gray-500">{{ activity.subtitle }}</p>
                             </div>
-
-                            <div class="group flex items-center gap-6 p-4 rounded-2xl hover:bg-gray-50 transition-all">
-                                <div
-                                    class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
-                                    <i class="fas fa-verified"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-bold text-gray-900">KYC Verification Completed</p>
-                                    <p class="text-sm text-gray-500">Greenway Logistics • Manufacturer Account</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xs font-bold text-gray-400">1 HOUR AGO</span>
-                                </div>
+                            <div class="text-right">
+                                <span class="text-xs font-bold text-gray-400 uppercase">{{ activity.time_ago }}</span>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="p-8 text-center text-gray-500">
+                            <i class="fas fa-stream text-4xl text-gray-200 mb-3"></i>
+                            <p>No recent activity stream.</p>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 

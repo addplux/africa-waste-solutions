@@ -5,6 +5,8 @@ import os
 from werkzeug.utils import secure_filename
 from functools import wraps
 
+from datetime import datetime
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -77,6 +79,7 @@ def login():
             data = response.json()
             session['user'] = data['user']
             session['token'] = data['token']
+            session['login_time'] = datetime.now().strftime("%I:%M %p, %d %b %Y")
             session['details_confirmed'] = False # Reset confirmation on login
             flash(f"Welcome back, {session['user']['name']}!", 'success')
             
@@ -178,6 +181,7 @@ def account_creation():
                 if 'token' in resp_data:
                     session['user'] = resp_data['user']
                     session['token'] = resp_data['token']
+                    session['login_time'] = datetime.now().strftime("%I:%M %p, %d %b %Y")  # Store formatted login time
                     flash(f"Account created! Welcome, {session['user']['name']}.", 'success')
                     return redirect(url_for('dashboard'))
                 else:
@@ -201,7 +205,7 @@ def dashboard():
     if session.get('user', {}).get('role') != 'admin' and not session.get('details_confirmed'):
         return redirect(url_for('confirm_details'))
 
-    # Fetch personalized stats from Go Backend
+    # Fetch personalized stats from Go Backend (for all users)
     user_stats = {
         'supply_received': 0,
         'distributed': 0,
@@ -215,7 +219,104 @@ def dashboard():
     if response and response.status_code == 200:
         user_stats = response.json().get('data', user_stats)
 
-    return render_template('dashboard.html', user=session.get('user'), stats=user_stats)
+    # ADMIN SPECIFIC REAL-TIME DATA
+    admin_stats = {}
+    recent_activity = []
+
+    if session.get('user', {}).get('role') == 'admin':
+        # 1. Fetch Report Stats for "Global Recovery" and "Distributed"
+        rep_resp = api_call('reports/stats', method='GET')
+        rep_data = {}
+        if rep_resp and rep_resp.status_code == 200:
+            rep_data = rep_resp.json().get('data', {})
+        
+        # 2. Fetch Accounts for "Total Nodes" and "KYC Queue"
+        acc_resp = api_call('accounts', method='GET')
+        all_accounts = []
+        if acc_resp and acc_resp.status_code == 200:
+            all_accounts = acc_resp.json().get('data', [])
+        
+        # Calculate Admin KPI Stats
+        admin_stats['total_accounts'] = len(all_accounts)
+        admin_stats['pending_kyc'] = len([a for a in all_accounts if a.get('kyc_status') == 'pending'])
+        admin_stats['global_recovery'] = rep_data.get('returned', 0)
+        admin_stats['node_status'] = "100%" # Placeholder for now, or calc active/total
+
+        # 3. Build Recent Activity Stream
+        # Fetch Entries
+        ent_resp = api_call('entries', method='GET')
+        all_entries = []
+        if ent_resp and ent_resp.status_code == 200:
+            all_entries = ent_resp.json().get('data', [])
+
+        # Combine Accounts (New Signups) and Entries (Transactions)
+        # We need to normalize them to: {type, title, subtitle, time, icon, color}
+        
+        for acc in all_accounts:
+            recent_activity.append({
+                'raw_date': acc.get('created_at', ''),
+                'title': 'New Account Created',
+                'subtitle': f"{acc.get('name', 'Unknown')} • {acc.get('account_type', 'User')} • {acc.get('area', 'N/A')}",
+                'icon': 'fa-user-plus',
+                'color': 'green'
+            })
+            
+        for ent in all_entries:
+            e_type = ent.get('transaction_type', 'log')
+            title = "Transaction Logged"
+            icon = "fa-exchange-alt"
+            color = "blue"
+            
+            if e_type == 'supply':
+                 title = "Production Recorded"
+                 icon = "fa-industry"
+                 color = "indigo"
+            elif e_type == 'return':
+                 title = "Waste Recovery"
+                 icon = "fa-recycle"
+                 color = "green"
+            elif e_type == 'transfer':
+                 title = "Stock Transfer"
+                 icon = "fa-truck"
+                 color = "blue"
+
+            qty = ent.get('unit', 0) # Simplified display
+            group = ent.get('product_group', 'General')
+            
+            recent_activity.append({
+                'raw_date': ent.get('created_at', ''),
+                'title': title,
+                'subtitle': f"{group} • {qty} Units",
+                'icon': icon,
+                'color': color
+            })
+
+        # Sort by date descending (newest first)
+        recent_activity.sort(key=lambda x: x['raw_date'], reverse=True)
+        # Take top 10
+        recent_activity = recent_activity[:10]
+
+        # Calculate "Ago" time
+        now = datetime.now()
+        for item in recent_activity:
+            try:
+                # Go time format ex: 2024-12-12T10:00:00.000Z
+                dt = datetime.strptime(item['raw_date'].split('.')[0], "%Y-%m-%dT%H:%M:%S")
+                diff = now - dt
+                seconds = diff.total_seconds()
+                
+                if seconds < 60:
+                    item['time_ago'] = "JUST NOW"
+                elif seconds < 3600:
+                    item['time_ago'] = f"{int(seconds // 60)} MIN AGO"
+                elif seconds < 86400:
+                    item['time_ago'] = f"{int(seconds // 3600)} HOURS AGO"
+                else:
+                    item['time_ago'] = f"{int(seconds // 86400)} DAYS AGO"
+            except:
+                item['time_ago'] = "RECENTLY"
+
+    return render_template('dashboard.html', user=session.get('user'), stats=user_stats, admin_stats=admin_stats, recent_activity=recent_activity)
 
 @app.route('/accounts')
 @login_required
