@@ -206,26 +206,19 @@
                 <!-- Pagination -->
                 <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                     <p class="text-sm text-gray-600">Showing <span class="font-semibold">1-{{ stats.total }}</span> of
-                        <span class="font-semibold">{{ stats.total }}</span> accounts</p>
+                        <span class="font-semibold">{{ stats.total }}</span> accounts
+                    </p>
                     <div class="flex gap-2">
-                        <button
-                            class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700">
+                        <button disabled
+                            class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-400 cursor-not-allowed">
                             Previous
                         </button>
                         <button
                             class="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-semibold">
                             1
                         </button>
-                        <button
-                            class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700">
-                            2
-                        </button>
-                        <button
-                            class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700">
-                            3
-                        </button>
-                        <button
-                            class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold text-gray-700">
+                        <button disabled
+                            class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-400 cursor-not-allowed">
                             Next
                         </button>
                     </div>
