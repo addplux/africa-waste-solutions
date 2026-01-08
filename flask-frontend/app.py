@@ -377,13 +377,19 @@ def data_entry():
             source_id = request.form.get('household_id')
             target_id = request.form.get('return_target_id')
 
+        # Normalize empty strings to None (for UUID unmarshaling in Go)
+        if not source_id or not source_id.strip():
+            source_id = None
+        if not target_id or not target_id.strip():
+            target_id = None
+
         # Clean integer inputs
         def get_int(key):
             try:
                 val = request.form.get(key)
                 if val and val.strip():
                     return int(val)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
             return 0
 
