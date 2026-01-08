@@ -7,6 +7,39 @@
     <!-- Sidebar -->
     {% include 'components/sidebar.html' %}
 
+    <style>
+        .product-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-top: 0.25rem;
+            max-height: 240px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-item {
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f9fafb;
+        }
+
+        .product-item:hover {
+            background: #f0f7ff;
+            color: #1d4ed8;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+
     <!-- Main Content -->
     <div class="flex-1 overflow-auto flex flex-col pt-16 lg:pt-0">
         <!-- Header -->
@@ -174,18 +207,21 @@
                                 <span class="text-xs text-gray-400">Waste Control List (Batch 1)</span>
                             </div>
 
-                            <div>
+                            <div class="relative">
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                                     Product / Package Name <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" name="product_name" list="product_list" required autocomplete="off"
-                                    placeholder="Start typing to select from items list..."
-                                    class="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm text-lg text-gray-800 placeholder-gray-400">
-                                <datalist id="product_list">
-                                    {% for p in products %}
-                                    <option value="{{ p }}">
+                                <div class="relative" id="product-search-container">
+                                    <input type="text" name="product_name" id="product_input" required
+                                        autocomplete="off" placeholder="Start typing to select item..."
+                                        onfocus="showProducts()" oninput="filterProducts(this.value)"
+                                        class="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm text-lg text-gray-800 placeholder-gray-400">
+                                    <div id="product-list-dropdown" class="product-dropdown hidden">
+                                        {% for p in products %}
+                                        <div class="product-item" onclick="selectProduct('{{ p }}')">{{ p }}</div>
                                         {% endfor %}
-                                </datalist>
+                                    </div>
+                                </div>
                                 <input type="hidden" name="product_group" value="Waste Control">
                             </div>
 
@@ -395,6 +431,52 @@
 
     // Init
     switchTab('supply');
+
+    // Product Search Logic
+    const fullProductList = {{ products| tojson }};
+
+    function showProducts() {
+        const dropdown = document.getElementById('product-list-dropdown');
+        dropdown.classList.remove('hidden');
+    }
+
+    function filterProducts(query) {
+        const dropdown = document.getElementById('product-list-dropdown');
+        const q = query.toLowerCase().trim();
+
+        // Clear current items
+        dropdown.innerHTML = '';
+
+        // Filter list
+        const filtered = fullProductList.filter(p => p.toLowerCase().includes(q));
+
+        if (filtered.length === 0) {
+            dropdown.innerHTML = '<div class="p-4 text-gray-400 italic text-center">No matching products</div>';
+        } else {
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'product-item';
+                div.textContent = p;
+                div.onclick = () => selectProduct(p);
+                dropdown.appendChild(div);
+            });
+        }
+        dropdown.classList.remove('hidden');
+    }
+
+    function selectProduct(name) {
+        document.getElementById('product_input').value = name;
+        document.getElementById('product-list-dropdown').classList.add('hidden');
+    }
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+        const container = document.getElementById('product-search-container');
+        const dropdown = document.getElementById('product-list-dropdown');
+        if (container && !container.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
 
     // Command Keys (Keyboard Shortcuts)
     document.addEventListener('keydown', (e) => {
