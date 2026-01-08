@@ -369,10 +369,8 @@ def data_entry():
             source_id = request.form.get('manufacturer_id')
             target_id = None # Production adds to source stock
         elif tx_type == 'transfer':
-            # Check for multiple possible source fields based on tab
-            source_id = request.form.get('manufacturer_id') or request.form.get('household_id') or request.form.get('source_id')
-            # Check for multiple possible target fields based on tab
-            target_id = request.form.get('target_id_supply') or request.form.get('return_target_id') or request.form.get('target_id')
+            source_id = request.form.get('transfer_source_id')
+            target_id = request.form.get('transfer_target_id')
         elif tx_type == 'return':
             source_id = request.form.get('household_id')
             target_id = None # Leaving the market as waste

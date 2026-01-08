@@ -28,12 +28,15 @@
                 <div class="flex border-b border-gray-100">
                     <button onclick="switchTab('supply')" id="tab-supply"
                         class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all border-b-2 border-transparent">
-                        <i class="fas fa-boxes mr-2"></i>1. Supply & Transfer (Manufacturer)
+                        <i class="fas fa-boxes mr-2"></i>1. Supply (Enter Market)
                     </button>
-                    <!-- Tab 2 removed as requested -->
+                    <button onclick="switchTab('transfer')" id="tab-transfer"
+                        class="flex-1 py-5 text-center font-bold text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all border-b-2 border-transparent">
+                        <i class="fas fa-exchange-alt mr-2"></i>2. Transfer (Movement)
+                    </button>
                     <button onclick="switchTab('return')" id="tab-return"
                         class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all border-b-2 border-transparent">
-                        <i class="fas fa-recycle mr-2"></i>2. Waste Return & Transfer
+                        <i class="fas fa-recycle mr-2"></i>3. Return (Leave Market)
                     </button>
                 </div>
 
@@ -45,18 +48,17 @@
                     <!-- CONTENT AREA -->
                     <div class="flex-1">
 
-                        <!-- TAB 1: SUPPLY (MANUFACTURER) -->
+                        <!-- TAB 1: SUPPLY -->
                         <div id="content-supply" class="space-y-6 tab-content">
                             <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 text-sm mb-6">
                                 <i class="fas fa-info-circle mr-2"></i> Record items <strong>entering the
                                     market</strong> as supply.
                             </div>
 
-                            <!-- Source: Manufacturer -->
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Manufacturer
-                                    Account</label>
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Supply
+                                    Source (Manufacturer)</label>
                                 {% if current_account and current_account.account_type == 'manufacturer' %}
                                 <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-4">
                                     <i class="fas fa-industry text-blue-600 text-xl"></i>
@@ -66,14 +68,6 @@
                                     <input type="hidden" name="manufacturer_id" value="{{ current_account.id }}">
                                 </div>
                                 {% else %}
-                                {% if user.role != 'admin' %}
-                                <div
-                                    class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-800 text-sm mb-4">
-                                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                                    <strong>Account Link Missing:</strong> We couldn't find a Manufacturer profile
-                                    linked to your user account. Please select your account manually or contact support.
-                                </div>
-                                {% endif %}
                                 <select name="manufacturer_id" id="manufacturer_select"
                                     class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500 transition-all">
                                     <option value="">Select Manufacturer...</option>
@@ -83,77 +77,91 @@
                                 </select>
                                 {% endif %}
                             </div>
+                        </div>
 
-                            <!-- Transfer Target (Shown for Transfer) -->
-                            <div id="transfer-target-supply" class="hidden animate-fade-in-up">
-                                <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
-                                    Distributor</label>
-                                <select name="target_id_supply" id="target_id_supply"
-                                    class="w-full p-4 bg-gray-50 border border-purple-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
-                                    <option value="">Select Destination Distributor...</option>
-                                    {% for dist in distributors %}
-                                    <option value="{{ dist.id }}">{{ dist.name }}</option>
-                                    {% endfor %}
-                                </select>
+                        <!-- TAB 2: TRANSFER -->
+                        <div id="content-transfer" class="hidden space-y-6 tab-content">
+                            <div
+                                class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-purple-800 text-sm mb-6">
+                                <i class="fas fa-truck-moving mr-2"></i> Move data between ecosystem nodes (e.g.,
+                                Manufacturer to Retailer).
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Source
+                                        (From)</label>
+                                    <select name="transfer_source_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Source...</option>
+                                        {% if current_account %}
+                                        <option value="{{ current_account.id }}" selected>My Account: {{
+                                            current_account.name }}</option>
+                                        {% endif %}
+                                        <optgroup label="Manufacturers">
+                                            {% for m in manufacturers %}
+                                            <option value="{{ m.id }}">{{ m.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Retailers/Distributors">
+                                            {% for d in distributors %}
+                                            <option value="{{ d.id }}">{{ d.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
+                                        (To)</label>
+                                    <select name="transfer_target_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Recipient...</option>
+                                        <optgroup label="Retailers/Distributors">
+                                            {% for d in distributors %}
+                                            <option value="{{ d.id }}">{{ d.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Households">
+                                            {% for h in households %}
+                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- TAB 2 (DELETED - Moved to Sub-actions) -->
-
-                        <!-- TAB 3: RETURN (HOUSEHOLD/MARKET) -->
+                        <!-- TAB 3: RETURN -->
                         <div id="content-return" class="hidden space-y-6 tab-content">
                             <div class="bg-green-50 p-4 rounded-lg border border-green-100 text-green-800 text-sm mb-6">
                                 <i class="fas fa-trash-restore mr-2"></i> Record items <strong>leaving the
                                     market</strong> as waste.
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Returner
-                                        Account</label>
-                                    {% if current_account and current_account.account_type == 'household' %}
-                                    <div
-                                        class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-4">
-                                        <i class="fas fa-home text-green-600 text-xl"></i>
-                                        <div>
-                                            <p class="font-bold text-gray-800">{{ current_account.name }} ({{
-                                                current_account.plot_number }})</p>
-                                        </div>
-                                        <input type="hidden" name="household_id" value="{{ current_account.id }}">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Returner
+                                    Account</label>
+                                {% if current_account and current_account.account_type == 'household' %}
+                                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex items-center gap-4">
+                                    <i class="fas fa-home text-green-600 text-xl"></i>
+                                    <div>
+                                        <p class="font-bold text-gray-800">{{ current_account.name }} ({{
+                                            current_account.plot_number }})</p>
                                     </div>
-                                    {% else %}
-                                    {% if user.role != 'admin' %}
-                                    <div
-                                        class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-amber-800 text-sm mb-4">
-                                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                                        <strong>Account Link Missing:</strong> We couldn't find a Household profile
-                                        linked to your user account. Please select your account manually or contact
-                                        support.
-                                    </div>
-                                    {% endif %}
-                                    <select name="household_id"
-                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
-                                        <option value="">Select Household...</option>
-                                        {% for hh in households %}
-                                        <option value="{{ hh.id }}">{{ hh.name }} ({{ hh.plot_number }})</option>
-                                        {% endfor %}
-                                    </select>
-                                    {% endif %}
+                                    <input type="hidden" name="household_id" value="{{ current_account.id }}">
                                 </div>
-                                <div class="flex items-center justify-center pt-6 opacity-0">
-                                    <i class="fas fa-arrow-right text-gray-300 text-2xl"></i>
-                                </div>
-                                <div id="return-target-container" class="hidden">
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
-                                        Recipient (Archived)</label>
-                                    <select name="return_target_id" id="return_target_id"
-                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
-                                        <option value="">N/A</option>
-                                    </select>
-                                </div>
+                                {% else %}
+                                <select name="household_id"
+                                    class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
+                                    <option value="">Select Household...</option>
+                                    {% for hh in households %}
+                                    <option value="{{ hh.id }}">{{ hh.name }} ({{ hh.plot_number }})</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -332,8 +340,6 @@
 
 <script>
     function switchTab(mode) {
-        const currentMode = document.getElementById('transaction_type').value;
-
         // Update hidden input
         document.getElementById('transaction_type').value = mode;
 
@@ -349,53 +355,41 @@
 
         // Set Active Tab Style
         const activeBtn = document.getElementById(`tab-${mode}`);
-        const colors = {
-            'supply': 'border-blue-500 text-blue-600 bg-blue-50',
-            'return': 'border-green-500 text-green-600 bg-green-50'
-        };
-        const btnColors = {
-            'supply': 'bg-blue-600 hover:bg-blue-700',
-            'return': 'bg-green-600 hover:bg-green-700'
+        const config = {
+            'supply': {
+                color: 'border-blue-500 text-blue-600 bg-blue-50',
+                btnClass: 'bg-blue-600 hover:bg-blue-700',
+                btnText: '<i class="fas fa-save mr-2"></i> Record Supply'
+            },
+            'transfer': {
+                color: 'border-purple-500 text-purple-600 bg-purple-50',
+                btnClass: 'bg-purple-600 hover:bg-purple-700',
+                btnText: '<i class="fas fa-exchange-alt mr-2"></i> Record Transfer'
+            },
+            'return': {
+                color: 'border-green-500 text-green-600 bg-green-50',
+                btnClass: 'bg-green-600 hover:bg-green-700',
+                btnText: '<i class="fas fa-recycle mr-2"></i> Record Return'
+            }
         };
 
-        if (activeBtn) activeBtn.className = `flex-1 py-5 text-center font-bold transition-all border-b-2 ${colors[mode]}`;
+        if (activeBtn) activeBtn.className = `flex-1 py-5 text-center font-bold transition-all border-b-2 ${config[mode].color}`;
 
-        // Update Submit Button Label
+        // Update Submit Button Label & Style
         const submitBtn = document.getElementById('submitBtn');
-        const transferBtn = document.getElementById('transferBtn');
-
-        if (mode === 'supply') {
-            submitBtn.className = `flex-1 md:flex-none px-10 py-4 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 ${btnColors[mode]}`;
-            submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Record Supply';
-            document.getElementById('transfer-target-supply').classList.add('hidden');
-        } else {
-            submitBtn.className = `flex-1 md:flex-none px-10 py-4 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 ${btnColors[mode]}`;
-            submitBtn.innerHTML = '<i class="fas fa-recycle mr-2"></i> Record Return';
+        if (submitBtn) {
+            submitBtn.className = `flex-1 md:flex-none px-12 py-4 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 ${config[mode].btnClass}`;
+            submitBtn.innerHTML = config[mode].btnText;
         }
     }
 
     function submitEntry(actionType) {
-        const mode = document.getElementById('transaction_type').value;
+        // The actionType parameter is no longer directly used to set transaction_type
+        // as switchTab already sets it. This function now just submits the form.
+        // Any specific logic for 'transfer' vs 'record' (like showing target_id_supply)
+        // should ideally be handled by the switchTab function or form validation.
 
-        if (actionType === 'transfer') {
-            document.getElementById('transaction_type').value = 'transfer';
-
-            // Map supply/return target fields to the backend expects
-            if (mode === 'supply') {
-                const target = document.getElementById('target_id_supply');
-                if (!target.value) {
-                    target.parentElement.classList.remove('hidden');
-                    alert('Please select a Target Distributor for the transfer.');
-                    return;
-                }
-                // We'll need to make sure the backend gets target_id
-                // Since there are multiple target fields, we might need to map them before submit
-                // Or let the backend handle target_id_supply
-            }
-        } else {
-            // Keep original mode (supply or return)
-        }
-
+        // For now, we just submit the form.
         document.getElementById('entryForm').submit();
     }
 
