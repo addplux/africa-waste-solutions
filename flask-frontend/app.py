@@ -375,7 +375,7 @@ def data_entry():
             target_id = request.form.get('target_id_supply') or request.form.get('return_target_id') or request.form.get('target_id')
         elif tx_type == 'return':
             source_id = request.form.get('household_id')
-            target_id = request.form.get('return_target_id')
+            target_id = None # Leaving the market as waste
 
         # Normalize empty strings to None (for UUID unmarshaling in Go)
         if not source_id or not source_id.strip():

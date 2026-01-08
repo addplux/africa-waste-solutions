@@ -48,8 +48,8 @@
                         <!-- TAB 1: SUPPLY (MANUFACTURER) -->
                         <div id="content-supply" class="space-y-6 tab-content">
                             <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 text-sm mb-6">
-                                <i class="fas fa-info-circle mr-2"></i> Manufacturers enter new stock items or transfer
-                                them to distributors.
+                                <i class="fas fa-info-circle mr-2"></i> Record items <strong>entering the
+                                    market</strong> as supply.
                             </div>
 
                             <!-- Source: Manufacturer -->
@@ -101,10 +101,11 @@
 
                         <!-- TAB 2 (DELETED - Moved to Sub-actions) -->
 
-                        <!-- TAB 3: RETURN (HOUSEHOLD) -->
+                        <!-- TAB 3: RETURN (HOUSEHOLD/MARKET) -->
                         <div id="content-return" class="hidden space-y-6 tab-content">
                             <div class="bg-green-50 p-4 rounded-lg border border-green-100 text-green-800 text-sm mb-6">
-                                <i class="fas fa-trash-restore mr-2"></i> Return waste to Retailers or Transfer it.
+                                <i class="fas fa-trash-restore mr-2"></i> Record items <strong>leaving the
+                                    market</strong> as waste.
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -141,19 +142,16 @@
                                     </select>
                                     {% endif %}
                                 </div>
-                                <div class="flex items-center justify-center pt-6">
+                                <div class="flex items-center justify-center pt-6 opacity-0">
                                     <i class="fas fa-arrow-right text-gray-300 text-2xl"></i>
                                 </div>
-                                <div id="return-target-container">
+                                <div id="return-target-container" class="hidden">
                                     <label
                                         class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
-                                        Recipient (Retailer)</label>
+                                        Recipient (Archived)</label>
                                     <select name="return_target_id" id="return_target_id"
                                         class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-green-500 transition-all">
-                                        <option value="">Select Retailer...</option>
-                                        {% for dist in distributors %}
-                                        <option value="{{ dist.id }}">{{ dist.name }}</option>
-                                        {% endfor %}
+                                        <option value="">N/A</option>
                                     </select>
                                 </div>
                             </div>
