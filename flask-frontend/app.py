@@ -598,6 +598,14 @@ def kyc():
     # Sort by date (newest first)
     pending_apps.sort(key=lambda x: x.get('created_at', ''), reverse=True)
 
+    # Calculate KYC Stats for the dashboard
+    stats = {
+        'pending': len(pending_apps),
+        'approved_today': 0, # Not tracked in current model
+        'rejected_today': 0, # Not tracked in current model
+        'total_verified': len([a for a in accounts if a.get('kyc_status') == 'approved'])
+    }
+
     return render_template('kyc.html', user=session.get('user'), stats=stats, pending_apps=pending_apps)
 
 if __name__ == '__main__':
