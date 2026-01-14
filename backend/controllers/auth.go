@@ -1,7 +1,10 @@
 package controllers
 
 import (
+	"encoding/base64"
+	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/addplux/africa-waste-solutions/models"
@@ -67,29 +70,29 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	// 2. Selfie (Base64 or File)
-	// The frontend sends base64 data in a hidden input field named 'selfie'
 	selfieData := getVal("selfie")
 	if selfieData != "" {
-		// Expecting "data:image/jpeg;base64,..."
-		// TODO: proper base64 decoding if sent as string, or handle as file if sent as blob
-		// For now, let's assume it might be sent as a file OR we decode the string
-		// If it's a raw base64 string, we save it to a file
-		// Simple check: write to file
-		filename := uuid.New().String() + "_selfie.jpg" // Assuming jpeg
-		selfiePath = "/uploads/kyc/selfies/" + filename
+		// Expecting "data:image/jpeg;base64,..." or just base64
+		// Remove header if present
+		b64data := selfieData
+		if strings.Contains(selfieData, ",") {
+			parts := strings.Split(selfieData, ",")
+			if len(parts) > 1 {
+				b64data = parts[1]
+			}
+		}
 
-		// In a real scenario we decode the base64 string here.
-		// For simplicity/robustness, we'll store the text or try to decode.
-		// However, standard is to decode.
-		// NOTE: Detailed base64 decoding omitted for brevity, assuming standard library usage would be here.
-		// But wait, we need to save it.
-		// Let's just save the string to a file if it's too complex to decode without importing more pkgs?
-		// No, let's do it right. But for now, let's assume the frontend sends it as a FILE blob if possible?
-		// Re-reading frontend code: it sends base64 string in hidden input.
-		// So we must decode.
-
-		// For this iteration, let's check if it's a file first (if they changed implementation)
-		// If not, use the string.
+		dec, err := base64.StdEncoding.DecodeString(b64data)
+		if err == nil {
+			filename := uuid.New().String() + "_selfie.jpg"
+			selfiePath = "/uploads/kyc/selfies/" + filename
+			err = os.WriteFile("."+selfiePath, dec, 0644)
+			if err != nil {
+				fmt.Println("Error saving selfie:", err)
+			}
+		} else {
+			fmt.Println("Error decoding selfie base64:", err)
+		}
 	}
 	// Fallback/Override if sent as file (cleaner)
 	if files, ok := form.File["selfie_file"]; ok && len(files) > 0 {
@@ -108,7 +111,9 @@ func Register(c *fiber.Ctx) error {
 		role = "admin"
 	}
 
+	userID := uuid.New()
 	user := models.User{
+		ID:           userID,
 		Name:         name,
 		Email:        email,
 		PasswordHash: string(hash),
@@ -119,7 +124,8 @@ func Register(c *fiber.Ctx) error {
 
 	if result := tx.Create(&user); result.Error != nil {
 		tx.Rollback()
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user"})
+		fmt.Println("Error creating user:", result.Error)
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user: " + result.Error.Error()})
 	}
 
 	// 2. Create Account
@@ -129,7 +135,9 @@ func Register(c *fiber.Ctx) error {
 		accountName = companyName
 	}
 
+	accountID := uuid.New()
 	account := models.Account{
+		ID:            accountID,
 		Name:          accountName,
 		CompanyName:   companyName,
 		Contact:       contact,
@@ -144,7 +152,8 @@ func Register(c *fiber.Ctx) error {
 
 	if result := tx.Create(&account); result.Error != nil {
 		tx.Rollback()
-		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create account"})
+		fmt.Println("Error creating account:", result.Error)
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create account: " + result.Error.Error()})
 	}
 
 	tx.Commit()
