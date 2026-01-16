@@ -233,8 +233,11 @@ def dashboard():
         # 2. Fetch Accounts for "Total Nodes" and "KYC Queue"
         acc_resp = api_call('accounts', method='GET')
         all_accounts = []
+        recent_accounts = []
         if acc_resp and acc_resp.status_code == 200:
             all_accounts = acc_resp.json().get('data', [])
+            # Sort for recent accounts table (Newest first)
+            recent_accounts = sorted(all_accounts, key=lambda x: x.get('created_at', ''), reverse=True)[:5]
         
         # Calculate Admin KPI Stats
         admin_stats['total_accounts'] = len(all_accounts)
@@ -323,7 +326,7 @@ def dashboard():
             except:
                 item['time_ago'] = "RECENTLY"
 
-    return render_template('dashboard.html', user=session.get('user'), stats=user_stats, admin_stats=admin_stats, recent_activity=recent_activity)
+    return render_template('dashboard.html', user=session.get('user'), stats=user_stats, admin_stats=admin_stats, recent_activity=recent_activity, recent_accounts=recent_accounts)
 
 @app.route('/accounts')
 @login_required
