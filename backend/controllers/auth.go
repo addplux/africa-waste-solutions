@@ -128,6 +128,9 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user: " + result.Error.Error()})
 	}
 
+	// Parse boolean
+	isInternational := getVal("is_international") == "true"
+
 	// 2. Create Account
 	// If company name is provided, use that for the account Name, otherwise use User Name
 	accountName := name
@@ -137,17 +140,19 @@ func Register(c *fiber.Ctx) error {
 
 	accountID := uuid.New()
 	account := models.Account{
-		ID:            accountID,
-		Name:          accountName,
-		CompanyName:   companyName,
-		Contact:       contact,
-		PlotNumber:    plotNumber,
-		Area:          area,
-		AccountType:   accountType,
-		KYCStatus:     "pending",
-		IDDocumentURL: idDocPath,
-		SelfieURL:     selfiePath,
-		CreatedBy:     user.ID,
+		ID:              accountID,
+		Name:            accountName,
+		CompanyName:     companyName,
+		Contact:         contact,
+		PlotNumber:      plotNumber,
+		Area:            area,
+		AccountType:     accountType,
+		IsInternational: isInternational,
+		KYCStatus:       "pending",
+		Status:          "active",
+		IDDocumentURL:   idDocPath,
+		SelfieURL:       selfiePath,
+		CreatedBy:       user.ID,
 	}
 
 	if result := tx.Create(&account); result.Error != nil {
