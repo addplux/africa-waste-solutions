@@ -159,7 +159,7 @@ def account_creation():
                 'company_name': request.form.get('companyName'),
                 'date_of_birth': request.form.get('dateOfBirth'),
                 'selfie': request.form.get('selfie'), # Base64 string from canvas
-                'is_international': is_international,
+                'is_international': str(is_international).lower(),
                 'kyc_status': 'pending'
             }
 

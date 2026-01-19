@@ -129,7 +129,7 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	// Parse boolean
-	isInternational := getVal("is_international") == "true"
+	isInternational := strings.ToLower(getVal("is_international")) == "true"
 
 	// 2. Create Account
 	// If company name is provided, use that for the account Name, otherwise use User Name
