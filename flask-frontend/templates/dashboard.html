@@ -82,23 +82,25 @@
                 </div>
 
                 <!-- ADMIN VIEW: Pending KYC -->
-                <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
+                <a href="{{ url_for('kyc') }}" class="block">
                     <div
-                        class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
-                    </div>
-                    <div class="relative z-10">
-                        <div class="flex items-center justify-between mb-6">
-                            <div
-                                class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
-                                <i class="fas fa-id-card text-2xl"></i>
-                            </div>
+                        class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200 cursor-pointer">
+                        <div
+                            class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
                         </div>
-                        <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">KYC Queue</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">{{ admin_stats.pending_kyc }}</p>
-                        <p class="text-xs font-bold text-yellow-600 mt-2">Awaiting Verification</p>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-6">
+                                <div
+                                    class="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
+                                    <i class="fas fa-id-card text-2xl"></i>
+                                </div>
+                            </div>
+                            <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">KYC Queue</p>
+                            <p class="text-4xl font-black text-gray-950 mt-1">{{ admin_stats.pending_kyc }}</p>
+                            <p class="text-xs font-bold text-yellow-600 mt-2">Awaiting Verification</p>
+                        </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- ADMIN VIEW: Status -->
                 <div
