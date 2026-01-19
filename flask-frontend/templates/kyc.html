@@ -178,8 +178,11 @@
                                         Expand
                                     </button>
                                 </div>
-                                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-                                    <div class="text-center">
+                                <div
+                                    class="bg-gray-100 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+                                    <img id="view-id-img" src="" alt="ID Document"
+                                        class="w-full h-full object-cover hidden">
+                                    <div id="view-id-placeholder" class="text-center">
                                         <i class="fas fa-id-card text-gray-400 text-6xl mb-3"></i>
                                         <p class="text-sm text-gray-600">National Registration Card</p>
                                         <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
@@ -197,8 +200,11 @@
                                         Expand
                                     </button>
                                 </div>
-                                <div class="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-                                    <div class="text-center">
+                                <div
+                                    class="bg-gray-100 rounded-lg h-64 flex items-center justify-center overflow-hidden">
+                                    <img id="view-selfie-img" src="" alt="Selfie"
+                                        class="w-full h-full object-cover hidden">
+                                    <div id="view-selfie-placeholder" class="text-center">
                                         <i class="fas fa-user-circle text-gray-400 text-6xl mb-3"></i>
                                         <p class="text-sm text-gray-600">Selfie Photo</p>
                                         <p class="text-xs text-gray-500 mt-1">Click expand to view</p>
@@ -298,6 +304,35 @@
         if (activeItem) {
             activeItem.className = "p-4 bg-blue-50 border-2 border-blue-600 rounded-lg cursor-pointer application-item";
         }
+
+        // Update Images
+        const backendUrl = "{{ config['BACKEND_API_URL'] }}";
+
+        // ID Document
+        if (app.id_document_url) {
+            const idUrl = app.id_document_url.startsWith('http') ? app.id_document_url : backendUrl + app.id_document_url;
+            document.getElementById('view-id-img').src = idUrl;
+            document.getElementById('view-id-img').classList.remove('hidden');
+            document.getElementById('view-id-placeholder').classList.add('hidden');
+            // Update onclick for expand
+            document.querySelector("button[onclick=\"viewFullscreen('id')\"]").onclick = function () { viewFullscreenUrl(idUrl) };
+        } else {
+            document.getElementById('view-id-img').classList.add('hidden');
+            document.getElementById('view-id-placeholder').classList.remove('hidden');
+        }
+
+        // Selfie
+        if (app.selfie_url) {
+            const selfieUrl = app.selfie_url.startsWith('http') ? app.selfie_url : backendUrl + app.selfie_url;
+            document.getElementById('view-selfie-img').src = selfieUrl;
+            document.getElementById('view-selfie-img').classList.remove('hidden');
+            document.getElementById('view-selfie-placeholder').classList.add('hidden');
+            // Update onclick for expand
+            document.querySelector("button[onclick=\"viewFullscreen('selfie')\"]").onclick = function () { viewFullscreenUrl(selfieUrl) };
+        } else {
+            document.getElementById('view-selfie-img').classList.add('hidden');
+            document.getElementById('view-selfie-placeholder').classList.remove('hidden');
+        }
     }
 
     function toggleRejection() {
@@ -347,6 +382,11 @@
         if (confirm("Are you sure you want to REJECT this application?")) {
             updateStatus('rejected', reason);
         }
+    }
+
+    function viewFullscreenUrl(url) {
+        if (!url) return;
+        window.open(url, '_blank');
     }
 
     // Initialize with first item if exists

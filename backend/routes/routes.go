@@ -10,6 +10,9 @@ import (
 func Setup(app *fiber.App) {
 	api := app.Group("/api")
 
+	// Serve Static Files (Uploads)
+	app.Static("/uploads", "./uploads")
+
 	// Health check endpoint - no database required
 	api.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
