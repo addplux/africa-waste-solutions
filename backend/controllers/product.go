@@ -34,6 +34,10 @@ func GetProducts(c *fiber.Ctx) error {
 		"disposable vehicle tyres",
 		"disposable bicycle tyres",
 		"disposable motorbike tyres",
+		"disposable plastic bags",
+		"disposable Coca cola",
+		"disposable Minute Maid",
+		"disposable Molt drink",
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "data": products})

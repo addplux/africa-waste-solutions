@@ -165,6 +165,46 @@
         </div>
     </section>
 
+    <!-- Monitored Items Section -->
+    <section id="monitored-items" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold mb-4">Monitored Waste Items</h2>
+                <div class="h-1 w-20 bg-blue-600 mx-auto rounded-full mb-6"></div>
+                <p class="text-gray-600 text-lg">We currently monitor and track the following categories of disposable
+                    waste and products across Zambia to ensure sustainable recovery.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for product in products %}
+                <div
+                    class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all flex items-center gap-4 group">
+                    <div
+                        class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors flex-shrink-0">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <span class="font-medium text-gray-800 capitalize">{{ product }}</span>
+                </div>
+                {% else %}
+                <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300">
+                    <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500">Connecting to monitoring network...</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-16 text-center">
+                <p class="text-gray-500 mb-6 italic">Don't see an item you want to track? Contact our compliance team.
+                </p>
+                <a href="#contact"
+                    class="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 transition-colors">
+                    Request new item monitoring
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- About Section -->
     <section id="about" class="py-24 bg-white relative overflow-hidden">
         <div

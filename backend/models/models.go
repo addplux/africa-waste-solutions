@@ -58,6 +58,8 @@ type Entry struct {
 	HalfDozen int `json:"half_dozen"`
 	Case      int `json:"case"`
 	Series    int `json:"series"` // If relevant
+	Level16   int `json:"level_16"`
+	Level10   int `json:"level_10"`
 
 	EntryDate time.Time `json:"entry_date"`
 	CreatedBy uuid.UUID `json:"created_by"`

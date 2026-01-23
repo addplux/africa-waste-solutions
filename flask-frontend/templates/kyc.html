@@ -306,7 +306,15 @@
         }
 
         // Update Images
-        const backendUrl = "{{ config['BACKEND_API_URL'] }}";
+        let backendUrl = "{{ config['BACKEND_API_URL'] }}";
+        // Remove '/api' suffix if present to get the root domain for static files
+        if (backendUrl.endsWith('/api')) {
+            backendUrl = backendUrl.slice(0, -4);
+        }
+        // Remove trailing slash if present
+        if (backendUrl.endsWith('/')) {
+            backendUrl = backendUrl.slice(0, -1);
+        }
 
         // ID Document
         if (app.id_document_url) {

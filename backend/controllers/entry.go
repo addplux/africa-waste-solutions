@@ -22,6 +22,8 @@ func CreateEntry(c *fiber.Ctx) error {
 		HalfDozen       int        `json:"half_dozen"`
 		Case            int        `json:"case"`
 		Series          int        `json:"series"`
+		Level16         int        `json:"level_16"`
+		Level10         int        `json:"level_10"`
 	}
 
 	if err := c.BodyParser(&input); err != nil {
@@ -46,6 +48,8 @@ func CreateEntry(c *fiber.Ctx) error {
 		HalfDozen:       input.HalfDozen,
 		Case:            input.Case,
 		Series:          input.Series,
+		Level16:         input.Level16,
+		Level10:         input.Level10,
 		EntryDate:       time.Now(),
 	}
 

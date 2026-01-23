@@ -63,7 +63,14 @@ def allowed_file(filename):
 def index():
     if 'user' in session:
         return redirect(url_for('dashboard'))
-    return render_template('landing.html')
+    
+    # Fetch monitored products for the landing page
+    products = []
+    response = api_call('products', method='GET')
+    if response and response.status_code == 200:
+        products = response.json().get('data', [])
+        
+    return render_template('landing.html', products=products)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -405,7 +412,9 @@ def data_entry():
             'dozen': get_int('qty_dozen'),
             'half_dozen': get_int('qty_half_dozen'),
             'case': get_int('qty_case'),
-            'series': get_int('qty_series')
+            'series': get_int('qty_series'),
+            'level_16': get_int('qty_level_16'),
+            'level_10': get_int('qty_level_10')
         }
 
         # Send to Go Backend
