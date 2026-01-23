@@ -72,6 +72,16 @@ def index():
         
     return render_template('landing.html', products=products)
 
+@app.route('/monitored-items')
+def monitored_items():
+    # Fetch monitored products for the dedicated page
+    products = []
+    response = api_call('products', method='GET')
+    if response and response.status_code == 200:
+        products = response.json().get('data', [])
+        
+    return render_template('monitored_items.html', products=products)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Monitored Items - Africa Waste Solutions{% endblock %}
+
+{% block extra_head %}
+<style>
+    .gradient-text {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(to right, #2563eb, #16a34a);
+    }
+
+    .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 pb-20">
+    <!-- Navbar (Simplified/Consistent with Landing) -->
+    <nav class="bg-white/90 backdrop-blur-md sticky top-0 w-full z-50 border-b border-gray-100 mb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="{{ url_for('index') }}" class="flex items-center gap-2 group">
+                    <i class="fas fa-recycle text-3xl text-green-600 group-hover:rotate-12 transition-transform"></i>
+                    <span class="font-bold text-xl tracking-tight">Africa Waste Solutions</span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-blue-600 font-semibold px-4">Log
+                        In</a>
+                    <a href="{{ url_for('account_creation') }}"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header & Search -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <h1 class="text-4xl font-extrabold mb-4">
+                Monitored <span class="gradient-text">Waste Items</span>
+            </h1>
+            <p class="text-gray-600 text-lg">
+                Browse our comprehensive catalogue of waste items currently tracked and managed for a sustainable
+                Zambia.
+            </p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="max-w-xl mx-auto mb-16 relative">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input type="text" id="productSearch" onkeyup="filterProducts()"
+                placeholder="Search for an item (e.g., 'bottles', 'plastic')..."
+                class="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all text-gray-900">
+        </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="productGrid">
+            {% for product in products %}
+            <div class="product-card bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4 group"
+                data-name="{{ product|lower }}">
+                <div
+                    class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors flex-shrink-0">
+                    {% if 'bottle' in product|lower or 'beverage' in product|lower or 'coke' in product|lower or 'water'
+                    in product|lower %}
+                    <i class="fas fa-wine-bottle text-xl"></i>
+                    {% elif 'bag' in product|lower %}
+                    <i class="fas fa-shopping-bag text-xl"></i>
+                    {% elif 'tire' in product|lower or 'tyre' in product|lower %}
+                    <i class="fas fa-compact-disc text-xl"></i>
+                    {% elif 'food' in product|lower or 'sauce' in product|lower or 'sugar' in product|lower %}
+                    <i class="fas fa-utensils text-xl"></i>
+                    {% elif 'medicine' in product|lower or 'pharma' in product|lower %}
+                    <i class="fas fa-pills text-xl"></i>
+                    {% else %}
+                    <i class="fas fa-box text-xl"></i>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-bold text-gray-900 capitalize">{{ product }}</span>
+                    <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Active Monitoring</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-box-open text-3xl text-gray-300"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No items found</h3>
+                <p class="text-gray-500">Connecting to our monitoring database...</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- No Results Fallback (Hidden) -->
+        <div id="noResults" class="hidden col-span-full text-center py-20">
+            <i class="fas fa-search text-5xl text-gray-300 mb-6"></i>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">No matches found</h3>
+            <p class="text-gray-500">Try searching for a different item or category.</p>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 text-center">
+        <div
+            class="bg-gradient-to-br from-blue-900 to-blue-950 rounded-3xl p-12 text-white shadow-2xl relative overflow-hidden">
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full filter blur-3xl opacity-20 -translate-y-1/2 translate-x-1/2">
+            </div>
+            <div class="relative z-10">
+                <h2 class="text-3xl font-bold mb-6">Can't find an item?</h2>
+                <p class="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
+                    Our compliance team is constantly expanding our monitoring network. Request a new item for
+                    monitoring and compliance tracking.
+                </p>
+                <a href="#"
+                    class="inline-flex items-center px-8 py-4 bg-white text-blue-900 rounded-full font-bold text-lg hover:bg-blue-50 transition-all shadow-lg">
+                    Contact Compliance Team
+                    <i class="fas fa-paper-plane ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterProducts() {
+        const input = document.getElementById('productSearch');
+        const filter = input.value.toLowerCase();
+        const grid = document.getElementById('productGrid');
+        const cards = grid.getElementsByClassName('product-card');
+        const noResults = document.getElementById('noResults');
+        let visibleCount = 0;
+
+        for (let i = 0; i < cards.length; i++) {
+            const name = cards[i].getAttribute('data-name');
+            if (name.includes(filter)) {
+                cards[i].style.display = "";
+                visibleCount++;
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+
+        if (visibleCount === 0 && cards.length > 0) {
+            noResults.classList.remove('hidden');
+        } else {
+            noResults.classList.add('hidden');
+        }
+    }
+</script>
+{% endblock %}

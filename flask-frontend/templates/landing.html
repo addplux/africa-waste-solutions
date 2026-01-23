@@ -31,6 +31,8 @@
                     <a href="#how-it-works" class="text-gray-600 hover:text-green-600 transition-colors">How it
                         Works</a>
                     <a href="#services" class="text-gray-600 hover:text-green-600 transition-colors">Services</a>
+                    <a href="{{ url_for('monitored_items') }}"
+                        class="text-gray-600 hover:text-green-600 transition-colors">Waste Items</a>
                     <a href="#about" class="text-gray-600 hover:text-green-600 transition-colors">About Us</a>
                 </div>
                 <div class="flex items-center gap-4">
@@ -191,6 +193,14 @@
                     <p class="text-gray-500">Connecting to monitoring network...</p>
                 </div>
                 {% endfor %}
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="{{ url_for('monitored_items') }}"
+                    class="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 border-2 border-blue-600 rounded-full font-bold text-lg hover:bg-blue-600 hover:text-white transition-all shadow-md">
+                    View All Monitored Items
+                    <i class="fas fa-list-ul ml-2"></i>
+                </a>
             </div>
 
             <div class="mt-16 text-center">
