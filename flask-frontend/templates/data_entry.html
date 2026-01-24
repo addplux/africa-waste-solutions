@@ -65,7 +65,7 @@
                     </button>
                     <button onclick="switchTab('transfer')" id="tab-transfer"
                         class="flex-1 py-5 text-center font-bold text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all border-b-2 border-transparent">
-                        <i class="fas fa-exchange-alt mr-2"></i>2. Transfer (Movement)
+                        <i class="fas fa-truck-moving mr-2"></i>2. Dispatch (Movement)
                     </button>
                     <button onclick="switchTab('return')" id="tab-return"
                         class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all border-b-2 border-transparent">
@@ -116,7 +116,7 @@
                         <div id="content-transfer" class="hidden space-y-6 tab-content">
                             <div
                                 class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-purple-800 text-sm mb-6">
-                                <i class="fas fa-truck-moving mr-2"></i> Move data between ecosystem nodes (e.g.,
+                                <i class="fas fa-truck-moving mr-2"></i> Dispatch items between ecosystem nodes (e.g.,
                                 Manufacturer to Retailer).
                             </div>
 
@@ -142,6 +142,11 @@
                                             <option value="{{ d.id }}">{{ d.name }}</option>
                                             {% endfor %}
                                         </optgroup>
+                                        <optgroup label="Households">
+                                            {% for h in households %}
+                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
+                                            {% endfor %}
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div>
@@ -151,6 +156,11 @@
                                     <select name="transfer_target_id"
                                         class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
                                         <option value="">Select Recipient...</option>
+                                        <optgroup label="Manufacturers">
+                                            {% for m in manufacturers %}
+                                            <option value="{{ m.id }}">{{ m.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
                                         <optgroup label="Retailers/Distributors">
                                             {% for d in distributors %}
                                             <option value="{{ d.id }}">{{ d.name }}</option>
@@ -417,7 +427,7 @@
             'transfer': {
                 color: 'border-purple-500 text-purple-600 bg-purple-50',
                 btnClass: 'bg-purple-600 hover:bg-purple-700',
-                btnText: '<i class="fas fa-exchange-alt mr-2"></i> Record Transfer'
+                btnText: '<i class="fas fa-truck-moving mr-2"></i> Record Dispatch'
             },
             'return': {
                 color: 'border-green-500 text-green-600 bg-green-50',
