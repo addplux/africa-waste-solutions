@@ -19,7 +19,9 @@ func main() {
 
 	models.ConnectDB()
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		BodyLimit: 10 * 1024 * 1024, // 10MB
+	})
 
 	// Get CORS origins from environment variable or use default
 	corsOrigins := os.Getenv("CORS_ORIGINS")

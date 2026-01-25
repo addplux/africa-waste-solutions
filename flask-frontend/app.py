@@ -160,7 +160,9 @@ def account_creation():
         if step == '3':  # Final step with KYC
             # Handle file uploads
             id_file = request.files.get('id_document')
-            selfie_file = request.files.get('selfie')
+            selfie_file = request.files.get('selfie') # Might be coming as form data if base64
+            
+            print(f"[DEBUG] KYC Upload: ID File={id_file.filename if id_file else 'None'}, Selfie={'Received' if request.form.get('selfie') else 'None'}")
             
             # Map form data to backend JSON structure
             is_international = (request.form.get('companyType') == 'international')
@@ -180,6 +182,8 @@ def account_creation():
                 'kyc_status': 'pending'
             }
 
+            print(f"[DEBUG] Form Data for Backend: { {k: v for k, v in data.items() if k != 'password'} }")
+            
             # Prepare files for upload
             files = {}
             if id_file:
@@ -190,8 +194,16 @@ def account_creation():
 
             # Send to Go Backend Auth Register Endpoint
             # This creates both User and Account
+            print(f"[DEBUG] Forwarding to Backend API: {app.config['BACKEND_API_URL']}/auth/register")
             response = api_call('auth/register', method='POST', data=data, files=files)
             
+            if response is not None:
+                print(f"[DEBUG] Backend Response Status: {response.status_code}")
+                if response.status_code not in [200, 201]:
+                    print(f"[DEBUG] Backend Error Body: {response.text}")
+            else:
+                print("[DEBUG] Backend API call returned None")
+
             if response and response.status_code in [200, 201]:
                 resp_data = response.json()
                 # Check for token and auto-login

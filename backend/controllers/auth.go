@@ -18,7 +18,17 @@ func Register(c *fiber.Ctx) error {
 	// Parse Multipart Form
 	form, err := c.MultipartForm()
 	if err != nil {
+		fmt.Printf("[DEBUG] MultipartForm Error: %v\n", err)
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid form data"})
+	}
+
+	// Logging keys received
+	fmt.Printf("[DEBUG] Form Values: %v\n", form.Value)
+	for key, files := range form.File {
+		fmt.Printf("[DEBUG] Form File Key: %s, Count: %d\n", key, len(files))
+		for _, file := range files {
+			fmt.Printf("[DEBUG] -> File: %s, Size: %d, Type: %s\n", file.Filename, file.Size, file.Header.Get("Content-Type"))
+		}
 	}
 
 	// Helper to get form value
@@ -64,7 +74,9 @@ func Register(c *fiber.Ctx) error {
 		file := files[0]
 		filename := uuid.New().String() + "_" + file.Filename
 		idDocPath = "/uploads/kyc/ids/" + filename
+		fmt.Printf("[DEBUG] Saving ID Document to: .%s\n", idDocPath)
 		if err := c.SaveFile(file, "."+idDocPath); err != nil {
+			fmt.Printf("[DEBUG] Error saving ID document: %v\n", err)
 			return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to save ID document"})
 		}
 	}
@@ -86,11 +98,14 @@ func Register(c *fiber.Ctx) error {
 		if err == nil {
 			filename := uuid.New().String() + "_selfie.jpg"
 			selfiePath = "/uploads/kyc/selfies/" + filename
+			fmt.Printf("[DEBUG] Saving Selfie to: .%s\n", selfiePath)
 			err = os.WriteFile("."+selfiePath, dec, 0644)
 			if err != nil {
+				fmt.Printf("[DEBUG] Error writing selfie file: %v\n", err)
 				fmt.Println("Error saving selfie:", err)
 			}
 		} else {
+			fmt.Printf("[DEBUG] Error decoding selfie base64: %v\n", err)
 			fmt.Println("Error decoding selfie base64:", err)
 		}
 	}
