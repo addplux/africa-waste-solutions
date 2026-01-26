@@ -62,6 +62,10 @@ def allowed_file(filename):
 def objectives():
     return render_template('objectives.html')
 
+@app.route('/safety-protocols')
+def safety_protocols():
+    return render_template('safety_protocols.html')
+
 # Routes
 @app.route('/')
 def index():
