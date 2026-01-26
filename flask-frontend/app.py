@@ -58,6 +58,10 @@ def api_call(endpoint, method='GET', data=None, files=None):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
+@app.route('/objectives')
+def objectives():
+    return render_template('objectives.html')
+
 # Routes
 @app.route('/')
 def index():
