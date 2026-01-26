@@ -66,6 +66,10 @@ def objectives():
 def safety_protocols():
     return render_template('safety_protocols.html')
 
+@app.route('/separation-guide')
+def separation_guide():
+    return render_template('separation_guide.html')
+
 # Routes
 @app.route('/')
 def index():

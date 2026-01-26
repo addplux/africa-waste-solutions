@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Waste Separation Guide - Africa Waste Solutions{% endblock %}
+
+{% block content %}
+<div class="bg-white min-h-screen">
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-r from-green-600 to-teal-600 py-20 overflow-hidden">
+        <div class="absolute inset-0 opacity-10"
+            style="background-image: radial-gradient(circle, #ffffff 2px, transparent 2px); background-size: 40px 40px;">
+        </div>
+        <div class="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur rounded-full text-white font-semibold mb-6">
+                <i class="fas fa-recycle"></i>
+                <span>Separation at Source</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-6">
+                Waste Separation Guide
+            </h1>
+            <p class="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
+                Learn how to properly separate waste at the point of generation for effective recycling and
+                environmental protection.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+
+        <!-- Why Separate -->
+        <section class="mb-16">
+            <div class="bg-green-50 border-l-4 border-green-600 p-6 rounded-r-lg mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-green-600"></i>
+                    Why Separate Waste at Source?
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-1">Higher Quality Recyclables</h3>
+                            <p class="text-sm text-gray-600">Clean, separated materials fetch better prices and are
+                                easier to recycle</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-1">Reduced Contamination</h3>
+                            <p class="text-sm text-gray-600">Prevents mixing of hazardous and organic waste with
+                                recyclables</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-1">Environmental Protection</h3>
+                            <p class="text-sm text-gray-600">Reduces landfill waste and pollution in our communities</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Waste Categories -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Waste Categories & How to Separate</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <!-- Category 1: Plastics -->
+                <div
+                    class="bg-white border-2 border-blue-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-blue-500 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bottle-water text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Plastics</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span>Plastic bottles (water, soda, juice)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span>Plastic containers and packaging</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span>Plastic bags (clean and dry)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-blue-500 mt-1"></i>
+                                <span>Yogurt cups and food containers</span>
+                            </li>
+                        </ul>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-blue-900 mb-1">⚠️ Important:</p>
+                            <p class="text-xs text-blue-800">Rinse containers to remove food residue. Remove caps and
+                                labels when possible.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 2: Glass -->
+                <div
+                    class="bg-white border-2 border-purple-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-purple-500 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-wine-bottle text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Glass</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-purple-500 mt-1"></i>
+                                <span>Glass bottles (beer, wine, spirits)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-purple-500 mt-1"></i>
+                                <span>Glass jars (jam, sauce, pickles)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-purple-500 mt-1"></i>
+                                <span>Beverage bottles</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-times text-red-500 mt-1"></i>
+                                <span>Broken glass (wrap separately)</span>
+                            </li>
+                        </ul>
+                        <div class="bg-purple-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-purple-900 mb-1">⚠️ Important:</p>
+                            <p class="text-xs text-purple-800">Rinse bottles and jars. Separate by color if possible
+                                (clear, green, brown).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 3: Paper & Cardboard -->
+                <div
+                    class="bg-white border-2 border-orange-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-orange-500 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-newspaper text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Paper & Cardboard</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-500 mt-1"></i>
+                                <span>Newspapers and magazines</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-500 mt-1"></i>
+                                <span>Cardboard boxes (flattened)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-orange-500 mt-1"></i>
+                                <span>Office paper and envelopes</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-times text-red-500 mt-1"></i>
+                                <span>Greasy pizza boxes</span>
+                            </li>
+                        </ul>
+                        <div class="bg-orange-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-orange-900 mb-1">⚠️ Important:</p>
+                            <p class="text-xs text-orange-800">Keep paper dry. Remove plastic windows from envelopes.
+                                Flatten boxes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 4: Metals -->
+                <div
+                    class="bg-white border-2 border-gray-300 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-gray-600 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-can-food text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Metals</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-gray-600 mt-1"></i>
+                                <span>Aluminum cans (soda, beer)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-gray-600 mt-1"></i>
+                                <span>Steel/tin cans (food, pet food)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-gray-600 mt-1"></i>
+                                <span>Metal bottle caps and lids</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-gray-600 mt-1"></i>
+                                <span>Aluminum foil (clean)</span>
+                            </li>
+                        </ul>
+                        <div class="bg-gray-100 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-gray-900 mb-1">⚠️ Important:</p>
+                            <p class="text-xs text-gray-800">Rinse cans thoroughly. Crush cans to save space. Remove
+                                labels if possible.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 5: Organic Waste -->
+                <div
+                    class="bg-white border-2 border-green-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-green-600 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-leaf text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Organic Waste</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-600 mt-1"></i>
+                                <span>Fruit and vegetable scraps</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-600 mt-1"></i>
+                                <span>Coffee grounds and tea bags</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-600 mt-1"></i>
+                                <span>Eggshells and nutshells</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-600 mt-1"></i>
+                                <span>Garden waste and leaves</span>
+                            </li>
+                        </ul>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-green-900 mb-1">⚠️ Important:</p>
+                            <p class="text-xs text-green-800">Keep separate from other waste. Can be composted at home
+                                or collected.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category 6: Hazardous Waste -->
+                <div
+                    class="bg-white border-2 border-red-200 rounded-2xl overflow-hidden hover:shadow-xl transition-shadow">
+                    <div class="bg-red-600 px-6 py-4">
+                        <div class="flex items-center gap-3 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-biohazard text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Hazardous Waste</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-600 mb-4 font-semibold">What to include:</p>
+                        <ul class="space-y-2 text-sm text-gray-700 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-red-600 mt-1"></i>
+                                <span>Batteries (all types)</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-red-600 mt-1"></i>
+                                <span>Electronics and e-waste</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-red-600 mt-1"></i>
+                                <span>Paint, chemicals, pesticides</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-exclamation-triangle text-red-600 mt-1"></i>
+                                <span>Medical waste (needles, etc.)</span>
+                            </li>
+                        </ul>
+                        <div class="bg-red-50 p-3 rounded-lg">
+                            <p class="text-xs font-bold text-red-900 mb-1">⚠️ DANGER:</p>
+                            <p class="text-xs text-red-800">NEVER mix with regular waste. Contact us for special
+                                collection.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Step-by-Step Guide -->
+        <section class="mb-16 bg-gradient-to-r from-blue-50 to-green-50 rounded-3xl p-8 md:p-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Step-by-Step Separation Process</h2>
+
+            <div class="max-w-4xl mx-auto space-y-6">
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        1</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Set Up Separation Bins</h3>
+                        <p class="text-gray-700">Have at least 3 bins at home: Recyclables (plastics, glass, paper,
+                            metal), Organic Waste, and General Waste. Label them clearly.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        2</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Rinse & Clean</h3>
+                        <p class="text-gray-700">Quickly rinse food containers, bottles, and cans with water. This
+                            prevents contamination and odors.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        3</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Remove Contaminants</h3>
+                        <p class="text-gray-700">Take off caps, lids, and labels when possible. Remove food residue from
+                            packaging.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        4</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Flatten & Compress</h3>
+                        <p class="text-gray-700">Flatten cardboard boxes and crush plastic bottles to save space in your
+                            bins.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        5</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Store Properly</h3>
+                        <p class="text-gray-700">Keep bins in a dry, accessible location. Empty regularly to prevent
+                            overflow and pests.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
+                        6</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Schedule Collection</h3>
+                        <p class="text-gray-700">Use our platform to schedule pickup or drop off at designated
+                            collection points.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Common Mistakes -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Common Mistakes to Avoid</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-2">Bagging Recyclables in Plastic</h3>
+                            <p class="text-sm text-gray-700">Don't put recyclables in plastic bags. This contaminates
+                                the batch and makes sorting difficult.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-2">Not Rinsing Containers</h3>
+                            <p class="text-sm text-gray-700">Food residue attracts pests and contaminates other
+                                recyclables, reducing their value.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-2">Mixing Hazardous Waste</h3>
+                            <p class="text-sm text-gray-700">Never mix batteries, electronics, or chemicals with regular
+                                waste. These require special handling.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-times-circle text-red-500 text-2xl mt-1"></i>
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-2">Wishful Recycling</h3>
+                            <p class="text-sm text-gray-700">Don't assume everything can be recycled. When in doubt,
+                                check our guide or contact us.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="bg-gradient-to-r from-green-600 to-teal-600 rounded-3xl p-8 md:p-12 text-white text-center">
+            <i class="fas fa-hands-helping text-5xl mb-6 opacity-90"></i>
+            <h2 class="text-3xl font-bold mb-4">Need Help with Waste Separation?</h2>
+            <p class="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
+                Our team is here to assist you. Contact us for personalized guidance or to schedule a waste collection.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('account_creation') }}"
+                    class="px-8 py-4 bg-white text-green-600 rounded-full font-bold hover:bg-green-50 transition-colors shadow-lg inline-flex items-center justify-center gap-2">
+                    <i class="fas fa-user-plus"></i>
+                    Register Your Household
+                </a>
+                <a href="{{ url_for('objectives') }}"
+                    class="px-8 py-4 bg-white/10 backdrop-blur text-white border-2 border-white rounded-full font-bold hover:bg-white/20 transition-colors inline-flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Objectives
+                </a>
+            </div>
+        </section>
+
+    </div>
+</div>
+{% endblock %}
