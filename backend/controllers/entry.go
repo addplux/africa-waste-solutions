@@ -58,6 +58,13 @@ func CreateEntry(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Source Account is required"})
 	}
 
+	// 4. Transfer-specific validation
+	if entry.TransactionType == "transfer" {
+		if entry.TargetAccountID == nil || *entry.TargetAccountID == uuid.Nil {
+			return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Target Account is required for transfers"})
+		}
+	}
+
 	if result := models.DB.Create(&entry); result.Error != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not record transaction"})
 	}
