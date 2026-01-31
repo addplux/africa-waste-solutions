@@ -17,6 +17,10 @@ try:
 except ImportError:
     print("Warning: Flask-WTF not available, CSRF protection disabled")
     csrf = None
+    # Provide a dummy csrf_token function for templates
+    @app.context_processor
+    def inject_csrf_token():
+        return dict(csrf_token=lambda: '')
 
 # Helper function to check if user is logged in
 def login_required(f):
