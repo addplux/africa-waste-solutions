@@ -377,36 +377,6 @@ def dashboard():
 
     return render_template('dashboard.html', user=session.get('user'), stats=user_stats, admin_stats=admin_stats, recent_activity=recent_activity, recent_accounts=recent_accounts)
 
-@app.route('/accounts')
-@login_required
-@admin_required
-def accounts():
-    accounts_list = []
-    response = api_call('accounts', method='GET')
-    if response and response.status_code == 200:
-        accounts_list = response.json().get('data', [])
-    
-    # Calculate Real-time Stats
-    stats = {
-        'total': len(accounts_list),
-        'active': 0,
-        'pending_kyc': 0,
-        'suspended': 0
-    }
-    
-    for acc in accounts_list:
-        status = acc.get('status', 'active').lower()
-        kyc = acc.get('kyc_status', 'approved').lower()
-        
-        if status == 'blocked':
-            stats['suspended'] += 1
-        elif kyc == 'pending':
-            stats['pending_kyc'] += 1
-        else:
-            stats['active'] += 1
-
-    return render_template('accounts.html', user=session.get('user'), accounts=accounts_list, stats=stats)
-
 @app.route('/data-entry', methods=['GET', 'POST'])
 @login_required
 def data_entry():
