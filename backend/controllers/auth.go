@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/addplux/africa-waste-solutions/models"
+	"github.com/addplux/africa-waste-solutions/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -48,6 +49,10 @@ func Register(c *fiber.Ctx) error {
 	accountType := getVal("account_type")
 	companyName := getVal("company_name")
 	dobStr := getVal("date_of_birth")
+	pin := getVal("pin")
+	if pin == "" {
+		pin = "1234" // Default for MVP, but hashed
+	}
 
 	// Basic Validation
 	if email == "" || password == "" || name == "" {
@@ -61,6 +66,7 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	hash, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	pinHash, _ := bcrypt.GenerateFromPassword([]byte(pin), 14)
 
 	// File Upload Handling
 	var idDocPath, selfiePath string
@@ -73,11 +79,17 @@ func Register(c *fiber.Ctx) error {
 	if files, ok := form.File["id_document"]; ok && len(files) > 0 {
 		file := files[0]
 		filename := uuid.New().String() + "_" + file.Filename
-		idDocPath = "/uploads/kyc/ids/" + filename
-		fmt.Printf("[DEBUG] Saving ID Document to: .%s\n", idDocPath)
-		if err := c.SaveFile(file, "."+idDocPath); err != nil {
-			fmt.Printf("[DEBUG] Error saving ID document: %v\n", err)
-			return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Failed to save ID document"})
+
+		f, err := file.Open()
+		if err == nil {
+			defer f.Close()
+			path, err := utils.UploadToMinio(c.Context(), filename, f, file.Size, file.Header.Get("Content-Type"))
+			if err == nil {
+				idDocPath = path
+				fmt.Printf("[DEBUG] Saved ID Document to Minio: %s\n", idDocPath)
+			} else {
+				fmt.Printf("[DEBUG] Error saving ID to Minio: %v\n", err)
+			}
 		}
 	}
 
@@ -97,12 +109,15 @@ func Register(c *fiber.Ctx) error {
 		dec, err := base64.StdEncoding.DecodeString(b64data)
 		if err == nil {
 			filename := uuid.New().String() + "_selfie.jpg"
-			selfiePath = "/uploads/kyc/selfies/" + filename
-			fmt.Printf("[DEBUG] Saving Selfie to: .%s\n", selfiePath)
-			err = os.WriteFile("."+selfiePath, dec, 0644)
-			if err != nil {
-				fmt.Printf("[DEBUG] Error writing selfie file: %v\n", err)
-				fmt.Println("Error saving selfie:", err)
+
+			// Use strings.Reader to implement io.Reader for base64 data
+			reader := strings.NewReader(string(dec))
+			path, err := utils.UploadToMinio(c.Context(), filename, reader, int64(len(dec)), "image/jpeg")
+			if err == nil {
+				selfiePath = path
+				fmt.Printf("[DEBUG] Saved Selfie to Minio: %s\n", selfiePath)
+			} else {
+				fmt.Printf("[DEBUG] Error saving Selfie to Minio: %v\n", err)
 			}
 		} else {
 			fmt.Printf("[DEBUG] Error decoding selfie base64: %v\n", err)
@@ -113,8 +128,15 @@ func Register(c *fiber.Ctx) error {
 	if files, ok := form.File["selfie_file"]; ok && len(files) > 0 {
 		file := files[0]
 		filename := uuid.New().String() + "_" + file.Filename
-		selfiePath = "/uploads/kyc/selfies/" + filename
-		c.SaveFile(file, "."+selfiePath)
+
+		f, err := file.Open()
+		if err == nil {
+			defer f.Close()
+			path, err := utils.UploadToMinio(c.Context(), filename, f, file.Size, file.Header.Get("Content-Type"))
+			if err == nil {
+				selfiePath = path
+			}
+		}
 	}
 
 	// Start Transaction
@@ -167,6 +189,7 @@ func Register(c *fiber.Ctx) error {
 		Status:          "active",
 		IDDocumentURL:   idDocPath,
 		SelfieURL:       selfiePath,
+		PinHash:         string(pinHash),
 		CreatedBy:       user.ID,
 	}
 

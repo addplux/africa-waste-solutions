@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Data Transfer - Supply Chain Operations{% endblock %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-50 font-sans">
+    <!-- Sidebar -->
+    {% include 'components/sidebar.html' %}
+
+    <style>
+        .product-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-top: 0.25rem;
+            max-height: 240px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-item {
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f9fafb;
+        }
+
+        .product-item:hover {
+            background: #f0f7ff;
+            color: #1d4ed8;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto flex flex-col pt-16 lg:pt-0">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center z-10">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Dispatch Operations</h1>
+                <p class="text-sm text-gray-500">Move Inventory Between Locations</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold border border-blue-100">
+                    {{ session.get('user', {}).get('name', 'Admin') }}
+                </span>
+            </div>
+        </header>
+
+        <main class="p-6 flex-1">
+            <!-- TABS (Single Tab for Visual Consistency) -->
+            <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden min-h-[600px] flex flex-col">
+                <div class="flex border-b border-gray-100">
+                    <div
+                        class="flex-1 py-5 text-center font-bold text-purple-600 bg-purple-50 transition-all border-b-2 border-purple-500">
+                        <i class="fas fa-truck-moving mr-2"></i>Dispatch (Movement)
+                    </div>
+                </div>
+
+                <!-- FORM CONTAINER -->
+                <form method="POST" action="{{ url_for('data_transfer') }}" id="entryForm"
+                    class="p-8 flex-1 flex flex-col">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="transaction_type" id="transaction_type" value="transfer">
+
+                    <!-- CONTENT AREA -->
+                    <div class="flex-1">
+
+                        <!-- TAB 2: TRANSFER (Always Visible) -->
+                        <div id="content-transfer" class="space-y-6 tab-content">
+                            <div
+                                class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-purple-800 text-sm mb-6">
+                                <i class="fas fa-truck-moving mr-2"></i> Dispatch items between ecosystem nodes (e.g.,
+                                Manufacturer to Retailer).
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Source
+                                        (From)</label>
+                                    <select name="transfer_source_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Source...</option>
+                                        {% if current_account %}
+                                        <option value="{{ current_account.id }}" selected>My Account: {{
+                                            current_account.name }}</option>
+                                        {% endif %}
+                                        <optgroup label="Manufacturers">
+                                            {% for m in manufacturers %}
+                                            <option value="{{ m.id }}">{{ m.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Retailers/Distributors">
+                                            {% for d in distributors %}
+                                            <option value="{{ d.id }}">{{ d.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Households">
+                                            {% for h in households %}
+                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
+                                        (To)</label>
+                                    <select name="transfer_target_id"
+                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
+                                        <option value="">Select Recipient...</option>
+                                        <optgroup label="Manufacturers">
+                                            {% for m in manufacturers %}
+                                            <option value="{{ m.id }}">{{ m.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Retailers/Distributors">
+                                            {% for d in distributors %}
+                                            <option value="{{ d.id }}">{{ d.name }}</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                        <optgroup label="Households">
+                                            {% for h in households %}
+                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-8 border-gray-100">
+
+                        <!-- COMMON: PRODUCT DETAILS -->
+                        <div class="space-y-6 animate-fade-in-up">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-gray-800">Product Details</h3>
+                                <span class="text-xs text-gray-400">Waste Control List (Batch 1)</span>
+                            </div>
+
+                            <div class="relative">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                    Product / Package Name <span class="text-red-500">*</span>
+                                </label>
+                                <div class="relative" id="product-search-container">
+                                    <input type="text" name="product_name" id="product_input" required
+                                        autocomplete="off" placeholder="Start typing to select item..."
+                                        onfocus="showProducts()" oninput="filterProducts(this.value)"
+                                        class="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 shadow-sm text-lg text-gray-800 placeholder-gray-400">
+                                    <div id="product-list-dropdown" class="product-dropdown hidden">
+                                        {% for p in products %}
+                                        <div class="product-item" onclick="selectProduct('{{ p }}')">{{ p }}</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <input type="hidden" name="product_group" value="Waste Control">
+                            </div>
+
+                            <!-- BULK QUANTITY KEYS -->
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">UNIT</label>
+                                    <input type="number" name="qty_unit" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">LEVEL
+                                        12
+                                        (DOZEN)</label>
+                                    <input type="number" name="qty_dozen" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">LEVEL
+                                        16</label>
+                                    <input type="number" name="qty_level_16" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">LEVEL
+                                        10</label>
+                                    <input type="number" name="qty_level_10" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">HALF
+                                        DOZEN (6)</label>
+                                    <input type="number" name="qty_half_dozen" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">CASE</label>
+                                    <input type="number" name="qty_case" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                                <div
+                                    class="bg-gray-50 p-4 rounded-xl text-center hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-gray-200 group">
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 group-hover:text-blue-600 mb-2">SERIES</label>
+                                    <input type="number" name="qty_series" placeholder="0"
+                                        class="w-full text-center bg-transparent text-xl font-bold focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER & ACTION -->
+                    <div class="mt-8 pt-6 border-t border-gray-100 space-y-6">
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="w-full md:w-auto">
+                                <label
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Authorization
+                                    PIN <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    <input type="password" name="pin" required maxlength="4" placeholder="****"
+                                        class="pl-10 pr-4 py-3 bg-gray-100 border-none rounded-xl w-32 text-center font-mono text-lg tracking-widest focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-4 w-full md:w-auto justify-end">
+                                <!-- Transfer Action Button -->
+                                <button type="submit" id="transferBtn"
+                                    class="flex-1 md:flex-none px-12 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
+                                    <i class="fas fa-truck-moving mr-2"></i> Record Dispatch
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RECENT TRANSACTIONS BOARD -->
+            <div class="max-w-5xl mx-auto mt-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                <div class="px-8 py-6 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg">Recent Dispatches</h3>
+                        <p class="text-sm text-gray-500">History of Movements</p>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50 text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="px-8 py-4 font-semibold">Date</th>
+                                <th class="px-8 py-4 font-semibold">Type</th>
+                                <th class="px-8 py-4 font-semibold">Transfer Flow</th>
+                                <th class="px-8 py-4 font-semibold">Product</th>
+                                <th class="px-8 py-4 font-semibold text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            {% for entry in recent_entries %}
+                            {% if entry.transaction_type == 'transfer' %}
+                            <tr class="hover:bg-gray-50 transition-colors group">
+                                <td class="px-8 py-4 text-gray-600 whitespace-nowrap">{{ entry.entry_date[:10] }}</td>
+                                <td class="px-8 py-4">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        {{ entry.transaction_type|capitalize }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-4">
+                                    <div class="flex items-center gap-2 text-gray-900 font-medium">
+                                        <span class="truncate max-w-[100px]">{{ account_map.get(entry.source_account_id,
+                                            'Source') }}</span>
+                                        <i class="fas fa-arrow-right text-gray-300 text-xs"></i>
+                                        {% if entry.target_account_id %}
+                                        <span class="truncate max-w-[100px]">{{ account_map.get(entry.target_account_id,
+                                            'Target') }}</span>
+                                        {% else %}
+                                        <span class="text-gray-400 italic">Inventory</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-8 py-4 text-gray-600">
+                                    {{ entry.product_name }}
+                                </td>
+                                <td class="px-8 py-4 text-right">
+                                    <form action="{{ url_for('reverse_entry', entry_id=entry.id) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure you want to REVERSE this transaction? This cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 hover:bg-red-50 px-3 py-1 rounded-lg transition-all text-xs font-bold border border-transparent hover:border-red-100">
+                                            <i class="fas fa-undo-alt mr-1"></i> REVERSE
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="px-8 py-8 text-center text-gray-500 italic">No recent
+                                    transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Product Search Logic
+    const fullProductList = {{ products| tojson }};
+
+    function showProducts() {
+        const dropdown = document.getElementById('product-list-dropdown');
+        dropdown.classList.remove('hidden');
+    }
+
+    function filterProducts(query) {
+        const dropdown = document.getElementById('product-list-dropdown');
+        const q = query.toLowerCase().trim();
+
+        // Clear current items
+        dropdown.innerHTML = '';
+
+        // Filter list
+        const filtered = fullProductList.filter(p => p.toLowerCase().includes(q));
+
+        if (filtered.length === 0) {
+            dropdown.innerHTML = '<div class="p-4 text-gray-400 italic text-center">No matching products</div>';
+        } else {
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'product-item';
+                div.textContent = p;
+                div.onclick = () => selectProduct(p);
+                dropdown.appendChild(div);
+            });
+        }
+        dropdown.classList.remove('hidden');
+    }
+
+    function selectProduct(name) {
+        document.getElementById('product_input').value = name;
+        document.getElementById('product-list-dropdown').classList.add('hidden');
+    }
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+        const container = document.getElementById('product-search-container');
+        const dropdown = document.getElementById('product-list-dropdown');
+        if (container && !container.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Fix for template string usage above
+    function selectProduct(name) {
+        document.getElementById('product_input').value = name;
+        document.getElementById('product-list-dropdown').classList.add('hidden');
+    }
+</script>
+{% endblock %}

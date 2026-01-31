@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -33,7 +34,8 @@ type Account struct {
 	KYCStatus     string `json:"kyc_status"` // pending, approved, rejected
 
 	Status    string    `json:"status"` // active, blocked
-	CreatedBy uuid.UUID `json:"created_by"`
+	PinHash   string    `json:"-"`      // Hashed PIN for transactions
+	CreatedBy uuid.UUID `gorm:"index" json:"created_by"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -42,8 +44,8 @@ type Entry struct {
 	TransactionType string    `json:"transaction_type"` // supply, transfer, return
 
 	// Transfer Details
-	SourceAccountID uuid.UUID  `json:"source_account_id"`
-	TargetAccountID *uuid.UUID `json:"target_account_id"` // Nullable (if just manufacturing stock)
+	SourceAccountID uuid.UUID  `gorm:"index" json:"source_account_id"`
+	TargetAccountID *uuid.UUID `gorm:"index" json:"target_account_id"` // Nullable (if just manufacturing stock)
 
 	// Authorization
 	PinVerified bool `json:"pin_verified"`
@@ -61,9 +63,10 @@ type Entry struct {
 	Level16   int `json:"level_16"`
 	Level10   int `json:"level_10"`
 
-	EntryDate time.Time `json:"entry_date"`
-	CreatedBy uuid.UUID `json:"created_by"`
-	CreatedAt time.Time `json:"created_at"`
+	EntryDate time.Time      `json:"entry_date"`
+	CreatedBy uuid.UUID      `gorm:"index" json:"created_by"`
+	CreatedAt time.Time      `json:"created_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
 type Group struct {

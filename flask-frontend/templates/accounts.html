@@ -172,6 +172,7 @@
                                     <form action="{{ url_for('block_account', account_id=account.id) }}" method="POST"
                                         onsubmit="return confirm('Block this account? Data access will be restricted.');"
                                         class="inline-block">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit"
                                             class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
                                             title="Block Data Access">
@@ -183,6 +184,7 @@
                                     <form action="{{ url_for('delete_account', account_id=account.id) }}" method="POST"
                                         onsubmit="return confirm('DELETE this account? This cannot be undone.');"
                                         class="inline-block">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit"
                                             class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                             title="Delete Account">

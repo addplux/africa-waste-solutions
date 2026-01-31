@@ -7,6 +7,7 @@ import (
 
 	"github.com/addplux/africa-waste-solutions/models"
 	"github.com/addplux/africa-waste-solutions/routes"
+	"github.com/addplux/africa-waste-solutions/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
@@ -18,6 +19,7 @@ func main() {
 	}
 
 	models.ConnectDB()
+	utils.InitStorage()
 
 	app := fiber.New(fiber.Config{
 		BodyLimit: 10 * 1024 * 1024, // 10MB

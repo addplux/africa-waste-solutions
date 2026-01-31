@@ -4,11 +4,13 @@ from config import Config
 import os
 from werkzeug.utils import secure_filename
 from functools import wraps
+from flask_wtf.csrf import CSRFProtect
 
 from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
+csrf = CSRFProtect(app)
 
 # Helper function to check if user is logged in
 def login_required(f):
@@ -525,6 +527,125 @@ def data_entry():
                 break
 
     return render_template('data_entry.html', 
+                           user=session.get('user'),
+                           current_account=current_account,
+                           manufacturers=manufacturers,
+                           distributors=distributors,
+                           households=households,
+                           recent_entries=recent_entries,
+                           account_map=account_map,
+                           products=products)
+
+@app.route('/data-transfer', methods=['GET', 'POST'])
+@login_required
+def data_transfer():
+    if request.method == 'POST':
+        # Force transaction type to transfer
+        tx_type = 'transfer'
+        
+        source_id = request.form.get('transfer_source_id')
+        target_id = request.form.get('transfer_target_id')
+
+        # Normalize empty strings to None
+        if not source_id or not source_id.strip():
+            source_id = None
+        if not target_id or not target_id.strip():
+            target_id = None
+
+        # Clean integer inputs
+        def get_int(key):
+            try:
+                val = request.form.get(key)
+                if val and val.strip():
+                    return int(val)
+            except (ValueError, TypeError):
+                pass
+            return 0
+
+        data = {
+            'transaction_type': tx_type,
+            'source_account_id': source_id,
+            'target_account_id': target_id,
+            'pin': request.form.get('pin'), # Send PIN for verification
+            'product_group': request.form.get('product_group'),
+            'product_name': request.form.get('product_name'),
+            'unit': get_int('qty_unit'),
+            'dozen': get_int('qty_dozen'),
+            'half_dozen': get_int('qty_half_dozen'),
+            'case': get_int('qty_case'),
+            'series': get_int('qty_series'),
+            'level_16': get_int('qty_level_16'),
+            'level_10': get_int('qty_level_10')
+        }
+
+        # Send to Go Backend
+        response = api_call('entries', method='POST', data=data)
+        
+        if response and response.status_code in [200, 201]:
+            flash('Dispatch recorded successfully!', 'success')
+        else:
+            error_msg = 'Failed to submit dispatch.'
+            if response:
+                try:
+                    error_msg = response.json().get('message', error_msg)
+                except:
+                    pass
+            flash(error_msg, 'error')
+            
+        return redirect(url_for('data_transfer'))
+    
+    # GET Request: Fetch accounts AND recent entries
+    all_accounts = [] 
+    accounts_response = api_call('accounts', method='GET')
+    entries_response = api_call('entries', method='GET')
+    
+    manufacturers = []
+    distributors = []
+    households = []
+    recent_entries = []
+    account_map = {}
+    
+    if accounts_response and accounts_response.status_code == 200:
+        all_accounts = accounts_response.json().get('data', [])
+        for acc in all_accounts:
+            account_map[acc['id']] = acc['name']
+            a_type = acc.get('account_type', '').lower()
+            if a_type == 'manufacturer':
+                manufacturers.append(acc)
+            elif a_type == 'distributor':
+                distributors.append(acc)
+            elif a_type == 'household':
+                households.append(acc)
+
+    if entries_response and entries_response.status_code == 200:
+        recent_entries = entries_response.json().get('data', [])
+        recent_entries.sort(key=lambda x: x.get('entry_date', ''), reverse=True)
+        recent_entries = recent_entries[:10] 
+    
+    # Fetch Products
+    products = []
+    products_response = api_call('products', method='GET')
+    if products_response and products_response.status_code == 200:
+        products = products_response.json().get('data', [])
+
+    # Identify current user's account
+    current_account = None
+    if session.get('user', {}).get('role') != 'admin':
+        user_id = session.get('user', {}).get('id')
+        user_name = session.get('user', {}).get('name')
+        
+        for acc in all_accounts:
+            if acc.get('created_by') == user_id:
+                current_account = acc
+                break
+            if user_name and acc.get('name') == user_name:
+                current_account = acc
+                break
+            if user_name and acc.get('company_name') == user_name:
+                current_account = acc
+                break
+
+    return render_template('data_transfer.html', 
                            user=session.get('user'),
                            current_account=current_account,
                            manufacturers=manufacturers,

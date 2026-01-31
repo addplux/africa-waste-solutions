@@ -114,6 +114,7 @@
 
             <form method="POST" action="{{ url_for('account_creation') }}" enctype="multipart/form-data"
                 id="accountForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="step" id="stepInput" value="1">
 
                 <!-- STEP 1: Account Type (Formerly Step 2) -->

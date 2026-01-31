@@ -30,7 +30,7 @@ func CreateEntry(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "Invalid input format"})
 	}
 
-	// 1. PIN Verification (Mock for now, or check against '1234')
+	// 1. PIN Verification (Temporary Hardcoded for Testing)
 	if input.Pin != "1234" {
 		return c.Status(401).JSON(fiber.Map{"status": "error", "message": "Invalid Authorization PIN"})
 	}

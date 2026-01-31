@@ -63,10 +63,7 @@
                         class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all border-b-2 border-transparent">
                         <i class="fas fa-boxes mr-2"></i>1. Supply (Enter Market)
                     </button>
-                    <button onclick="switchTab('transfer')" id="tab-transfer"
-                        class="flex-1 py-5 text-center font-bold text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-all border-b-2 border-transparent">
-                        <i class="fas fa-truck-moving mr-2"></i>2. Dispatch (Movement)
-                    </button>
+
                     <button onclick="switchTab('return')" id="tab-return"
                         class="flex-1 py-5 text-center font-bold text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all border-b-2 border-transparent">
                         <i class="fas fa-recycle mr-2"></i>3. Return (Leave Market)
@@ -76,6 +73,7 @@
                 <!-- FORM CONTAINER -->
                 <form method="POST" action="{{ url_for('data_entry') }}" id="entryForm"
                     class="p-8 flex-1 flex flex-col">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="transaction_type" id="transaction_type" value="supply">
 
                     <!-- CONTENT AREA -->
@@ -112,69 +110,7 @@
                             </div>
                         </div>
 
-                        <!-- TAB 2: TRANSFER -->
-                        <div id="content-transfer" class="hidden space-y-6 tab-content">
-                            <div
-                                class="bg-purple-50 p-4 rounded-lg border border-purple-100 text-purple-800 text-sm mb-6">
-                                <i class="fas fa-truck-moving mr-2"></i> Dispatch items between ecosystem nodes (e.g.,
-                                Manufacturer to Retailer).
-                            </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Source
-                                        (From)</label>
-                                    <select name="transfer_source_id"
-                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
-                                        <option value="">Select Source...</option>
-                                        {% if current_account %}
-                                        <option value="{{ current_account.id }}" selected>My Account: {{
-                                            current_account.name }}</option>
-                                        {% endif %}
-                                        <optgroup label="Manufacturers">
-                                            {% for m in manufacturers %}
-                                            <option value="{{ m.id }}">{{ m.name }}</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                        <optgroup label="Retailers/Distributors">
-                                            {% for d in distributors %}
-                                            <option value="{{ d.id }}">{{ d.name }}</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                        <optgroup label="Households">
-                                            {% for h in households %}
-                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Target
-                                        (To)</label>
-                                    <select name="transfer_target_id"
-                                        class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 transition-all">
-                                        <option value="">Select Recipient...</option>
-                                        <optgroup label="Manufacturers">
-                                            {% for m in manufacturers %}
-                                            <option value="{{ m.id }}">{{ m.name }}</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                        <optgroup label="Retailers/Distributors">
-                                            {% for d in distributors %}
-                                            <option value="{{ d.id }}">{{ d.name }}</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                        <optgroup label="Households">
-                                            {% for h in households %}
-                                            <option value="{{ h.id }}">{{ h.name }} ({{ h.plot_number }})</option>
-                                            {% endfor %}
-                                        </optgroup>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- TAB 3: RETURN -->
                         <div id="content-return" class="hidden space-y-6 tab-content">
@@ -316,11 +252,7 @@
                                     <i class="fas fa-save mr-2"></i> Record Supply
                                 </button>
 
-                                <!-- Transfer Action Button (Relocated to bottom as requested) -->
-                                <button type="button" onclick="submitEntry('transfer')" id="transferBtn"
-                                    class="flex-1 md:flex-none px-10 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
-                                    <i class="fas fa-exchange-alt mr-2"></i> Transfer
-                                </button>
+
                             </div>
                         </div>
                     </div>
@@ -380,6 +312,7 @@
                                 <td class="px-8 py-4 text-right">
                                     <form action="{{ url_for('reverse_entry', entry_id=entry.id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure you want to REVERSE this transaction? This cannot be undone.');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit"
                                             class="text-red-600 hover:text-red-900 hover:bg-red-50 px-3 py-1 rounded-lg transition-all text-xs font-bold border border-transparent hover:border-red-100">
                                             <i class="fas fa-undo-alt mr-1"></i> REVERSE
@@ -423,11 +356,6 @@
                 color: 'border-blue-500 text-blue-600 bg-blue-50',
                 btnClass: 'bg-blue-600 hover:bg-blue-700',
                 btnText: '<i class="fas fa-save mr-2"></i> Record Supply'
-            },
-            'transfer': {
-                color: 'border-purple-500 text-purple-600 bg-purple-50',
-                btnClass: 'bg-purple-600 hover:bg-purple-700',
-                btnText: '<i class="fas fa-truck-moving mr-2"></i> Record Dispatch'
             },
             'return': {
                 color: 'border-green-500 text-green-600 bg-green-50',
@@ -512,9 +440,7 @@
             if (e.key.toLowerCase() === 's') {
                 e.preventDefault();
                 switchTab('supply');
-            } else if (e.key.toLowerCase() === 't') {
-                e.preventDefault();
-                switchTab('transfer');
+
             } else if (e.key.toLowerCase() === 'r') {
                 e.preventDefault();
                 switchTab('return');
