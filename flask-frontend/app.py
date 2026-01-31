@@ -678,65 +678,72 @@ def block_account(account_id):
 @login_required
 @admin_required
 def admin_create_account():
-    if request.method == 'POST':
-        try:
-            # Collect form data
-            account_type = request.form.get('account_type')
-            company_name = request.form.get('company_name', '')
-            full_name = request.form.get('full_name')
-            date_of_birth = request.form.get('date_of_birth')
-            email = request.form.get('email')
-            password = request.form.get('password')
-            contact = request.form.get('contact')
-            pin = request.form.get('pin', '1234')  # Default to 1234 if not provided
-            plot_number = request.form.get('plot_number')
-            area = request.form.get('area', '')
-            company_type = request.form.get('company_type', 'local')
-            
-            # Get uploaded files
-            id_document = request.files.get('id_document')
-            selfie_file = request.files.get('selfie_file')
-            
-            # Prepare data payload
-            data = {
-                'account_type': account_type,
-                'company_name': company_name,
-                'name': full_name,
-                'date_of_birth': date_of_birth,
-                'email': email,
-                'password': password,
-                'contact': contact,
-                'pin': pin,
-                'plot_number': plot_number,
-                'area': area,
-                'is_international': company_type == 'international'
-            }
-            
-            # Prepare files for upload
-            files = {}
-            if id_document:
-                files['id_document'] = (id_document.filename, id_document.stream, id_document.mimetype)
-            if selfie_file:
-                files['selfie_file'] = (selfie_file.filename, selfie_file.stream, selfie_file.mimetype)
-            
-            # Call backend registration endpoint
-            response = api_call('auth/register', method='POST', data=data, files=files)
-            
-            if response and response.status_code in [200, 201]:
-                flash(f'Account created successfully for {full_name}!', 'success')
-                return redirect(url_for('accounts'))
-            else:
-                error_msg = 'Failed to create account.'
-                if response:
-                    try:
-                        error_msg = response.json().get('message', error_msg)
-                    except:
-                        pass
-                flash(error_msg, 'error')
-        except Exception as e:
-            flash(f'Error creating account: {str(e)}', 'error')
-    
-    return render_template('admin_account_create.html')
+    try:
+        if request.method == 'POST':
+            try:
+                # Collect form data
+                account_type = request.form.get('account_type')
+                company_name = request.form.get('company_name', '')
+                full_name = request.form.get('full_name')
+                date_of_birth = request.form.get('date_of_birth')
+                email = request.form.get('email')
+                password = request.form.get('password')
+                contact = request.form.get('contact')
+                pin = request.form.get('pin', '1234')  # Default to 1234 if not provided
+                plot_number = request.form.get('plot_number')
+                area = request.form.get('area', '')
+                company_type = request.form.get('company_type', 'local')
+                
+                # Get uploaded files
+                id_document = request.files.get('id_document')
+                selfie_file = request.files.get('selfie_file')
+                
+                # Prepare data payload
+                data = {
+                    'account_type': account_type,
+                    'company_name': company_name,
+                    'name': full_name,
+                    'date_of_birth': date_of_birth,
+                    'email': email,
+                    'password': password,
+                    'contact': contact,
+                    'pin': pin,
+                    'plot_number': plot_number,
+                    'area': area,
+                    'is_international': company_type == 'international'
+                }
+                
+                # Prepare files for upload
+                files = {}
+                if id_document:
+                    files['id_document'] = (id_document.filename, id_document.stream, id_document.mimetype)
+                if selfie_file:
+                    files['selfie_file'] = (selfie_file.filename, selfie_file.stream, selfie_file.mimetype)
+                
+                # Call backend registration endpoint
+                response = api_call('auth/register', method='POST', data=data, files=files)
+                
+                if response and response.status_code in [200, 201]:
+                    flash(f'Account created successfully for {full_name}!', 'success')
+                    return redirect(url_for('accounts'))
+                else:
+                    error_msg = 'Failed to create account.'
+                    if response:
+                        try:
+                            error_msg = response.json().get('message', error_msg)
+                        except:
+                            pass
+                    flash(error_msg, 'error')
+            except Exception as e:
+                print(f"Error in POST handler: {str(e)}")
+                flash(f'Error creating account: {str(e)}', 'error')
+        
+        return render_template('admin_account_create.html')
+    except Exception as e:
+        print(f"Error in admin_create_account route: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return f"Internal Server Error: {str(e)}", 500
 
 @app.route('/account/suspend/<string:account_id>', methods=['POST'])
 @login_required
