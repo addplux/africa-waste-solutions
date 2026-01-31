@@ -4,13 +4,19 @@ from config import Config
 import os
 from werkzeug.utils import secure_filename
 from functools import wraps
-from flask_wtf.csrf import CSRFProtect
 
 from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
-csrf = CSRFProtect(app)
+
+# Initialize CSRF protection if available
+try:
+    from flask_wtf.csrf import CSRFProtect
+    csrf = CSRFProtect(app)
+except ImportError:
+    print("Warning: Flask-WTF not available, CSRF protection disabled")
+    csrf = None
 
 # Helper function to check if user is logged in
 def login_required(f):
