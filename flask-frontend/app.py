@@ -655,6 +655,28 @@ def data_transfer():
                            account_map=account_map,
                            products=products)
 
+@app.route('/accounts')
+@login_required
+@admin_required
+def accounts():
+    # Fetch all accounts from backend
+    response = api_call('accounts', method='GET')
+    accounts_list = []
+    
+    if response and response.status_code == 200:
+        data = response.json()
+        accounts_list = data.get('data', [])
+    
+    # Calculate stats
+    stats = {
+        'total': len(accounts_list),
+        'active': len([a for a in accounts_list if a.get('status') == 'active']),
+        'pending_kyc': len([a for a in accounts_list if a.get('kyc_status') == 'pending']),
+        'suspended': len([a for a in accounts_list if a.get('status') == 'suspended'])
+    }
+    
+    return render_template('accounts.html', user=session.get('user'), accounts=accounts_list, stats=stats)
+
 @app.route('/account/block/<string:account_id>', methods=['POST'])
 @login_required
 @admin_required
