@@ -41,6 +41,34 @@ func BlockAccount(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"status": "success", "message": "Account blocked successfully"})
 }
 
+func SuspendAccount(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var account models.Account
+
+	if result := models.DB.First(&account, "id = ?", id); result.Error != nil {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Account not found"})
+	}
+
+	account.Status = "suspended"
+	models.DB.Save(&account)
+
+	return c.JSON(fiber.Map{"status": "success", "message": "Account suspended successfully"})
+}
+
+func UnsuspendAccount(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var account models.Account
+
+	if result := models.DB.First(&account, "id = ?", id); result.Error != nil {
+		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "Account not found"})
+	}
+
+	account.Status = "active"
+	models.DB.Save(&account)
+
+	return c.JSON(fiber.Map{"status": "success", "message": "Account reactivated successfully"})
+}
+
 func DeleteAccount(c *fiber.Ctx) error {
 	id := c.Params("id")
 	if result := models.DB.Delete(&models.Account{}, "id = ?", id); result.Error != nil {

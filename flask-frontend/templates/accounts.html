@@ -16,7 +16,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
                     <p class="text-gray-600 mt-1">Manage customer and business accounts</p>
                 </div>
-                <a href="{{ url_for('account_creation') }}"
+                <a href="{{ url_for('admin_create_account') }}"
                     class="px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
                     <i class="fas fa-user-plus mr-2"></i>
                     New Account
@@ -168,15 +168,26 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
 
-                                    {% if account.status != 'blocked' %}
-                                    <form action="{{ url_for('block_account', account_id=account.id) }}" method="POST"
-                                        onsubmit="return confirm('Block this account? Data access will be restricted.');"
+                                    {% if account.status == 'suspended' %}
+                                    <form action="{{ url_for('unsuspend_account', account_id=account.id) }}"
+                                        method="POST" onsubmit="return confirm('Reactivate this account?');"
+                                        class="inline-block">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit"
+                                            class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                            title="Reactivate Account">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <form action="{{ url_for('suspend_account', account_id=account.id) }}" method="POST"
+                                        onsubmit="return confirm('Suspend this account? User will not be able to perform transactions.');"
                                         class="inline-block">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit"
                                             class="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
-                                            title="Block Data Access">
-                                            <i class="fas fa-ban"></i>
+                                            title="Suspend Account">
+                                            <i class="fas fa-pause-circle"></i>
                                         </button>
                                     </form>
                                     {% endif %}
