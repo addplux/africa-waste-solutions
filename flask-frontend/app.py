@@ -738,7 +738,7 @@ def admin_create_account():
                 print(f"Error in POST handler: {str(e)}")
                 flash(f'Error creating account: {str(e)}', 'error')
         
-        return render_template('admin_account_create.html')
+        return render_template('admin_account_create.html', user=session.get('user'))
     except Exception as e:
         print(f"Error in admin_create_account route: {str(e)}")
         import traceback
