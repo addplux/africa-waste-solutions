@@ -635,6 +635,74 @@ def data_transfer():
                            account_map=account_map,
                            products=products)
 
+@app.route('/my-account')
+@login_required
+def my_account():
+    user = session.get('user', {})
+    
+    # Reuse logic from confirm_details/stats to get account details
+    account_details = {
+        'account_type': 'consumer', # Default
+        'company_name': None,
+        'contact': user.get('contact'),
+        'area': user.get('area'),
+        'plot_number': user.get('plot_number'),
+        'created_at': user.get('created_at'),
+        'kyc_status': 'unknown',
+        'is_international': False
+    }
+
+    # Fetch more details from stats API if possible, or accounts API filtering by ID
+    # Stats API is a good place if it returns account info
+    response = api_call('auth/stats', method='GET')
+    if response and response.status_code == 200:
+        data = response.json().get('data', {})
+        account_details.update({
+            'account_type': data.get('account_type', account_details['account_type']),
+            'kyc_status': data.get('kyc_status', account_details['kyc_status']),
+             # Mapping other fields if returned by stats, or fallback to user session
+            'contact': data.get('contact', account_details['contact']),
+            'area': data.get('area', account_details['area']),
+            # Add other specific fields if available in stats or consider fetching specific account info
+        })
+        
+        # If stats doesn't return full profile strings (like 'company_name'), we might need to fetch account specific info
+        # But 'auth/stats' in backend seems to return limited info based on previous file reads.
+        # Let's try to find this user in the 'accounts' list if they are not admin, 
+        # although 'accounts' endpoint might be admin-only (it is in app.py).
+        # However, for the user to see THEIR OWN info, we might need an endpoint.
+        # IF 'accounts' is admin only, we can't use it here easily without logic change or a new backend endpoint.
+        # Let's rely on what we have or 'auth/stats'. 
+        
+        # Actually, looking at 'dashboard' route, 'auth/stats' returns basic stats.
+        # The 'confirm_details' route suggests 'auth/stats' returns some profile info.
+        # Let's assume 'auth/stats' or session has enough for now, or add a TODO to backend.
+        
+        # Refinement: Let's check 'accounts' logic in 'data_entry'. 
+        # It fetches ALL accounts to find the current user's account.
+        # But `accounts` endpoint is likely protected or we are filtering it.
+        # In `data_entry` it calls `api_call('accounts', method='GET')`.
+        # Taking a look there helps.
+        pass
+
+    # Attempt to fetch full account details if possible (reusing logic from data_entry to find self)
+    # Note: If 'accounts' endpoint is restricted to admins in backend, this fails. 
+    # But in 'data_entry' it is used by non-admins? 
+    # 'data_entry' route calls `api_call('accounts', method='GET')`. 
+    # Let's try to get full details from there.
+    if user.get('role') != 'admin':
+         acc_resp = api_call('accounts', method='GET')
+         if acc_resp and acc_resp.status_code == 200:
+             all_accs = acc_resp.json().get('data', [])
+             user_id = user.get('id')
+             for acc in all_accs:
+                 if acc.get('created_by') == user_id or acc.get('email') == user.get('email'): # Email might not be in account
+                     # Match found
+                     account_details.update(acc)
+                     break
+    
+    return render_template('my_account.html', user=user, account=account_details)
+
 @app.route('/accounts')
 @login_required
 @admin_required

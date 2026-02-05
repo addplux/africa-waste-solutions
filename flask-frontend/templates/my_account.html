@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - Africa Waste Solutions{% endblock %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-100">
+    <!-- Sidebar -->
+    {% include 'components/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="flex-1 overflow-auto pt-16 lg:pt-0">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
+            <h1 class="text-3xl font-bold text-gray-900">My Account</h1>
+            <p class="text-gray-600 mt-1">View your personal information and account status</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-8">
+                        <div class="flex items-center gap-6 mb-8">
+                            <div
+                                class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold">
+                                {{ user.name[0] if user.name else 'U' }}
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">{{ user.name }}</h2>
+                                <p class="text-gray-500">{{ user.email }}</p>
+                                <div class="mt-2 text-sm">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 capitalize">
+                                        {{ user.role or 'User' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-100 pt-8">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+                                <dl class="space-y-4">
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Account Type</dt>
+                                        <dd class="mt-1 text-sm text-gray-900 capitalize">{{ account.account_type or
+                                            'N/A' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Company Name</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">{{ account.company_name or 'N/A' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Contact Number</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">{{ account.contact or user.contact or
+                                            'N/A' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Member Since</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">{{ (account.created_at[:10] if
+                                            account.created_at else user.created_at[:10]) or 'N/A' }}</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Location Details</h3>
+                                <dl class="space-y-4">
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Area / Location</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">{{ account.area or 'N/A' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Plot Number</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">{{ account.plot_number or 'N/A' }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">International Status</dt>
+                                        <dd class="mt-1 text-sm text-gray-900">
+                                            {% if account.is_international %}
+                                            <span class="text-green-600 font-medium">International Entity</span>
+                                            {% else %}
+                                            <span class="text-gray-600">Local Entity</span>
+                                            {% endif %}
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-8 border-t border-gray-100">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Compliance</h3>
+                            <div class="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center 
+                                            {% if account.kyc_status == 'approved' %}bg-green-100 text-green-600
+                                            {% elif account.kyc_status == 'pending' %}bg-yellow-100 text-yellow-600
+                                            {% else %}bg-red-100 text-red-600{% endif %}">
+                                        <i
+                                            class="fas {% if account.kyc_status == 'approved' %}fa-check-circle{% elif account.kyc_status == 'pending' %}fa-clock{% else %}fa-exclamation-circle{% endif %}"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">KYC Status</p>
+                                        <p class="text-sm text-gray-500 capitalize">{{ account.kyc_status or 'Not
+                                            Submitted' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock %}
