@@ -25,17 +25,6 @@ except ImportError:
     def inject_csrf_token():
         return dict(csrf_token=lambda: '')
 
-# Error Handlers for debugging on Vercel
-@app.errorhandler(500)
-def handle_500(e):
-    import traceback
-    return f"Internal Server Error: {str(e)}<br><pre>{traceback.format_exc()}</pre>", 500
-
-@app.errorhandler(Exception)
-def handle_exception(e):
-    import traceback
-    return f"Unhandle Exception: {str(e)}<br><pre>{traceback.format_exc()}</pre>", 500
-
 # Helper function to check if user is logged in
 def login_required(f):
     @wraps(f)
@@ -297,6 +286,7 @@ def dashboard():
     # ADMIN SPECIFIC REAL-TIME DATA
     admin_stats = {}
     recent_activity = []
+    recent_accounts = []
 
     if session.get('user', {}).get('role') == 'admin':
         # 1. Fetch Report Stats for "Global Recovery" and "Distributed"
