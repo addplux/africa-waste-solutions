@@ -377,6 +377,29 @@
     let currentStep = 1;
     let stream = null;
 
+    function showError(message) {
+        // Remove existing error popups
+        const existing = document.getElementById('form-error-popup');
+        if (existing) existing.remove();
+
+        // Create popup
+        const popup = document.createElement('div');
+        popup.id = 'form-error-popup';
+        popup.className = 'fixed top-6 right-6 z-50 max-w-md bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-3 animate-fade-in-up';
+        popup.innerHTML = `
+            <i class="fas fa-exclamation-triangle text-xl mt-0.5"></i>
+            <div>
+                <p class="font-bold">Error</p>
+                <p class="text-sm">${message}</p>
+            </div>
+            <button onclick="this.parentElement.remove()" class="ml-auto text-white/80 hover:text-white text-lg">&times;</button>
+        `;
+        document.body.appendChild(popup);
+
+        // Auto-remove after 8 seconds
+        setTimeout(() => { if (popup.parentElement) popup.remove(); }, 8000);
+    }
+
     // Initialize webcam when page loads - REMOVED to only init on Step 3
     // window.addEventListener('load', function () {
     //     initWebcam();
@@ -411,14 +434,15 @@
                 const name = field.name;
                 if (!document.querySelector(`input[name="${name}"]:checked`)) {
                     valid = false;
-                    alert('Please select an account type.');
+                    showError('Please select an account type before proceeding.');
                     break;
                 }
             } else if (!field.value || !field.value.trim()) {
                 valid = false;
                 field.focus();
                 field.classList.add('border-red-500');
-                alert(`Please fill in the "${field.previousElementSibling?.textContent?.trim() || field.name}" field.`);
+                const label = field.previousElementSibling?.textContent?.trim() || field.name;
+                showError(`Please fill in the "${label}" field before proceeding.`);
                 break;
             } else {
                 field.classList.remove('border-red-500');
@@ -565,18 +589,87 @@
     }
 
     function handleSubmit() {
-        // Validate Step 3 (KYC) - check ID document
-        const idInput = document.getElementById('id-input');
-        if (!idInput.files || idInput.files.length === 0) {
-            alert('Please upload your ID document.');
-            return;
+        console.log('[DEBUG] handleSubmit called');
+
+        try {
+            // Validate all steps have data
+            const errors = [];
+
+            // Step 1: Account type
+            const accountType = document.querySelector('input[name="accountType"]:checked');
+            if (!accountType) {
+                errors.push('Account type not selected (Step 1)');
+            }
+            console.log('[DEBUG] Account type:', accountType?.value);
+
+            // Step 1: Company name (if business type)
+            if (accountType && ['manufacturer', 'distributor', 'institution'].includes(accountType.value)) {
+                const companyName = document.querySelector('input[name="companyName"]');
+                if (!companyName || !companyName.value.trim()) {
+                    errors.push('Company name is required for business accounts (Step 2)');
+                }
+            }
+
+            // Step 2: Required personal fields
+            const requiredFields = [
+                { name: 'fullName', label: 'Full Name' },
+                { name: 'dateOfBirth', label: 'Date of Birth' },
+                { name: 'email', label: 'Email Address' },
+                { name: 'password', label: 'Password' },
+                { name: 'contact', label: 'Contact Number' },
+                { name: 'plotNumber', label: 'Plot Number' }
+            ];
+
+            for (const field of requiredFields) {
+                const el = document.querySelector(`[name="${field.name}"]`);
+                const val = el ? el.value.trim() : '';
+                if (!val) {
+                    errors.push(`${field.label} is required (Step 2)`);
+                }
+                console.log(`[DEBUG] ${field.name}:`, val ? 'filled' : 'EMPTY');
+            }
+
+            // Step 3: ID Document
+            const idInput = document.getElementById('id-input');
+            if (!idInput || !idInput.files || idInput.files.length === 0) {
+                errors.push('ID Document upload is required (Step 3)');
+            }
+            console.log('[DEBUG] ID Document:', idInput?.files?.length > 0 ? idInput.files[0].name : 'NONE');
+
+            // Step 3: Selfie (optional but log it)
+            const selfieData = document.getElementById('selfie-data');
+            console.log('[DEBUG] Selfie data:', selfieData?.value ? 'captured' : 'NONE');
+
+            // If there are errors, show them
+            if (errors.length > 0) {
+                console.error('[DEBUG] Validation errors:', errors);
+                showError(errors.join('. '));
+                return;
+            }
+
+            // Ensure step is set to 3 for backend processing
+            document.getElementById('stepInput').value = '3';
+            console.log('[DEBUG] Step set to 3, submitting form...');
+
+            // Log form data summary
+            const form = document.getElementById('accountForm');
+            const formData = new FormData(form);
+            for (const [key, value] of formData.entries()) {
+                if (key === 'password' || key === 'csrf_token' || key === 'selfie') {
+                    console.log(`[DEBUG] Form field: ${key} = [hidden]`);
+                } else if (value instanceof File) {
+                    console.log(`[DEBUG] Form field: ${key} = File(${value.name}, ${value.size} bytes)`);
+                } else {
+                    console.log(`[DEBUG] Form field: ${key} = ${value}`);
+                }
+            }
+
+            // Submit the form
+            form.submit();
+        } catch (err) {
+            console.error('[DEBUG] handleSubmit error:', err);
+            showError('Unexpected error: ' + err.message);
         }
-
-        // Ensure step is set to 3 for backend processing
-        document.getElementById('stepInput').value = '3';
-
-        // Submit the form
-        document.getElementById('accountForm').submit();
     }
 </script>
 {% endblock %}
