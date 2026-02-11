@@ -161,7 +161,7 @@ func Register(c *fiber.Ctx) error {
 
 	if result := tx.Create(&user); result.Error != nil {
 		tx.Rollback()
-		fmt.Println("Error creating user:", result.Error)
+		fmt.Printf("[ERROR] Register - User creation failed: %v\n", result.Error)
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create user: " + result.Error.Error()})
 	}
 
@@ -195,7 +195,7 @@ func Register(c *fiber.Ctx) error {
 
 	if result := tx.Create(&account); result.Error != nil {
 		tx.Rollback()
-		fmt.Println("Error creating account:", result.Error)
+		fmt.Printf("[ERROR] Register - Account creation failed: %v\n", result.Error)
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not create account: " + result.Error.Error()})
 	}
 

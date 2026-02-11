@@ -244,11 +244,16 @@ def account_creation():
                 error_msg = 'Failed to create account.'
                 if response:
                     try:
-                        error_msg = response.json().get('message', error_msg)
+                        resp_json = response.json()
+                        error_msg = resp_json.get('message', error_msg)
+                        if 'error' in resp_json and not resp_json.get('message'):
+                            error_msg = resp_json.get('error')
                     except:
-                        pass
+                        # If not JSON, use the status text or first 100 chars of body
+                        error_msg = f"Backend Error ({response.status_code}): {response.text[:100]}"
                 flash(error_msg, 'error')
                 return redirect(url_for('account_creation'))
+
     
     return render_template('account_creation.html')
 
@@ -778,7 +783,7 @@ def admin_create_account():
                     'pin': pin,
                     'plot_number': plot_number,
                     'area': area,
-                    'is_international': company_type == 'international'
+                    'is_international': str(company_type == 'international').lower()
                 }
                 
                 # Prepare files for upload

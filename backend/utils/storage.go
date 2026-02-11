@@ -56,7 +56,28 @@ func InitStorage() {
 
 func UploadToMinio(ctx context.Context, objectName string, reader io.Reader, objectSize int64, contentType string) (string, error) {
 	if MinioClient == nil {
-		return "", fmt.Errorf("minio client not initialized")
+		// FALLBACK: Save to local filesystem if MinIO is not initialized
+		log.Println("[STORAGE] MinIO not initialized, falling back to local storage")
+
+		uploadDir := "./uploads/kyc"
+		if err := os.MkdirAll(uploadDir, 0755); err != nil {
+			return "", fmt.Errorf("failed to create local upload directory: %v", err)
+		}
+
+		filePath := fmt.Sprintf("%s/%s", uploadDir, objectName)
+		file, err := os.Create(filePath)
+		if err != nil {
+			return "", fmt.Errorf("failed to create local file: %v", err)
+		}
+		defer file.Close()
+
+		_, err = io.Copy(file, reader)
+		if err != nil {
+			return "", fmt.Errorf("failed to save local file: %v", err)
+		}
+
+		log.Printf("[STORAGE] Saved file locally: %s\n", filePath)
+		return filePath, nil
 	}
 
 	_, err := MinioClient.PutObject(ctx, BucketName, objectName, reader, objectSize, minio.PutObjectOptions{
@@ -66,8 +87,5 @@ func UploadToMinio(ctx context.Context, objectName string, reader io.Reader, obj
 		return "", err
 	}
 
-	// In a real production setup with public access, we'd return a public URL.
-	// For this demo, we'll return a path that our backend can use to generate a presigned URL if needed,
-	// or just the object name.
 	return objectName, nil
 }
