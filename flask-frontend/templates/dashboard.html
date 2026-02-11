@@ -75,7 +75,8 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Global Recovery</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(admin_stats.global_recovery)
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{
+                            "{:,}".format(admin_stats.global_recovery|default(0)|int)
                             }} <span class="text-xl font-bold text-gray-400">T</span></p>
                         <p class="text-xs font-bold text-green-600 mt-2">Total System Output</p>
                     </div>
@@ -136,7 +137,8 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">My Total Recovery</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.returned) }} <span
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{
+                            "{:,}".format(stats.returned|default(0)|int) }} <span
                                 class="text-xl font-bold text-gray-400">U</span></p>
                         <p class="text-xs font-bold text-green-600 mt-2">Lifetime Impact</p>
                     </div>
@@ -156,7 +158,8 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Current Stock</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.balance) }}</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.balance|default(0)|int)
+                            }}</p>
                         <p class="text-xs font-bold text-blue-600 mt-2">Units in Node</p>
                     </div>
                 </div>
@@ -175,7 +178,8 @@
                             </div>
                         </div>
                         <p class="text-gray-500 font-semibold text-sm uppercase tracking-wider">Outbound Stream</p>
-                        <p class="text-4xl font-black text-gray-950 mt-1">{{ "{:,}".format(stats.distributed) }}</p>
+                        <p class="text-4xl font-black text-gray-950 mt-1">{{
+                            "{:,}".format(stats.distributed|default(0)|int) }}</p>
                         <p class="text-xs font-bold text-purple-600 mt-2">Total Transferred</p>
                     </div>
                 </div>
@@ -401,7 +405,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
-                                {{ account.created_at[:10] }}
+                                {{ account.created_at[:10] if account.created_at else 'N/A' }}
                             </td>
                         </tr>
                         {% else %}

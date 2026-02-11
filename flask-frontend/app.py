@@ -278,7 +278,10 @@ def dashboard():
     
     response = api_call('auth/stats', method='GET')
     if response and response.status_code == 200:
-        user_stats = response.json().get('data', user_stats)
+        try:
+            user_stats.update(response.json().get('data', {}))
+        except (ValueError, AttributeError):
+            print("[ERROR] Dashboard - Failed to parse user stats JSON")
 
     # ADMIN SPECIFIC REAL-TIME DATA
     admin_stats = {}
@@ -289,16 +292,22 @@ def dashboard():
         rep_resp = api_call('reports/stats', method='GET')
         rep_data = {}
         if rep_resp and rep_resp.status_code == 200:
-            rep_data = rep_resp.json().get('data', {})
+            try:
+                rep_data = rep_resp.json().get('data', {})
+            except (ValueError, AttributeError):
+                print("[ERROR] Dashboard - Failed to parse report stats JSON")
         
         # 2. Fetch Accounts for "Total Nodes" and "KYC Queue"
         acc_resp = api_call('accounts', method='GET')
         all_accounts = []
         recent_accounts = []
         if acc_resp and acc_resp.status_code == 200:
-            all_accounts = acc_resp.json().get('data', [])
-            # Sort for recent accounts table (Newest first)
-            recent_accounts = sorted(all_accounts, key=lambda x: x.get('created_at', ''), reverse=True)[:5]
+            try:
+                all_accounts = acc_resp.json().get('data', [])
+                # Sort for recent accounts table (Newest first)
+                recent_accounts = sorted(all_accounts, key=lambda x: x.get('created_at') or '', reverse=True)[:5]
+            except (ValueError, AttributeError, TypeError):
+                print("[ERROR] Dashboard - Failed to parse or sort accounts JSON")
         
         # Calculate Admin KPI Stats
         admin_stats['total_accounts'] = len(all_accounts)
@@ -318,7 +327,10 @@ def dashboard():
         ent_resp = api_call('entries', method='GET')
         all_entries = []
         if ent_resp and ent_resp.status_code == 200:
-            all_entries = ent_resp.json().get('data', [])
+            try:
+                all_entries = ent_resp.json().get('data', [])
+            except (ValueError, AttributeError):
+                print("[ERROR] Dashboard - Failed to parse entries JSON")
 
         # Combine Accounts (New Signups) and Entries (Transactions)
         # We need to normalize them to: {type, title, subtitle, time, icon, color}
