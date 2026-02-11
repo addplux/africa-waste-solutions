@@ -1,13 +1,11 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 # Cache bust: 2026-01-06-Try2
 RUN echo "Force rebuild 2026-01-06-Try2"
 
 # Copy backend go.mod from the backend directory
-COPY backend/go.mod ./
-# Backend go.sum might not exist or be needed if we skip check
-# COPY backend/go.sum ./
+COPY backend/go.mod backend/go.sum ./
 
 RUN go mod download || echo "Skipping download, manual vendor needed if no net"
 
