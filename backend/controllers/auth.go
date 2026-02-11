@@ -257,7 +257,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Could not login"})
 	}
 
-	return c.JSON(fiber.Map{
+	response := fiber.Map{
 		"status": "success",
 		"token":  t,
 		"user": fiber.Map{
@@ -266,5 +266,13 @@ func Login(c *fiber.Ctx) error {
 			"email": user.Email,
 			"role":  user.Role,
 		},
-	})
+	}
+
+	// Fetch account associated with this user
+	var account models.Account
+	if err := models.DB.Where("created_by = ?", user.ID).First(&account).Error; err == nil {
+		response["account"] = account
+	}
+
+	return c.JSON(response)
 }

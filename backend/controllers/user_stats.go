@@ -53,6 +53,10 @@ func GetUserStats(c *fiber.Ctx) error {
 			"kyc_status":      account.KYCStatus,
 			"account_type":    account.AccountType,
 			"balance":         supply - distributed - returned,
+			"name":            account.Name,
+			"contact":         account.Contact,
+			"plot_number":     account.PlotNumber,
+			"area":            account.Area,
 		},
 	})
 }
