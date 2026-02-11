@@ -654,6 +654,9 @@
             // Log form data summary
             const form = document.getElementById('accountForm');
             const formData = new FormData(form);
+            const csrfToken = formData.get('csrf_token');
+            console.log('[DEBUG] CSRF Token found in form:', csrfToken ? 'YES (starts with ' + csrfToken.substring(0, 10) + '...)' : 'MISSING');
+
             for (const [key, value] of formData.entries()) {
                 if (key === 'password' || key === 'csrf_token' || key === 'selfie') {
                     console.log(`[DEBUG] Form field: ${key} = [hidden]`);

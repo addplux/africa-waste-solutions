@@ -10,14 +10,17 @@ from datetime import datetime
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Initialize CSRF protection if available
+# Initialize CSRF protection
 try:
-    from flask_wtf.csrf import CSRFProtect
+    from flask_wtf.csrf import CSRFProtect, generate_csrf
     csrf = CSRFProtect(app)
+    
+    @app.context_processor
+    def inject_csrf():
+        return dict(csrf_token=generate_csrf)
 except ImportError:
     print("Warning: Flask-WTF not available, CSRF protection disabled")
     csrf = None
-    # Provide a dummy csrf_token function for templates
     @app.context_processor
     def inject_csrf_token():
         return dict(csrf_token=lambda: '')
