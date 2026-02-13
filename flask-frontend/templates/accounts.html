@@ -10,14 +10,14 @@
     <!-- Main Content -->
     <div class="flex-1 overflow-auto pt-16 lg:pt-0">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Account Management</h1>
-                    <p class="text-gray-600 mt-1">Manage customer and business accounts</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Account Management</h1>
+                    <p class="text-xs text-gray-600 mt-1">Manage customer and business accounts</p>
                 </div>
                 <a href="{{ url_for('admin_create_account') }}"
-                    class="px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+                    class="px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-user-plus mr-2"></i>
                     New Account
                 </a>
@@ -77,30 +77,27 @@
                 </div>
             </div>
 
-            <!-- Filters & Search -->
-            <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="md:col-span-2">
+            <!-- Search & Filters -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                <form action="{{ url_for('accounts') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+                    <div class="md:flex-1">
                         <div class="relative">
                             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="Search by name, email, or plot number..."
-                                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
                         </div>
+                        <select
+                            class="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+                            <option value="">All Types</option>
+                            <option value="consumer">Consumer</option>
+                            <option value="business">Business</option>
+                        </select>
+                        <select
+                            class="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending KYC</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
                     </div>
-                    <select
-                        class="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
-                        <option value="">All Types</option>
-                        <option value="consumer">Consumer</option>
-                        <option value="business">Business</option>
-                    </select>
-                    <select
-                        class="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
-                        <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="pending">Pending KYC</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
-                </div>
             </div>
 
             <!-- Accounts Table -->

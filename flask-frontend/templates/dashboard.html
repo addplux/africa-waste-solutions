@@ -10,7 +10,7 @@
     <!-- Main Content -->
     <div class="flex-1 overflow-auto pt-16 lg:pt-0">
         <!-- Header -->
-        <header class="bg-white shadow-sm border-b border-gray-200 px-8 py-6">
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
@@ -38,12 +38,12 @@
                 </p>
             </div>
 
-            <!-- Enhanced KPI Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {% if user.role == 'admin' %}
                 <!-- ADMIN VIEW: Total Accounts -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-blue-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -63,7 +63,7 @@
 
                 <!-- ADMIN VIEW: Global Waste -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-green-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -85,7 +85,7 @@
                 <!-- ADMIN VIEW: Pending KYC -->
                 <a href="{{ url_for('kyc') }}" class="block">
                     <div
-                        class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200 cursor-pointer">
+                        class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200 cursor-pointer">
                         <div
                             class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
                         </div>
@@ -105,7 +105,7 @@
 
                 <!-- ADMIN VIEW: Status -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-purple-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -125,7 +125,7 @@
                 {% else %}
                 <!-- CLIENT VIEW: My Recycling -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-green-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-green-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -146,7 +146,7 @@
 
                 <!-- CLIENT VIEW: Inventory Balance -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-100">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-blue-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -166,7 +166,7 @@
 
                 <!-- CLIENT VIEW: Distributed -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-200">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-purple-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>
@@ -186,7 +186,7 @@
 
                 <!-- CLIENT VIEW: Account KYC -->
                 <div
-                    class="group relative bg-white rounded-3xl p-8 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
+                    class="group relative bg-white rounded-3xl p-6 border border-gray-100 shadow-xl shadow-gray-200/50 hover:shadow-2xl hover:shadow-yellow-500/10 transition-all duration-500 overflow-hidden animate-fade-in-up animate-delay-300">
                     <div
                         class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-32 h-32 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform">
                     </div>

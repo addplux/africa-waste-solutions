@@ -16,48 +16,48 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 py-4 space-y-0.5">
+    <nav class="flex-1 py-3 space-y-0">
         <a href="{{ url_for('dashboard') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'dashboard' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'dashboard' else 'border-transparent' }}">
             <i class="fas fa-home w-5 text-center"></i>
             <span>Dashboard</span>
         </a>
 
         {% if user.role == 'admin' %}
         <a href="{{ url_for('accounts') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'accounts' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'accounts' else 'border-transparent' }}">
             <i class="fas fa-users w-5 text-center"></i>
             <span>Accounts</span>
         </a>
 
         <a href="{{ url_for('data_entry') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'data_entry' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'data_entry' else 'border-transparent' }}">
             <i class="fas fa-edit w-5 text-center"></i>
             <span>Data Entry</span>
         </a>
         {% else %}
         <a href="{{ url_for('my_account') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'my_account' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-blue-800 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-blue-800 border-blue-400' if request.endpoint == 'my_account' else 'border-transparent' }}">
             <i class="fas fa-user-circle w-5 text-center"></i>
             <span>Account</span>
         </a>
         {% endif %}
 
         <a href="{{ url_for('data_transfer') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-purple-600 hover:text-white transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-purple-600 text-white border-purple-300' if request.endpoint == 'data_transfer' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-purple-600 hover:text-white transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-purple-600 text-white border-purple-300' if request.endpoint == 'data_transfer' else 'border-transparent' }}">
             <i class="fas fa-truck-moving w-5 text-center"></i>
             <span>Data Transfer</span>
         </a>
 
         <a href="{{ url_for('reports') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'reports' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'reports' else 'border-transparent' }}">
             <i class="fas fa-chart-bar w-5 text-center"></i>
             <span>Reports</span>
         </a>
 
         {% if user.role == 'admin' %}
         <a href="{{ url_for('kyc') }}"
-            class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'kyc' else 'border-transparent' }}">
+            class="flex items-center gap-3 px-6 py-2.5 hover:bg-green-700 transition-colors text-sm font-medium border-l-4 border-transparent {{ 'bg-green-700 border-green-400' if request.endpoint == 'kyc' else 'border-transparent' }}">
             <i class="fas fa-id-card w-5 text-center"></i>
             <span>KYC Verification</span>
         </a>
