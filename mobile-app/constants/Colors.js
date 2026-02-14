@@ -1,7 +1,5 @@
-export const Colors = {
+const Colors = {
     // Primary Brand Colors
-    primary: '#10b981',      // Green
-    primaryDark: '#059669',
     primary: '#2563eb', // blue-600
     primaryDark: '#1e40af', // blue-800
     primaryLight: '#60a5fa', // blue-400
@@ -36,7 +34,7 @@ export const Colors = {
     }
 };
 
-export const Spacing = {
+const Spacing = {
     xs: 4,
     sm: 8,
     md: 16,
@@ -45,7 +43,7 @@ export const Spacing = {
     xxl: 48,
 };
 
-export const FontSizes = {
+const FontSizes = {
     xs: 12,
     sm: 14,
     md: 16,
@@ -55,7 +53,7 @@ export const FontSizes = {
     xxxl: 32,
 };
 
-export const BorderRadius = {
+const BorderRadius = {
     sm: 8,
     md: 12,
     lg: 16,
