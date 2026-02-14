@@ -1,16 +1,24 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Colors, Spacing, FontSizes } from '../../constants/Colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors, Spacing, FontSizes, BorderRadius } from '../../constants/Colors';
 
 export default function ReportsScreen() {
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Reports & Analytics</Text>
-                <Text style={styles.subtitle}>Coming soon...</Text>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+            <LinearGradient
+                colors={['#fff', '#f3f4f6']}
+                style={styles.card}
+            >
+                <View style={styles.iconContainer}>
+                    <Ionicons name="bar-chart" size={64} color={Colors.primary} />
+                </View>
+                <Text style={styles.title}>Analytics & Reports</Text>
+                <Text style={styles.subtitle}>Insights Coming Soon</Text>
                 <Text style={styles.description}>
-                    This section will display detailed reports, charts, and analytics about waste management activities.
+                    We are building a comprehensive analytics suite to help you visualize your environmental impact and waste management efficiency.
                 </Text>
-            </View>
+            </LinearGradient>
         </ScrollView>
     );
 }
@@ -21,25 +29,49 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.background,
     },
     content: {
+        flex: 1,
         padding: Spacing.lg,
-        alignItems: 'center',
         justifyContent: 'center',
-        minHeight: 400,
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: BorderRadius.xl,
+        padding: Spacing.xl,
+        alignItems: 'center',
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        borderWidth: 1,
+        borderColor: '#fff',
+    },
+    iconContainer: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: '#eff6ff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
     },
     title: {
         fontSize: FontSizes.xxl,
         fontWeight: 'bold',
         color: Colors.text,
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.xs,
+        textAlign: 'center',
     },
     subtitle: {
         fontSize: FontSizes.lg,
-        color: Colors.textSecondary,
+        fontWeight: '600',
+        color: Colors.primary,
         marginBottom: Spacing.md,
+        textAlign: 'center',
     },
     description: {
         fontSize: FontSizes.md,
-        color: Colors.textLight,
+        color: Colors.textSecondary,
         textAlign: 'center',
         lineHeight: 24,
     },

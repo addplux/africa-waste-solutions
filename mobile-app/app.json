@@ -25,7 +25,8 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -45,6 +46,14 @@
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos for document upload."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "826f913c-bc85-47f1-b10f-efe81ce18b49"
+      }
+    }
   }
 }

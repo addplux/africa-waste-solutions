@@ -10,9 +10,12 @@ import {
     ScrollView,
     Alert,
     ActivityIndicator,
+    Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { Colors, Spacing, FontSizes, BorderRadius } from '../constants/Colors';
 
@@ -23,6 +26,7 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -42,137 +46,281 @@ export default function LoginScreen() {
     };
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
+        <View style={styles.container}>
             <StatusBar style="light" />
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Africa Waste Solutions</Text>
-                    <Text style={styles.subtitle}>Sustainable Waste Management</Text>
-                </View>
+            <LinearGradient
+                colors={Colors.gradients.primary}
+                style={styles.background}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            />
 
-                <View style={styles.form}>
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your email"
-                        value={email}
-                        onChangeText={setEmail}
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        editable={!loading}
-                    />
+            <KeyboardAvoidingView
+                style={styles.keyboardView}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    <View style={styles.header}>
+                        <View style={styles.logoContainer}>
+                            <Ionicons name="leaf" size={48} color={Colors.primary} />
+                        </View>
+                        <Text style={styles.title}>Welcome Back</Text>
+                        <Text style={styles.subtitle}>Sign in to continue to your dashboard</Text>
+                    </View>
 
-                    <Text style={styles.label}>Password</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter your password"
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                        editable={!loading}
-                    />
+                    <View style={styles.formContainer}>
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>Email Address</Text>
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="mail-outline" size={20} color={Colors.textLight} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="name@example.com"
+                                    placeholderTextColor={Colors.textLight}
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCapitalize="none"
+                                    keyboardType="email-address"
+                                    editable={!loading}
+                                />
+                            </View>
+                        </View>
 
-                    <TouchableOpacity
-                        style={[styles.button, loading && styles.buttonDisabled]}
-                        onPress={handleLogin}
-                        disabled={loading}
-                    >
-                        {loading ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <Text style={styles.buttonText}>Login</Text>
-                        )}
-                    </TouchableOpacity>
+                        <View style={styles.inputGroup}>
+                            <Text style={styles.label}>Password</Text>
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="lock-closed-outline" size={20} color={Colors.textLight} style={styles.inputIcon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter your password"
+                                    placeholderTextColor={Colors.textLight}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry={secureTextEntry}
+                                    editable={!loading}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => setSecureTextEntry(!secureTextEntry)}
+                                    style={styles.eyeIcon}
+                                >
+                                    <Ionicons
+                                        name={secureTextEntry ? "eye-off-outline" : "eye-outline"}
+                                        size={20}
+                                        color={Colors.textLight}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
-                    <TouchableOpacity
-                        style={styles.linkButton}
-                        onPress={() => router.push('/register')}
-                        disabled={loading}
-                    >
-                        <Text style={styles.linkText}>
-                            Don't have an account? <Text style={styles.linkTextBold}>Sign Up</Text>
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </KeyboardAvoidingView>
+                        <TouchableOpacity
+                            style={styles.forgotPassword}
+                            onPress={() => Alert.alert('Forgot Password', 'Please contact support to reset your password.')}
+                        >
+                            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleLogin}
+                            disabled={loading}
+                        >
+                            <LinearGradient
+                                colors={Colors.gradients.primary}
+                                style={styles.buttonGradient}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text style={styles.buttonText}>Sign In</Text>
+                                )}
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <View style={styles.divider}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>OR</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.secondaryButton}
+                            onPress={() => router.push('/register')}
+                            disabled={loading}
+                        >
+                            <Text style={styles.secondaryButtonText}>Create New Account</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>Africa Waste Solutions © 2026</Text>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.primary,
+        backgroundColor: Colors.background,
+    },
+    background: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: '40%',
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+    },
+    keyboardView: {
+        flex: 1,
     },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'center',
         padding: Spacing.lg,
+        justifyContent: 'center',
     },
     header: {
         alignItems: 'center',
-        marginBottom: Spacing.xxl,
+        marginBottom: Spacing.xl,
+        marginTop: Spacing.xxl,
+    },
+    logoContainer: {
+        width: 80,
+        height: 80,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: Spacing.lg,
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
     },
     title: {
-        fontSize: FontSizes.xxxl,
+        fontSize: FontSizes.xxl,
         fontWeight: 'bold',
         color: '#fff',
-        marginBottom: Spacing.sm,
+        marginBottom: Spacing.xs,
         textAlign: 'center',
     },
     subtitle: {
         fontSize: FontSizes.md,
-        color: '#fff',
-        opacity: 0.9,
+        color: 'rgba(255, 255, 255, 0.9)',
+        textAlign: 'center',
     },
-    form: {
+    formContainer: {
         backgroundColor: '#fff',
-        borderRadius: BorderRadius.lg,
-        padding: Spacing.lg,
+        borderRadius: BorderRadius.xl,
+        padding: Spacing.xl,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+    },
+    inputGroup: {
+        marginBottom: Spacing.lg,
     },
     label: {
-        fontSize: FontSizes.md,
+        fontSize: FontSizes.sm,
         fontWeight: '600',
-        color: Colors.text,
-        marginBottom: Spacing.sm,
-        marginTop: Spacing.md,
+        color: Colors.textSecondary,
+        marginBottom: Spacing.xs,
+        marginLeft: Spacing.xs,
     },
-    input: {
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: Colors.background,
+        borderRadius: BorderRadius.md,
         borderWidth: 1,
         borderColor: Colors.border,
-        borderRadius: BorderRadius.md,
-        padding: Spacing.md,
+        paddingHorizontal: Spacing.md,
+        height: 50,
+    },
+    inputIcon: {
+        marginRight: Spacing.sm,
+    },
+    input: {
+        flex: 1,
         fontSize: FontSizes.md,
-        backgroundColor: Colors.surface,
+        color: Colors.text,
+        height: '100%',
+    },
+    eyeIcon: {
+        padding: Spacing.xs,
+    },
+    forgotPassword: {
+        alignSelf: 'flex-end',
+        marginBottom: Spacing.lg,
+    },
+    forgotPasswordText: {
+        color: Colors.primary,
+        fontSize: FontSizes.sm,
+        fontWeight: '600',
     },
     button: {
-        backgroundColor: Colors.primary,
-        borderRadius: BorderRadius.md,
-        padding: Spacing.md,
-        alignItems: 'center',
-        marginTop: Spacing.lg,
+        borderRadius: BorderRadius.lg,
+        overflow: 'hidden',
+        elevation: 2,
+        shadowColor: Colors.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
     },
-    buttonDisabled: {
-        opacity: 0.6,
+    buttonGradient: {
+        paddingVertical: Spacing.md,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     buttonText: {
         color: '#fff',
         fontSize: FontSizes.lg,
         fontWeight: 'bold',
     },
-    linkButton: {
-        marginTop: Spacing.lg,
+    divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: Spacing.lg,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: Colors.border,
+    },
+    dividerText: {
+        paddingHorizontal: Spacing.md,
+        color: Colors.textLight,
+        fontSize: FontSizes.sm,
+        fontWeight: '600',
+    },
+    secondaryButton: {
+        paddingVertical: Spacing.md,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: Colors.border,
+        borderRadius: BorderRadius.lg,
+        backgroundColor: '#fff',
+    },
+    secondaryButtonText: {
+        color: Colors.textSecondary,
+        fontSize: FontSizes.md,
+        fontWeight: '600',
+    },
+    footer: {
+        marginTop: Spacing.xl,
         alignItems: 'center',
     },
-    linkText: {
-        fontSize: FontSizes.md,
-        color: Colors.textSecondary,
-    },
-    linkTextBold: {
-        color: Colors.primary,
-        fontWeight: 'bold',
+    footerText: {
+        color: Colors.textLight,
+        fontSize: FontSizes.xs,
     },
 });
