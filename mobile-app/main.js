@@ -1,6 +1,5 @@
-const { app, BrowserWindow, protocol } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const url = require('url');
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -13,26 +12,11 @@ function createWindow() {
         icon: path.join(__dirname, 'assets/icon.png')
     });
 
-    // Intercept absolute paths and map them to the dist folder
-    // This handles Windows drive letters and variations in file URL formatting
-    win.webContents.session.webRequest.onBeforeRequest((details, callback) => {
-        let requestUrl = details.url;
-
-        // Check if the URL is trying to access /_expo or /favicon.ico at the root of a drive
-        // e.g., file:///D:/_expo/... or file:///_expo/...
-        if (requestUrl.includes('/_expo/') || requestUrl.includes('/favicon.ico')) {
-            const parts = requestUrl.split(/_expo\/|favicon\.ico/);
-            const filename = requestUrl.includes('_expo') ? '_expo/' + parts[1] : 'favicon.ico';
-            const newPath = path.join(__dirname, 'dist', filename);
-            callback({ redirectURL: url.pathToFileURL(newPath).href });
-        } else {
-            callback({});
-        }
-    });
-
+    // Load the index.html
+    // With fix-paths.js, we don't need complex interceptors anymore
     win.loadFile(path.join(__dirname, 'dist/index.html'));
 
-    // Enable DevTools so we can see the errors if it still fails
+    // Keep devtools open until we are sure it works
     win.webContents.openDevTools();
 }
 

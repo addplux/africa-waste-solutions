@@ -25,7 +25,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build:web": "npx expo export --platform web",
-    "build:windows": "npm run build:web && electron-builder --win"
+    "build:windows": "npm run build:web && node fix-paths.js && electron-builder --win"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
