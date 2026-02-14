@@ -1,0 +1,15 @@
+directories:
+  output: dist-electron
+  buildResources: build
+appId: com.addplux.wastesolutions
+productName: Africa Waste Solutions
+win:
+  target: nsis
+  icon: assets/icon.png
+files:
+  - filter:
+      - dist/**/*
+      - main.js
+      - assets/**/*
+      - package.json
+electronVersion: 40.4.1

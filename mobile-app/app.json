@@ -12,6 +12,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#10b981"
     },
+    "updates": {
+      "url": "https://u.expo.dev/826f913c-bc85-47f1-b10f-efe81ce18b49"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.addplux.wastesolutions"
