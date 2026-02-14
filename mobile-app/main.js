@@ -14,20 +14,26 @@ function createWindow() {
     });
 
     // Intercept absolute paths and map them to the dist folder
-    // This fixes the white screen caused by Expo's absolute paths (/_expo/...)
-    const filter = {
-        urls: ['file:///_expo/*', 'file:///favicon.ico']
-    };
+    // This handles Windows drive letters and variations in file URL formatting
+    win.webContents.session.webRequest.onBeforeRequest((details, callback) => {
+        let requestUrl = details.url;
 
-    win.webContents.session.webRequest.onBeforeRequest(filter, (details, callback) => {
-        const relativePath = details.url.replace('file:///', '');
-        callback({ redirectURL: url.pathToFileURL(path.join(__dirname, 'dist', relativePath)).href });
+        // Check if the URL is trying to access /_expo or /favicon.ico at the root of a drive
+        // e.g., file:///D:/_expo/... or file:///_expo/...
+        if (requestUrl.includes('/_expo/') || requestUrl.includes('/favicon.ico')) {
+            const parts = requestUrl.split(/_expo\/|favicon\.ico/);
+            const filename = requestUrl.includes('_expo') ? '_expo/' + parts[1] : 'favicon.ico';
+            const newPath = path.join(__dirname, 'dist', filename);
+            callback({ redirectURL: url.pathToFileURL(newPath).href });
+        } else {
+            callback({});
+        }
     });
 
     win.loadFile(path.join(__dirname, 'dist/index.html'));
 
-    // Uncomment to debug if still showing white screen
-    // win.webContents.openDevTools();
+    // Enable DevTools so we can see the errors if it still fails
+    win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
