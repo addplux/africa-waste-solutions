@@ -15,9 +15,15 @@ if (fs.existsSync(indexPath)) {
   const routingFix = `
     <script>
       (function() {
-        // If we are on our custom app:// protocol, ensure history matches
+        // If we are on our custom app:// protocol
         if (window.location.protocol === 'app:') {
-          window.history.replaceState(null, '', 'app://./');
+          // Force the router to see '/' as the initial route
+          // This prevents "Unmatched Route" on launch
+          try {
+             window.history.replaceState(null, '', 'app://app/');
+          } catch(e) {
+             console.error("Routing fix failed:", e);
+          }
         }
       })();
     </script>

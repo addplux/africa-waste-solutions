@@ -6,6 +6,12 @@ const fs = require('fs');
 // This makes the app think it's running from a real root (app://)
 const protocolName = 'app';
 
+// Register the scheme as privileged BEFORE app is ready
+// This is CRITICAL to fix the SecurityError and origin 'null' issues
+protocol.registerSchemesAsPrivileged([
+    { scheme: protocolName, privileges: { standard: true, secure: true, supportFetchAPI: true } }
+]);
+
 function createWindow() {
     const win = new BrowserWindow({
         width: 1200,
@@ -18,7 +24,8 @@ function createWindow() {
     });
 
     // Load via our custom protocol
-    win.loadURL(`${protocolName}://./index.html`);
+    // Using a more "standard" looking URL to help expo-router
+    win.loadURL(`${protocolName}://app/index.html`);
 
     // Open DevTools for debugging
     win.webContents.openDevTools();
@@ -26,11 +33,13 @@ function createWindow() {
 
 app.whenReady().then(() => {
     // Set up the custom protocol before creating the window
-    // registerFileProtocol is deprecated in newer Electron, using registerFileProtocol (for now)
-    // or handle it with handle() if using Electron 25+
     protocol.registerFileProtocol(protocolName, (request, callback) => {
-        const url = request.url.substr(protocolName.length + 3);
-        const filePath = path.join(__dirname, 'dist', url.split('?')[0]);
+        // request.url will be something like "app://app/index.html"
+        // We want to extract "index.html"
+        const urlPart = request.url.substr(protocolName.length + 3); // "app/index.html"
+        const relativePath = urlPart.startsWith('app/') ? urlPart.substr(4) : urlPart;
+
+        const filePath = path.join(__dirname, 'dist', relativePath.split('?')[0]);
         callback({ path: filePath });
     });
 
