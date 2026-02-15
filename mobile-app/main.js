@@ -1,5 +1,10 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, protocol } = require('electron');
 const path = require('path');
+const fs = require('fs');
+
+// Register a custom protocol to handle paths correctly
+// This makes the app think it's running from a real root (app://)
+const protocolName = 'app';
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -12,15 +17,23 @@ function createWindow() {
         icon: path.join(__dirname, 'assets/icon.png')
     });
 
-    // Load the index.html
-    // With fix-paths.js, we don't need complex interceptors anymore
-    win.loadFile(path.join(__dirname, 'dist/index.html'));
+    // Load via our custom protocol
+    win.loadURL(`${protocolName}://./index.html`);
 
-    // Keep devtools open until we are sure it works
+    // Open DevTools for debugging
     win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
+    // Set up the custom protocol before creating the window
+    // registerFileProtocol is deprecated in newer Electron, using registerFileProtocol (for now)
+    // or handle it with handle() if using Electron 25+
+    protocol.registerFileProtocol(protocolName, (request, callback) => {
+        const url = request.url.substr(protocolName.length + 3);
+        const filePath = path.join(__dirname, 'dist', url.split('?')[0]);
+        callback({ path: filePath });
+    });
+
     createWindow();
 
     app.on('activate', () => {
