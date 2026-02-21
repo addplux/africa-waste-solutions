@@ -49,6 +49,7 @@ func Setup(app *fiber.App) {
 	api.Get("/reports/stats", controllers.GetDashboardStats)
 	api.Get("/reports/export", controllers.GenerateReport)
 	api.Get("/reports/insights", controllers.GetInsights)
+	api.Get("/reports/account-balances", controllers.GetAccountBalances)
 
 	// Products
 	api.Get("/debug/users", func(c *fiber.Ctx) error {

@@ -49,6 +49,12 @@ func main() {
 		port = "8080"
 	}
 
+	// Validate port is reasonable (max 65535, so 5 digits max)
+	if len(port) > 5 {
+		log.Printf("Warning: PORT environment variable '%s' is invalid. Falling back to 8080.", port)
+		port = "8080"
+	}
+
 	log.Printf("Starting server on port %s", port)
-	log.Fatal(app.Listen(":" + port))
+	log.Fatal(app.Listen("0.0.0.0:" + port))
 }

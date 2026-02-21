@@ -152,3 +152,66 @@ func GetDashboardStats(c *fiber.Ctx) error {
 		},
 	})
 }
+
+func GetAccountBalances(c *fiber.Ctx) error {
+	accountID := c.Query("account_id")
+	if accountID == "" {
+		return c.Status(400).JSON(fiber.Map{"status": "error", "message": "account_id is required"})
+	}
+
+	var entries []models.Entry
+	models.DB.Where("source_account_id = ? OR target_account_id = ?", accountID, accountID).Find(&entries)
+
+	type ProductBalance struct {
+		Supply int64
+		Waste  int64
+	}
+	balances := make(map[string]*ProductBalance)
+
+	for _, e := range entries {
+		total := int64(e.Unit) + int64(e.Case)*24 + int64(e.Dozen)*12 + int64(e.Series) + int64(e.HalfDozen)*6
+		if total == 0 {
+			continue
+		}
+
+		if balances[e.ProductName] == nil {
+			balances[e.ProductName] = &ProductBalance{}
+		}
+
+		sourceMatch := e.SourceAccountID.String() == accountID
+		targetMatch := e.TargetAccountID != nil && e.TargetAccountID.String() == accountID
+
+		if e.TransactionType == "supply" {
+			if sourceMatch {
+				balances[e.ProductName].Supply += total
+			}
+		} else if e.TransactionType == "transfer" {
+			if sourceMatch {
+				balances[e.ProductName].Supply -= total
+			}
+			if targetMatch {
+				balances[e.ProductName].Supply += total
+			}
+		} else if e.TransactionType == "return" {
+			if sourceMatch {
+				balances[e.ProductName].Waste += total
+			}
+		}
+	}
+
+	var results []map[string]interface{}
+	for product, bal := range balances {
+		if bal.Supply != 0 || bal.Waste != 0 {
+			results = append(results, map[string]interface{}{
+				"product":      product,
+				"supply_items": bal.Supply,
+				"waste_return": bal.Waste,
+			})
+		}
+	}
+
+	return c.JSON(fiber.Map{
+		"status": "success",
+		"data":   results,
+	})
+}

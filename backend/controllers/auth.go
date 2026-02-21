@@ -236,7 +236,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	var user models.User
-	models.DB.Where("email = ?", input.Email).First(&user)
+	models.DB.Where("email = ? OR contact = ?", input.Email, input.Email).First(&user)
 
 	if user.ID == uuid.Nil {
 		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "User not found"})
