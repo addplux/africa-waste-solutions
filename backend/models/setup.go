@@ -23,7 +23,7 @@ func ConnectDB() {
 	}
 
 	log.Println("Connected to Database!")
-	db.Logger = db.Logger.LogMode(1) // 1 = Silent, to prevent Railway rate limit log spam
+	db.Logger = db.Logger.LogMode(4) // Info
 
 	log.Println("Running Migrations...")
 	db.AutoMigrate(&User{}, &Account{}, &Entry{}, &Group{})
