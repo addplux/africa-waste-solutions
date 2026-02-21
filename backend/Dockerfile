@@ -8,7 +8,7 @@ RUN go mod download || echo "Skipping download, manual vendor needed if no net"
 
 COPY . .
 
-RUN go build -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 FROM alpine:latest
 WORKDIR /root/
